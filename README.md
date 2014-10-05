@@ -1,4 +1,4 @@
-mephisto_iii
-============
+callete-template
+================
 
-The new mephisto III UI based on the callete framework.
+Template for the callete framework.
