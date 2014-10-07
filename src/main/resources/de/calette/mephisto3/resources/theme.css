@@ -1,0 +1,10 @@
+.root {
+     -fx-background-image: url("background.png");
+}
+
+#header-weather, #header-datetime {
+   -fx-font-size: 19px;
+   -fx-font-family: "Tahoma";
+   -fx-fill: #fff;
+   -fx-font-smoothing-type: gray;
+}
