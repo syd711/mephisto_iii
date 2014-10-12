@@ -2,9 +2,67 @@
      -fx-background-image: url("background.png");
 }
 
+/**
+ * Header Styling
+ */
 #header-weather, #header-datetime {
-   -fx-font-size: 19px;
+   -fx-font-size: 21px;
    -fx-font-family: "Tahoma";
    -fx-fill: #fff;
    -fx-font-smoothing-type: gray;
+}
+
+
+/**
+ * Streaming Panels formatting
+ */
+.stream-name {
+   -fx-font-size: 40px;
+   -fx-font-family: "Tahoma";
+   -fx-fill: #fff;
+   -fx-font-smoothing-type: gray;
+}
+.stream-title {
+   -fx-font-size: 30px;
+   -fx-font-family: "Tahoma";
+   -fx-fill: #fff;
+   -fx-font-smoothing-type: gray;
+}
+.stream-artist {
+   -fx-font-size: 25px;
+   -fx-font-family: "Tahoma";
+   -fx-fill: #fff;
+   -fx-font-smoothing-type: gray;
+}
+.stream-url {
+   -fx-font-size: 14px;
+   -fx-font-family: "Tahoma";
+   -fx-fill: #fff;
+   -fx-font-smoothing-type: gray;
+}
+.stream-panel {
+   /*-fx-background-color: rgba(60, 30, 60, 0.5); -fx-background-radius: 10;*/
+}
+
+/**
+ * Footer styling
+ */
+#scroller {
+  -fx-background-color:black;
+}
+
+#scroller .thumb {
+  -fx-background-color:#3C1F42;
+  -fx-background-radius: 0em;
+}
+
+#scroller .increment-arrow,
+#scroller .decrement-arrow {
+   -fx-shape: " ";
+   -fx-padding:0;
+}
+
+#scroller .increment-button,
+#scroller .decrement-button {
+  -fx-padding:9px;
 }

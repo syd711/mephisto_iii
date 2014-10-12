@@ -16,6 +16,7 @@ public class ComponentUtil {
     final Canvas canvas = new Canvas(width, height);
     final GraphicsContext gc = canvas.getGraphicsContext2D();
     gc.drawImage(img.getImage(), 0, 0);
+
     return canvas;
   }
 }

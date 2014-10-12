@@ -2,6 +2,7 @@ package de.calette.mephisto3.ui;
 
 import callete.api.Callete;
 import callete.api.services.weather.Weather;
+import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.resources.weather.WeatherQuickInfoResourceLoader;
 import de.calette.mephisto3.util.ComponentUtil;
 import de.calette.mephisto3.util.TransitionUtil;
@@ -27,6 +28,7 @@ public class Header extends BorderPane {
   private SimpleDateFormat simpleDateFormat;
 
   public Header() {
+    setMaxWidth(Mephisto3.WIDTH);
     setPadding(new Insets(6, 10, 10, 10));
     HBox topLeft = new HBox();
     final Text weatherInfoText = new Text();

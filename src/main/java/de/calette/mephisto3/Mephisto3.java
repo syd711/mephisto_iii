@@ -1,8 +1,11 @@
 package de.calette.mephisto3;
 
 import callete.api.util.SystemUtils;
+import de.calette.mephisto3.gpio.GPIOController;
 import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.resources.weather.WeatherQuickInfoResourceLoader;
+import de.calette.mephisto3.ui.Center;
+import de.calette.mephisto3.ui.Footer;
 import de.calette.mephisto3.ui.Header;
 import de.calette.mephisto3.util.CSSDebugger;
 import de.calette.mephisto3.util.ComponentUtil;
@@ -27,6 +30,8 @@ import javafx.stage.WindowEvent;
  * In the beginning, there was main...
  */
 public class Mephisto3 extends Application {
+  public static final int WIDTH = 700;
+  public static final int HEIGHT= 395;
 
   public static void main(String[] args) {
     launch(args);
@@ -39,24 +44,33 @@ public class Mephisto3 extends Application {
 
     //create root component with background
     BorderPane root = new BorderPane();
-    Scene scene = new Scene(root, (double) 700, (double) 395);
+    Scene scene = new Scene(root, (double) WIDTH, (double) HEIGHT);
     scene.getStylesheets().add(ResourceLoader.getResource("theme.css"));
     primaryStage.setScene(scene);
     primaryStage.getScene().setRoot(root);
 
     //header
     root.setTop(new Header());
+    //center
+    root.setCenter(new Center());
+    //footer
+    root.setBottom(new Footer());
 
     //apply debugging options on windows
-    if (!SystemUtils.isWindows()) {
-      primaryStage.initStyle(StageStyle.UNDECORATED);
+    if (SystemUtils.isWindows()) {
       addStateListener(primaryStage);
       addDisposeListener(primaryStage);
       CSSDebugger.dump(root);
     }
+    else {
+      primaryStage.initStyle(StageStyle.UNDECORATED);
+    }
 
     //finally show the stage
     primaryStage.show();
+
+    //initialize GPIO
+    GPIOController.getInstance();
   }
 
 
