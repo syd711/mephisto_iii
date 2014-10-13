@@ -1,4 +1,4 @@
-package de.calette.mephisto3.gpio;
+package de.calette.mephisto3.control;
 
 /**
  * Interface for control listener.

@@ -1,27 +1,18 @@
 package de.calette.mephisto3;
 
 import callete.api.util.SystemUtils;
-import de.calette.mephisto3.gpio.GPIOController;
 import de.calette.mephisto3.resources.ResourceLoader;
-import de.calette.mephisto3.resources.weather.WeatherQuickInfoResourceLoader;
 import de.calette.mephisto3.ui.Center;
 import de.calette.mephisto3.ui.Footer;
 import de.calette.mephisto3.ui.Header;
 import de.calette.mephisto3.util.CSSDebugger;
-import de.calette.mephisto3.util.ComponentUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
@@ -41,6 +32,9 @@ public class Mephisto3 extends Application {
   public void start(final Stage primaryStage) {
     //force rendering of small fonts
     System.setProperty("prism.lcdtext", "false");
+
+    //set thread name
+    Thread.currentThread().setName("Mephisto 3");
 
     //create root component with background
     BorderPane root = new BorderPane();
@@ -68,11 +62,9 @@ public class Mephisto3 extends Application {
 
     //finally show the stage
     primaryStage.show();
-
-    //initialize GPIO
-    GPIOController.getInstance();
   }
 
+  //--------------------------- Helper --------------------------------------------
 
   private static void addStateListener(Stage primaryStage) {
     primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {

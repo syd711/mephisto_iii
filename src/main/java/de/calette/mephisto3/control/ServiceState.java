@@ -1,0 +1,44 @@
+package de.calette.mephisto3.control;
+
+import callete.api.services.Service;
+import callete.api.services.ServiceModel;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Model that represents the current state of the UI.
+ */
+public class ServiceState {
+  private Service service;
+  private List<? extends ServiceModel> models;
+  private Map<Service, Integer> serviceIndex = new HashMap<>();
+
+  public List<? extends ServiceModel> getModels() {
+    return models;
+  }
+
+  public void setModels(List<? extends ServiceModel> models) {
+    this.models = models;
+  }
+
+  public Service getService() {
+    return service;
+  }
+
+  public void setService(Service service) {
+    if(!serviceIndex.containsKey(service)) {
+      serviceIndex.put(service, 0);
+    }
+    this.service = service;
+  }
+
+  /**
+   * Returns the last active service model of
+   * the service of this model.
+   */
+  public int getServiceIndex() {
+    return serviceIndex.get(service);
+  }
+}

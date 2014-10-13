@@ -1,4 +1,4 @@
-package de.calette.mephisto3.gpio;
+package de.calette.mephisto3.control;
 
 /**
  * Enum that represents the different input methods provided by a single rotary encoder.
