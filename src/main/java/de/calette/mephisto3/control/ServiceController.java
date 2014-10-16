@@ -70,12 +70,12 @@ public class ServiceController {
         Platform.runLater(new Runnable() {
           @Override
           public void run() {
-            ControlEvent push = ControlEvent.PUSH;
+            ServiceControlEvent.EVENT_TYPE push = ServiceControlEvent.EVENT_TYPE.PUSH;
             if (pushEvent.isLongPush()) {
-              push = ControlEvent.LONG_PUSH;
+              push = ServiceControlEvent.EVENT_TYPE.LONG_PUSH;
             }
             for (ControlListener listener : controlListeners) {
-              listener.controlEvent(push);
+              listener.controlEvent(new ServiceControlEvent(ServiceControlEvent.EVENT_TYPE.LONG_PUSH, serviceState));
             }
           }
         });
@@ -100,12 +100,17 @@ public class ServiceController {
         Platform.runLater(new Runnable() {
           @Override
           public void run() {
+            ServiceControlEvent.EVENT_TYPE eventType = ServiceControlEvent.EVENT_TYPE.PREVIOUS;
+            if (event.rotatedLeft()) {
+              serviceState.decrementIndex();
+            } else {
+              eventType = ServiceControlEvent.EVENT_TYPE.NEXT;
+              serviceState.incrementIndex();
+            }
+
+            final ServiceControlEvent serviceControlEvent = new ServiceControlEvent(eventType, serviceState);
             for (ControlListener listener : controlListeners) {
-              if (event.rotatedLeft()) {
-                listener.controlEvent(ControlEvent.PREVIOUS);
-              } else {
-                listener.controlEvent(ControlEvent.NEXT);
-              }
+              listener.controlEvent(serviceControlEvent);
             }
           }
         });

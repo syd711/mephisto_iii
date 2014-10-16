@@ -41,4 +41,33 @@ public class ServiceState {
   public int getServiceIndex() {
     return serviceIndex.get(service);
   }
+
+  /**
+   * Remembers the last selected position for the service.
+   */
+  public void setServiceIndex(int pos) {
+    serviceIndex.put(service, pos);
+  }
+
+  public void decrementIndex() {
+    int index = getServiceIndex();
+    if(index == 0) {
+      index = models.size();
+    }
+    else {
+      index--;
+    }
+    setServiceIndex(index);
+  }
+
+  public void incrementIndex() {
+    int index = getServiceIndex();
+    if(index == models.size()) {
+      index = 0;
+    }
+    else {
+      index++;
+    }
+    setServiceIndex(index);
+  }
 }

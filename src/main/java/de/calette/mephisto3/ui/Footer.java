@@ -1,9 +1,7 @@
 package de.calette.mephisto3.ui;
 
-import callete.api.services.Service;
-import callete.api.services.ServiceModel;
 import de.calette.mephisto3.Mephisto3;
-import de.calette.mephisto3.control.ControlEvent;
+import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
@@ -12,8 +10,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.BorderPane;
-
-import java.util.List;
 
 /**
  * The footer only contains the scrollbar, indicating
@@ -56,12 +52,11 @@ public class Footer extends BorderPane implements ServiceChangeListener, Control
   }
 
   @Override
-  public void controlEvent(ControlEvent event) {
-    if(event.equals(ControlEvent.NEXT)) {
-      sc.setValue(sc.getValue()+1);
-    }
-    else if(event.equals(ControlEvent.PREVIOUS)) {
-      sc.setValue(sc.getValue()-1);
+  public void controlEvent(ServiceControlEvent event) {
+    final ServiceControlEvent.EVENT_TYPE eventType = event.getEventType();
+    if(eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT) || eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
+      System.out.println(event.getServiceState().getServiceIndex());
+      sc.setValue(event.getServiceState().getServiceIndex());
     }
   }
 }

@@ -1,7 +1,7 @@
 package de.calette.mephisto3.ui;
 
 import callete.api.Callete;
-import de.calette.mephisto3.control.ControlEvent;
+import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
@@ -35,21 +35,21 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
   }
 
   @Override
-  public void controlEvent(ControlEvent event) {
-    if(event.equals(ControlEvent.LONG_PUSH)) {
+  public void controlEvent(ServiceControlEvent event) {
+    if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
       //handle feature switch
 //      Text test = new Text("test");
 //      test.getStyleClass().add("stream-name");
 //      stackPane.getChildren().add(test);
       ServiceController.getInstance().updateServiceState(Callete.getWeatherService());
     }
-    else if(event.equals(ControlEvent.NEXT)) {
+    else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
       activeControlPanel.rotatedRight();
     }
-    else if(event.equals(ControlEvent.PREVIOUS)) {
+    else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
       activeControlPanel.rotatedLeft();
     }
-    else if(event.equals(ControlEvent.PUSH)) {
+    else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
       activeControlPanel.pushed();
     }
   }
