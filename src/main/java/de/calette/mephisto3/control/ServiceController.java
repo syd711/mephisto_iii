@@ -75,7 +75,7 @@ public class ServiceController {
               push = ServiceControlEvent.EVENT_TYPE.LONG_PUSH;
             }
             for (ControlListener listener : controlListeners) {
-              listener.controlEvent(new ServiceControlEvent(ServiceControlEvent.EVENT_TYPE.LONG_PUSH, serviceState));
+              listener.controlEvent(new ServiceControlEvent(push, serviceState));
             }
           }
         });

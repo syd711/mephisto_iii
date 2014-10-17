@@ -15,7 +15,7 @@ public class StreamPanel extends StackPane {
   public StreamPanel(Stream stream) {
     VBox root = new VBox(20);
     root.setPadding(new Insets(30, 30, 30, 30));
-    root.setMinWidth(Mephisto3.WIDTH-50);
+    root.setMinWidth(Mephisto3.WIDTH);
     Text name = new Text("Antenne Voralberg");
     name.getStyleClass().add("stream-name");
     Text artist = new Text("The fabulous baker boys");

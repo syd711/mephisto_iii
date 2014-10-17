@@ -2,6 +2,7 @@ package de.calette.mephisto3.util;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.FadeTransitionBuilder;
+import javafx.animation.ScaleTransition;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -26,13 +27,34 @@ public class TransitionUtil {
   }
 
   /**
-   * Creates a fade out effect without playing it
+   * Creates a fade in effect without playing it
    */
   public static FadeTransition createInFader(Node node) {
-    FadeTransition fadeTransition = new FadeTransition(Duration.millis(2000), node);
+    return createInFader(node, 2000);
+  }
+
+  public static FadeTransition createInFader(Node node, long duration) {
+    FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), node);
     fadeTransition.setFromValue(0);
     fadeTransition.setToValue(1);
     fadeTransition.setAutoReverse(false);
     return fadeTransition;
   }
+
+  public static FadeTransition createOutFader(Node node, long duration) {
+    FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), node);
+    fadeTransition.setFromValue(1);
+    fadeTransition.setToValue(0);
+    fadeTransition.setAutoReverse(false);
+    return fadeTransition;
+  }
+
+  public static ScaleTransition createScaler(Node node, long duration) {
+    ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(duration), node);
+    scaleTransition.setToX(1.3);
+    scaleTransition.setToY(1.3);
+    scaleTransition.setAutoReverse(false);
+    return scaleTransition;
+  }
+
 }

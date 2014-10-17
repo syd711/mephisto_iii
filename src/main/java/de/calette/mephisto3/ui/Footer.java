@@ -29,7 +29,7 @@ public class Footer extends BorderPane implements ServiceChangeListener, Control
     sc.setMin(0);
 
     ServiceState serviceState = ServiceController.getInstance().getServiceState();
-    sc.setMax(serviceState.getModels().size());
+    sc.setMax(serviceState.getModels().size()-1);
     sc.setVisibleAmount(0.9);
     sc.setValue(0);
 
@@ -55,7 +55,6 @@ public class Footer extends BorderPane implements ServiceChangeListener, Control
   public void controlEvent(ServiceControlEvent event) {
     final ServiceControlEvent.EVENT_TYPE eventType = event.getEventType();
     if(eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT) || eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
-      System.out.println(event.getServiceState().getServiceIndex());
       sc.setValue(event.getServiceState().getServiceIndex());
     }
   }

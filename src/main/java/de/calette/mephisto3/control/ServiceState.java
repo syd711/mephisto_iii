@@ -52,7 +52,7 @@ public class ServiceState {
   public void decrementIndex() {
     int index = getServiceIndex();
     if(index == 0) {
-      index = models.size();
+      index = models.size()-1;
     }
     else {
       index--;
@@ -62,7 +62,7 @@ public class ServiceState {
 
   public void incrementIndex() {
     int index = getServiceIndex();
-    if(index == models.size()) {
+    if(index == models.size()-1) {
       index = 0;
     }
     else {

@@ -66,3 +66,19 @@
 #scroller .decrement-button {
   -fx-padding:9px;
 }
+
+/**
+ * Chooser styling
+ */
+#chooser {
+  -fx-background-color:black;
+  -fx-border-color: #3C1F42 black #3C1F42 black;
+  -fx-border-width: 1;
+}
+
+.function-name {
+   -fx-font-size: 35px;
+   -fx-font-family: "Tahoma";
+   -fx-fill: #fff;
+   -fx-font-smoothing-type: gray;
+}

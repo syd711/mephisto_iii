@@ -9,10 +9,12 @@ import de.calette.mephisto3.util.CSSDebugger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
@@ -37,22 +39,25 @@ public class Mephisto3 extends Application {
     Thread.currentThread().setName("Mephisto 3");
 
     //create root component with background
+    StackPane rootStack = new StackPane();
+    rootStack.setMaxWidth(WIDTH);
+    rootStack.setMaxHeight(HEIGHT);
     BorderPane root = new BorderPane();
-    Scene scene = new Scene(root, (double) WIDTH, (double) HEIGHT);
+    rootStack.getChildren().add(root);
+    Scene scene = new Scene(rootStack, (double) WIDTH, (double) HEIGHT);
     scene.getStylesheets().add(ResourceLoader.getResource("theme.css"));
     primaryStage.setScene(scene);
-    primaryStage.getScene().setRoot(root);
+    primaryStage.getScene().setRoot(rootStack);
 
     //header
     root.setTop(new Header());
     //center
-    root.setCenter(new Center());
+    root.setCenter(new Center(root));
     //footer
     root.setBottom(new Footer());
 
     //apply debugging options on windows
     if (SystemUtils.isWindows()) {
-      addStateListener(primaryStage);
       addDisposeListener(primaryStage);
       CSSDebugger.dump(root);
     }
@@ -65,17 +70,6 @@ public class Mephisto3 extends Application {
   }
 
   //--------------------------- Helper --------------------------------------------
-
-  private static void addStateListener(Stage primaryStage) {
-    primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-      @Override
-      public void handle(KeyEvent keyEvent) {
-        if (keyEvent.getCode() == KeyCode.RIGHT) {
-
-        }
-      }
-    });
-  }
 
   private static void addDisposeListener(Stage primaryStage) {
     //ensures that the process is terminated on window dispose
