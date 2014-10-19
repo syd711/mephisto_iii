@@ -6,6 +6,7 @@ import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
+import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -16,6 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 
 /**
  * The chooser that selects the active function of the radio.
@@ -26,6 +28,7 @@ public class FunctionChooser implements ControlListener {
   private Stage dialog;
   private Text music;
   private BorderPane root;
+  private HBox scroller;
 
   public FunctionChooser(BorderPane root) {
     this.root = root;
@@ -37,7 +40,7 @@ public class FunctionChooser implements ControlListener {
     overlay.setMinWidth(700);
     overlay.setMinHeight(80);
 
-    HBox scroller = new HBox(40);
+    scroller = new HBox(50);
     scroller.setAlignment(Pos.CENTER);
 
     Text radio = new Text("Radio");
@@ -94,9 +97,14 @@ public class FunctionChooser implements ControlListener {
           }
         });
         outFader.play();
+
+        ServiceController.getInstance().updateServiceState(null);
       }
       else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
-
+        TranslateTransition tt = new TranslateTransition(Duration.millis(500), scroller);
+        tt.setByX(100);
+        tt.setAutoReverse(false);
+        tt.play();
       }
       else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
 

@@ -3,15 +3,12 @@ package de.calette.mephisto3.ui;
 import callete.api.services.ServiceModel;
 import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.control.ServiceState;
-import javafx.animation.SequentialTransition;
-import javafx.animation.Transition;
+import de.calette.mephisto3.util.TransitionQueue;
 import javafx.animation.TranslateTransition;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 
-import java.util.*;
+import java.util.List;
 
 /**
  * Abstract superclass for all center panels
@@ -20,34 +17,32 @@ import java.util.*;
 public abstract class ControllablePanel extends HBox {
   private static final int SCROLL_DURATION = 200;
   private static final int OFFSET = 10;
+  private static final int SCROLL_WIDTH = Mephisto3.WIDTH+OFFSET;
   protected List<? extends ServiceModel> models;
-
-
-  private List<Transition> transitionQueue = Collections.synchronizedList(new ArrayList<Transition>());
-  private final SequentialTransition sequentialTransition = new SequentialTransition(this);
-  private boolean running = false;
+  private TransitionQueue transitionQueue;
 
   public ControllablePanel(List<? extends ServiceModel> models) {
     super(10);
     this.models = models;
+    transitionQueue = new TransitionQueue(this);
   }
 
   public void rotatedLeft(ServiceState serviceState) {
-    int offset = (Mephisto3.WIDTH+OFFSET);
+    int offset = SCROLL_WIDTH;
     if(serviceState.getServiceIndex() == serviceState.getModels().size()-1) {
-      offset = -((serviceState.getModels().size()-1)*(Mephisto3.WIDTH+OFFSET));
+      offset = -((serviceState.getModels().size()-1)*SCROLL_WIDTH);
     }
-    transitionQueue.add(createTranslateTransition(offset));
-    playTransitions();
+    transitionQueue.addTransition(createTranslateTransition(offset));
+    transitionQueue.play();
   }
 
   public void rotatedRight(ServiceState serviceState) {
-    int offset = -(Mephisto3.WIDTH+OFFSET);
+    int offset = -SCROLL_WIDTH;
     if(serviceState.getServiceIndex() == 0) {
-      offset = (serviceState.getModels().size()-1)*(Mephisto3.WIDTH+OFFSET);
+      offset = (serviceState.getModels().size()-1)*SCROLL_WIDTH;
     }
-    transitionQueue.add(createTranslateTransition(offset));
-    playTransitions();
+    transitionQueue.addTransition(createTranslateTransition(offset));
+    transitionQueue.play();
   }
 
 
@@ -64,26 +59,5 @@ public abstract class ControllablePanel extends HBox {
     return tt;
   }
 
-  /**
-   * Synchronized playback of the translate transitions.
-   */
-  private void playTransitions() {
-    if(running) {
-      return;
-    }
-    running = true;
-    sequentialTransition.getChildren().clear();
-    sequentialTransition.getChildren().addAll(transitionQueue.remove(0));
-    sequentialTransition.setAutoReverse(false);
-    sequentialTransition.play();
-    sequentialTransition.setOnFinished(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent actionEvent) {
-        running = false;
-        if(!transitionQueue.isEmpty()) {
-          playTransitions();
-        }
-      }
-    });
-  }
+
 }

@@ -1,25 +1,14 @@
 package de.calette.mephisto3.ui;
 
-import callete.api.Callete;
-import de.calette.mephisto3.Mephisto3;
-import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ControlListener;
+import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.radio.RadioStationPanel;
 import de.calette.mephisto3.ui.weather.WeatherPanel;
-import javafx.geometry.Insets;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
-
-import java.awt.*;
 
 /**
  * The center panel which is a stackpane so that

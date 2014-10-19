@@ -5,8 +5,8 @@
 /**
  * Header Styling
  */
-#header-weather, #header-datetime {
-   -fx-font-size: 21px;
+.header-text {
+   -fx-font-size: 22px;
    -fx-font-family: "Tahoma";
    -fx-fill: #fff;
    -fx-font-smoothing-type: gray;

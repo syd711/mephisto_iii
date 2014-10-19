@@ -1,7 +1,6 @@
 package de.calette.mephisto3.util;
 
 import javafx.animation.FadeTransition;
-import javafx.animation.FadeTransitionBuilder;
 import javafx.animation.ScaleTransition;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -30,7 +29,7 @@ public class TransitionUtil {
    * Creates a fade in effect without playing it
    */
   public static FadeTransition createInFader(Node node) {
-    return createInFader(node, 2000);
+    return createInFader(node, 1000);
   }
 
   public static FadeTransition createInFader(Node node, long duration) {

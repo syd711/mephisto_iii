@@ -1,8 +1,8 @@
 package de.calette.mephisto3.ui;
 
 import de.calette.mephisto3.Mephisto3;
-import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ControlListener;
+import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.util.TransitionUtil;
@@ -17,6 +17,7 @@ import javafx.scene.layout.BorderPane;
  */
 public class Footer extends BorderPane implements ServiceChangeListener, ControlListener {
   private ScrollBar sc;
+  private boolean enabled = true;
 
   public Footer() {
     setMaxWidth(Mephisto3.WIDTH);
@@ -53,9 +54,18 @@ public class Footer extends BorderPane implements ServiceChangeListener, Control
 
   @Override
   public void controlEvent(ServiceControlEvent event) {
+    if(!enabled) {
+      return;
+    }
     final ServiceControlEvent.EVENT_TYPE eventType = event.getEventType();
     if(eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT) || eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
       sc.setValue(event.getServiceState().getServiceIndex());
+    }
+    else if(eventType.equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
+      enabled = false;
+    }
+    else if(eventType.equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
+      enabled = true;
     }
   }
 }
