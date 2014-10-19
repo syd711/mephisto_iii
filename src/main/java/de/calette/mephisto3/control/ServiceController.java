@@ -2,17 +2,24 @@ package de.calette.mephisto3.control;
 
 import callete.api.Callete;
 import callete.api.services.Service;
+import callete.api.services.ServiceModel;
 import callete.api.services.gpio.*;
 import callete.api.util.SystemUtils;
 import de.calette.mephisto3.ui.ServiceChangeListener;
 import javafx.application.Platform;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  */
 public class ServiceController {
+  public final static String SERVICE_NAME_RADIO = "Radio";
+  public final static String SERVICE_NAME_WEATHER = "Wetter";
+  public final static String SERVICE_NAME_MUSIC = "Musik";
+  public final static String SERVICE_NAME_SETTINGS = "System";
+
   private static ServiceController instance;
 
   private List<ServiceChangeListener> serviceChangeListeners = new ArrayList<>();
@@ -36,9 +43,30 @@ public class ServiceController {
     this.controlListeners.add(listener);
   }
 
-  public void updateServiceState(Service service) {
+  /**
+   * Activates the UI for the given service.
+   * @param service the service to activate.
+   */
+  public void switchService(Service service) {
     serviceState.setService(Callete.getWeatherService());
-    serviceState.setModels(Callete.getWeatherService().getWeather());
+    serviceState.setModels(Collections.<ServiceModel>emptyList());
+
+    if(service.equals(Callete.getWeatherService())) {
+      serviceState.setService(Callete.getWeatherService());
+      serviceState.setModels(Callete.getWeatherService().getWeather());
+    }
+    else if(service.equals(Callete.getStreamingService())) {
+      serviceState.setService(Callete.getStreamingService());
+      serviceState.setModels(Callete.getStreamingService().getStreams());
+    }
+    else if(service.equals(Callete.getGoogleMusicService())) {
+      serviceState.setService(Callete.getGoogleMusicService());
+      serviceState.setModels(Callete.getGoogleMusicService().getAlbums());
+    }
+    else if(service.equals(Callete.getSystemService())) {
+      serviceState.setService(Callete.getSystemService());
+    }
+
     serviceChanged();
   }
 

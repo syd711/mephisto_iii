@@ -2,6 +2,7 @@ package de.calette.mephisto3.ui;
 
 import callete.api.Callete;
 import callete.api.services.weather.Weather;
+import callete.api.services.weather.WeatherService;
 import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.resources.weather.WeatherQuickInfoResourceLoader;
@@ -126,6 +127,6 @@ public class Header extends BorderPane {
           }
         });
       }
-    }, 0, 60000);
+    }, 0, WeatherService.DEFAULT_REFRESH_INTERVAL);
   }
 }

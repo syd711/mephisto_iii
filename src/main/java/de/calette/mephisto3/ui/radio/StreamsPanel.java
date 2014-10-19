@@ -9,10 +9,10 @@ import de.calette.mephisto3.ui.ControllablePanel;
 /**
  * All components for the Radio control.
  */
-public class RadioStationPanel extends ControllablePanel {
+public class StreamsPanel extends ControllablePanel {
 
 
-  public RadioStationPanel() {
+  public StreamsPanel() {
     super(Callete.getStreamingService().getStreams());
     setMinWidth(Mephisto3.WIDTH);
 

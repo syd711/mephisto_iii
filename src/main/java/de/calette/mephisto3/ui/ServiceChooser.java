@@ -1,5 +1,8 @@
 package de.calette.mephisto3.ui;
 
+import callete.api.Callete;
+import callete.api.services.Service;
+import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
@@ -8,11 +11,11 @@ import de.calette.mephisto3.util.TransitionQueue;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.BorderPane;
@@ -42,17 +45,17 @@ public class ServiceChooser implements ControlListener {
   private HBox scroller;
 
   private int index = 0;
-  private List<Node> serviceBoxes = new ArrayList<>();
+  private List<Text> serviceBoxes = new ArrayList<>();
   private TransitionQueue transitionQueue;
 
   public ServiceChooser(BorderPane root) {
     this.root = root;
 
     dialog = new Stage();
-    overlay = new HBox(0);
+    overlay = new HBox();
     overlay.setAlignment(Pos.CENTER);
     overlay.setId("chooser");
-    overlay.setMinWidth(700);
+    overlay.setMinWidth(Mephisto3.WIDTH);
     overlay.setMinHeight(80);
 
     scroller = new HBox();
@@ -61,10 +64,10 @@ public class ServiceChooser implements ControlListener {
 
     transitionQueue = new TransitionQueue(scroller);
 
-    scroller.getChildren().add(createServiceBox("Radio"));
-    scroller.getChildren().add(createServiceBox("Weather"));
-    scroller.getChildren().add(createServiceBox("Music"));
-    scroller.getChildren().add(createServiceBox("Settings"));
+    scroller.getChildren().add(createServiceBox(ServiceController.SERVICE_NAME_RADIO, Callete.getStreamingService()));
+    scroller.getChildren().add(createServiceBox(ServiceController.SERVICE_NAME_WEATHER, Callete.getWeatherService()));
+    scroller.getChildren().add(createServiceBox(ServiceController.SERVICE_NAME_MUSIC, Callete.getGoogleMusicService()));
+    scroller.getChildren().add(createServiceBox(ServiceController.SERVICE_NAME_SETTINGS, Callete.getSystemService()));
 
     overlay.getChildren().add(scroller);
     Scene scene = new Scene(overlay);
@@ -104,7 +107,13 @@ public class ServiceChooser implements ControlListener {
             });
             outFader.play();
 
-//            ServiceController.getInstance().updateServiceState(null);
+            Platform.runLater(new Runnable() {
+              @Override
+              public void run() {
+                final Service service = (Service) serviceBoxes.get(index).getUserData();
+                ServiceController.getInstance().switchService(service);
+              }
+            });
           }
         });
         blink.play();
@@ -143,8 +152,9 @@ public class ServiceChooser implements ControlListener {
     TransitionUtil.createScaler(serviceBoxes.get(index), ControllablePanel.SCROLL_DURATION, SELECTION_SCALE_FACTOR).play();
   }
 
-  private HBox createServiceBox(String label) {
+  private HBox createServiceBox(String label, Service service) {
     Text text = new Text(label);
+    text.setUserData(service);
     serviceBoxes.add(text);
     text.getStyleClass().add("service-name");
     HBox box = new HBox();

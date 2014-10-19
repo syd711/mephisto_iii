@@ -14,7 +14,7 @@ public class WeatherLocationPanel extends StackPane {
   public WeatherLocationPanel(Weather weather) {
     VBox root = new VBox(20);
     root.setPadding(new Insets(30, 30, 30, 30));
-    root.setMinWidth(Mephisto3.WIDTH - 50);
+    root.setMinWidth(Mephisto3.WIDTH);
     Text name = new Text(weather.getCity());
     name.getStyleClass().add("stream-name");
 
