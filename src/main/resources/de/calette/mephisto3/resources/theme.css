@@ -68,7 +68,7 @@
 }
 
 /**
- * Chooser styling
+ * Service Chooser styling
  */
 #chooser {
   -fx-background-color:black;
@@ -76,8 +76,8 @@
   -fx-border-width: 1;
 }
 
-.function-name {
-   -fx-font-size: 35px;
+.service-name {
+   -fx-font-size: 32px;
    -fx-font-family: "Tahoma";
    -fx-fill: #fff;
    -fx-font-smoothing-type: gray;

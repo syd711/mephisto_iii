@@ -21,7 +21,7 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
   private StackPane stackPane;
   private ControllablePanel activeControlPanel;
   private BorderPane root;
-  private FunctionChooser functionChooser;
+  private ServiceChooser serviceChooser;
 
   public Center(BorderPane root) {
     this.root = root;
@@ -34,19 +34,19 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     ServiceController.getInstance().addControlListener(this);
     ServiceController.getInstance().addServiceChangeListener(this);
 
-    functionChooser = new FunctionChooser(root);
+    serviceChooser = new ServiceChooser(root);
   }
 
   @Override
   public void controlEvent(ServiceControlEvent event) {
     //action are delegated to the function chooser
-    if(functionChooser.visible()) {
+    if(serviceChooser.visible()) {
       return;
     }
 
     if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
       root.setEffect(new GaussianBlur(18));
-      functionChooser.show();
+      serviceChooser.show();
     }
     else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
       activeControlPanel.rotatedRight(event.getServiceState());

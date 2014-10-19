@@ -1,7 +1,9 @@
 package de.calette.mephisto3.util;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.FadeTransitionBuilder;
 import javafx.animation.ScaleTransition;
+import javafx.animation.Timeline;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -48,12 +50,24 @@ public class TransitionUtil {
     return fadeTransition;
   }
 
-  public static ScaleTransition createScaler(Node node, long duration) {
+  public static ScaleTransition createScaler(Node node, long duration, double factor) {
     ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(duration), node);
-    scaleTransition.setToX(1.3);
-    scaleTransition.setToY(1.3);
+    scaleTransition.setToX(factor);
+    scaleTransition.setToY(factor);
     scaleTransition.setAutoReverse(false);
     return scaleTransition;
+  }
+
+  /**
+   * Creates a blink out effect without playing it
+   */
+  public static FadeTransition createBlink(Node node) {
+    FadeTransition fadeTransition = new FadeTransition(Duration.millis(80), node);
+    fadeTransition.setFromValue(0.1);
+    fadeTransition.setCycleCount(3);
+    fadeTransition.setToValue(1);
+    fadeTransition.setAutoReverse(true);
+    return fadeTransition;
   }
 
 }

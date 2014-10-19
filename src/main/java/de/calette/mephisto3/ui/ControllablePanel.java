@@ -15,7 +15,7 @@ import java.util.List;
  * that are controlled via the rotary encoder.
  */
 public abstract class ControllablePanel extends HBox {
-  private static final int SCROLL_DURATION = 200;
+  public static final int SCROLL_DURATION = 200;
   private static final int OFFSET = 10;
   private static final int SCROLL_WIDTH = Mephisto3.WIDTH+OFFSET;
   protected List<? extends ServiceModel> models;
