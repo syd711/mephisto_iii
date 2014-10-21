@@ -16,6 +16,8 @@ import javafx.util.Duration;
  */
 public class TransitionUtil {
 
+  public static final int FADER_DEFAULT = 200;
+
   /**
    * Creates an image canvas with the given width and height.
    */
@@ -44,6 +46,14 @@ public class TransitionUtil {
 
   public static FadeTransition createOutFader(Node node, long duration) {
     FadeTransition fadeTransition = new FadeTransition(Duration.millis(duration), node);
+    fadeTransition.setFromValue(1);
+    fadeTransition.setToValue(0);
+    fadeTransition.setAutoReverse(false);
+    return fadeTransition;
+  }
+
+  public static FadeTransition createOutFader(Node node) {
+    FadeTransition fadeTransition = new FadeTransition(Duration.millis(FADER_DEFAULT), node);
     fadeTransition.setFromValue(1);
     fadeTransition.setToValue(0);
     fadeTransition.setAutoReverse(false);

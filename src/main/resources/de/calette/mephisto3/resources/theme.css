@@ -12,6 +12,60 @@
    -fx-font-smoothing-type: gray;
 }
 
+/**
+ * Weather
+ */
+.weather-degree {
+   -fx-font-size: 70px;
+   -fx-font-family: "Tahoma";
+   -fx-fill: #fff;
+   -fx-font-smoothing-type: gray;
+}
+
+.weather-city {
+   -fx-font-size: 36px;
+   -fx-font-family: "Tahoma";
+   -fx-fill: #fff;
+   -fx-font-smoothing-type: gray;
+}
+
+.weather-date {
+    -fx-font-size: 20px;
+    -fx-font-family: "Tahoma";
+    -fx-fill: #fff;
+    -fx-font-smoothing-type: gray;
+ }
+
+.weather-center {
+    -fx-font-size: 14px;
+    -fx-font-family: "Tahoma";
+    -fx-fill: #fff;
+    -fx-font-smoothing-type: gray;
+}
+
+.forecast-panel {
+    -fx-background-color: rgba(60, 30, 60, 0.5); -fx-background-radius: 0;
+}
+
+.forecast-title {
+    -fx-font-size: 18px;
+    -fx-font-family: "Tahoma";
+    -fx-fill: #fff;
+}
+
+.forecast-sub {
+    -fx-font-size: 14px;
+    -fx-font-family: "Tahoma";
+    -fx-fill: #fff;
+}
+
+.forecast-title-bold {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Tahoma";
+    -fx-fill: #fff;
+}
+
 
 /**
  * Streaming Panels formatting

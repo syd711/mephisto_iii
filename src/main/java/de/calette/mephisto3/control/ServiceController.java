@@ -9,6 +9,7 @@ import de.calette.mephisto3.ui.ServiceChangeListener;
 import javafx.application.Platform;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
@@ -91,7 +92,8 @@ public class ServiceController {
     GPIOService gpioService = Callete.getGPIOService();
     gpioService.setSimulationMode(SystemUtils.isWindows());
 
-    PushButton pushButton = gpioService.connectPushButton(18, "Rotary Push");
+    int pin = Callete.getConfiguration().getInt("rotary.encoder.push.pin");
+    PushButton pushButton = gpioService.connectPushButton(pin, "Rotary Push");
     pushButton.addPushListener(new PushListener() {
       @Override
       public void pushed(final PushEvent pushEvent) {
@@ -112,16 +114,18 @@ public class ServiceController {
 
       @Override
       public long getPushDebounceMillis() {
-        return 700;
+        return Callete.getConfiguration().getInt("push.debounce.millis", 700);
       }
 
       @Override
       public long getLongPushDebounceMillis() {
-        return 1500;
+        return Callete.getConfiguration().getInt("long.push.debounce.millis", 1500);
       }
     });
 
-    RotaryEncoder rotary = gpioService.connectRotaryEncoder(12, 16, "Rotary Encoder");
+    int pinA = Callete.getConfiguration().getInt("rotary.encoder.pin.a");
+    int pinB = Callete.getConfiguration().getInt("rotary.encoder.pin.b");
+    RotaryEncoder rotary = gpioService.connectRotaryEncoder(pinA, pinB, "Rotary Encoder");
     rotary.addChangeListener(new RotaryEncoderListener() {
       @Override
       public void rotated(final RotaryEncoderEvent event) {

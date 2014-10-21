@@ -50,6 +50,10 @@ public abstract class ControllablePanel extends HBox {
 
   }
 
+  abstract public void showPanel();
+
+  abstract public void hidePanel();
+
   // ------------------- Helper ------------------------------
 
   private TranslateTransition createTranslateTransition(int offset) {

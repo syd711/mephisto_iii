@@ -6,8 +6,9 @@ import callete.api.services.weather.WeatherService;
 import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.resources.weather.WeatherQuickInfoResourceLoader;
-import de.calette.mephisto3.ui.weather.WeatherIconMapper;
+import de.calette.mephisto3.ui.weather.WeatherConditionMapper;
 import de.calette.mephisto3.util.ComponentUtil;
+import de.calette.mephisto3.util.Executor;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -85,48 +86,53 @@ public class Header extends BorderPane {
 
     setRight(timeBox);
 
-    //apply datetime timer
-    new Timer().schedule(new TimerTask() {
+    Executor.run(new Runnable() {
       @Override
       public void run() {
-        Platform.runLater(new Runnable() {
+        //apply datetime timer
+        new Timer().schedule(new TimerTask() {
           @Override
           public void run() {
-            String date = dateFormat.format(new Date());
-            String time = timeFormat.format(new Date());
-            dateText.setText(date);
-            timeText.setText(time);
-            if(dateBox.getOpacity() == 0) {
-              TransitionUtil.createInFader(dateBox).play();
-              TransitionUtil.createInFader(timeBox).play();
-            }
+            Platform.runLater(new Runnable() {
+              @Override
+              public void run() {
+                String date = dateFormat.format(new Date());
+                String time = timeFormat.format(new Date());
+                dateText.setText(date);
+                timeText.setText(time);
+                if(dateBox.getOpacity() == 0) {
+                  TransitionUtil.createInFader(dateBox).play();
+                  TransitionUtil.createInFader(timeBox).play();
+                }
+              }
+            });
           }
-        });
-      }
-    }, 0, 60000);
+        }, 0, 60000);
 
-    //apply weather timer
-    new Timer().schedule(new TimerTask() {
-      @Override
-      public void run() {
-        Platform.runLater(new Runnable() {
+        //apply weather timer
+        new Timer().schedule(new TimerTask() {
           @Override
           public void run() {
-            Weather weather = Callete.getWeatherService().getWeatherAt(1);
-            weatherInfoText.setText(weather.getTemp() + " °C");
+            Platform.runLater(new Runnable() {
+              @Override
+              public void run() {
+                Weather weather = Callete.getWeatherService().getWeatherAt(1);
+                weatherInfoText.setText(weather.getTemp() + " °C");
 
-            weatherImageCanvas.getGraphicsContext2D().clearRect(0, 0, 32, 32);
-            String url = WeatherIconMapper.getWeatherQuickInfoIcon(weather);
-            ImageView weatherImage = new ImageView(new Image(url, 32, 32, false, true));
-            weatherImageCanvas.getGraphicsContext2D().drawImage(weatherImage.getImage(), 0, 0);
+                weatherImageCanvas.getGraphicsContext2D().clearRect(0, 0, 32, 32);
+                String url = WeatherConditionMapper.getWeatherQuickInfoIcon(weather);
+                ImageView weatherImage = new ImageView(new Image(url, 32, 32, false, true));
+                weatherImageCanvas.getGraphicsContext2D().drawImage(weatherImage.getImage(), 0, 0);
 
-            if(weatherInfoText.getOpacity() == 0) {
-              TransitionUtil.createInFader(weatherInfoText).play();
-              TransitionUtil.createInFader(weatherImageCanvas).play();
-            }
+                if(weatherInfoText.getOpacity() == 0) {
+                  TransitionUtil.createInFader(weatherInfoText).play();
+                  TransitionUtil.createInFader(weatherImageCanvas).play();
+                }
+              }
+            });
           }
-        });
+        }, 0, WeatherService.DEFAULT_REFRESH_INTERVAL);
       }
-    }, 0, WeatherService.DEFAULT_REFRESH_INTERVAL);
+    });
   }
 }

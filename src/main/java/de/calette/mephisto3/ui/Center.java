@@ -9,6 +9,9 @@ import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.radio.StreamsPanel;
 import de.calette.mephisto3.ui.weather.WeatherPanel;
 import de.calette.mephisto3.util.TransitionUtil;
+import javafx.animation.FadeTransition;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
@@ -23,6 +26,7 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
 
   private StackPane stackPane;
   private ControllablePanel activeControlPanel;
+  private ControllablePanel newControlPanel;
   private BorderPane root;
   private ServiceChooser serviceChooser;
 
@@ -33,17 +37,17 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     this.root = root;
     stackPane = new StackPane();
 
+    weatherPanel = new WeatherPanel();
     streamsPanel = new StreamsPanel();
-    activeControlPanel = streamsPanel;
+    activeControlPanel = weatherPanel;
     stackPane.getChildren().add(activeControlPanel);
     setCenter(stackPane);
 
+    //TODO
     new Thread() {
       @Override
       public void run() {
         try {
-          weatherPanel = new WeatherPanel();
-
           Callete.getGoogleMusicService().authenticate();
         } catch (MusicServiceAuthenticationException e) {
           e.printStackTrace();
@@ -55,6 +59,8 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     ServiceController.getInstance().addServiceChangeListener(this);
 
     serviceChooser = new ServiceChooser(root);
+
+    activeControlPanel.showPanel();
   }
 
   @Override
@@ -81,17 +87,28 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
 
   @Override
   public void serviceChanged(ServiceState serviceState) {
-    stackPane.getChildren().removeAll(activeControlPanel);
-
     if(serviceState.getService().equals(Callete.getStreamingService())) {
-      activeControlPanel = streamsPanel;
+      newControlPanel = streamsPanel;
     }
     else if(serviceState.getService().equals(Callete.getWeatherService())) {
-      activeControlPanel = weatherPanel;
+      newControlPanel = weatherPanel;
     }
-    activeControlPanel.setOpacity(0);
-    stackPane.getChildren().add(activeControlPanel);
 
-    TransitionUtil.createInFader(activeControlPanel).play();
+    //ignore command, nothing has changed.
+    if(newControlPanel.equals(activeControlPanel)) {
+      return;
+    }
+
+    final FadeTransition outFader = TransitionUtil.createOutFader(activeControlPanel);
+    outFader.setOnFinished(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent actionEvent) {
+        stackPane.getChildren().removeAll(activeControlPanel);
+        activeControlPanel = newControlPanel;
+        stackPane.getChildren().add(activeControlPanel);
+        activeControlPanel.showPanel();
+      }
+    });
+    outFader.play();
   }
 }

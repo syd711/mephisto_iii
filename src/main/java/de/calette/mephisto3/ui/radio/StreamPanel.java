@@ -2,6 +2,7 @@ package de.calette.mephisto3.ui.radio;
 
 import callete.api.services.music.model.Stream;
 import de.calette.mephisto3.Mephisto3;
+import de.calette.mephisto3.util.TransitionUtil;
 import javafx.geometry.Insets;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -12,6 +13,7 @@ import javafx.scene.text.Text;
 public class StreamPanel extends StackPane {
 
   public StreamPanel(Stream stream) {
+    setOpacity(0);
     VBox root = new VBox(20);
     root.setPadding(new Insets(30, 30, 30, 30));
     root.setMinWidth(Mephisto3.WIDTH);
@@ -31,5 +33,9 @@ public class StreamPanel extends StackPane {
     root.getChildren().add(url);
     root.getStyleClass().add("stream-panel");
     getChildren().add(root);
+  }
+
+  public void show() {
+    TransitionUtil.createInFader(this).play();
   }
 }
