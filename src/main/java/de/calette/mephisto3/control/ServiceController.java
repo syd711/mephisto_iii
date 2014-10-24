@@ -90,7 +90,6 @@ public class ServiceController {
 
   private void initGPIO() {
     GPIOService gpioService = Callete.getGPIOService();
-    gpioService.setSimulationMode(SystemUtils.isWindows());
 
     int pin = Callete.getConfiguration().getInt("rotary.encoder.push.pin");
     PushButton pushButton = gpioService.connectPushButton(pin, "Rotary Push");

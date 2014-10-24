@@ -1,5 +1,6 @@
 package de.calette.mephisto3;
 
+import callete.api.Callete;
 import callete.api.util.SystemUtils;
 import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.ui.Center;
@@ -29,6 +30,8 @@ public class Mephisto3 extends Application {
 
   @Override
   public void start(final Stage primaryStage) {
+    Callete.getGPIOService().setSimulationMode(true);
+
     //force rendering of small fonts
     System.setProperty("prism.lcdtext", "false");
 

@@ -34,7 +34,7 @@
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>callete.template.samples.WeatherExample</mainClass>
+                                    <mainClass>de.calette.mephisto3.Mephisto3</mainClass>
                                 </configuration>
                             </execution>
                         </executions>
