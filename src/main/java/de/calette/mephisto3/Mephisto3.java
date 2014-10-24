@@ -62,7 +62,7 @@ public class Mephisto3 extends Application {
       CSSDebugger.dump(root);
     }
     else {
-      primaryStage.initStyle(StageStyle.UNDECORATED);
+//      primaryStage.initStyle(StageStyle.UNDECORATED);
     }
 
     //finally show the stage
