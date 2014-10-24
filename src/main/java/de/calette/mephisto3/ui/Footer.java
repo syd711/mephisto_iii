@@ -17,7 +17,6 @@ import javafx.scene.layout.BorderPane;
  */
 public class Footer extends BorderPane implements ServiceChangeListener, ControlListener {
   private ScrollBar sc;
-  private boolean enabled = true;
 
   public Footer() {
     setMaxWidth(Mephisto3.WIDTH);
@@ -52,23 +51,23 @@ public class Footer extends BorderPane implements ServiceChangeListener, Control
     if(serviceState.getModels().isEmpty()) {
       sc.setMax(0);
     }
-    sc.setValue(serviceState.getServiceIndex());
+    //TODO
+//    sc.setValue(serviceState.getServiceIndex());
+    sc.setValue(0);
   }
 
   @Override
   public void controlEvent(ServiceControlEvent event) {
-    if(!enabled) {
-      return;
-    }
     final ServiceControlEvent.EVENT_TYPE eventType = event.getEventType();
     if(eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT) || eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
-      sc.setValue(event.getServiceState().getServiceIndex());
+      final int serviceIndex = event.getServiceState().getServiceIndex();
+      sc.setValue(serviceIndex);
     }
     else if(eventType.equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
-      enabled = false;
+      this.setVisible(false);
     }
     else if(eventType.equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
-      enabled = true;
+      this.setVisible(true);
     }
   }
 }

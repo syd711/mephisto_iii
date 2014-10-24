@@ -3,6 +3,7 @@ package de.calette.mephisto3.ui;
 import callete.api.Callete;
 import callete.api.services.Service;
 import de.calette.mephisto3.Mephisto3;
+import de.calette.mephisto3.Mephisto3KeyEventFilter;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
@@ -18,6 +19,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
@@ -76,6 +78,7 @@ public class ServiceChooser implements ControlListener {
     dialog.initStyle(StageStyle.TRANSPARENT);
     dialog.setScene(scene);
 
+    scene.addEventFilter(KeyEvent.KEY_PRESSED, new Mephisto3KeyEventFilter());
     ServiceController.getInstance().addControlListener(this);
   }
 

@@ -4,22 +4,29 @@ import callete.api.Callete;
 import callete.api.services.Service;
 import callete.api.services.ServiceModel;
 import callete.api.services.gpio.*;
-import callete.api.util.SystemUtils;
+import callete.api.services.impl.simulator.Simulator;
+import callete.api.services.impl.simulator.SimulatorPushButton;
+import callete.api.services.impl.simulator.SimulatorRotaryEncoder;
 import de.calette.mephisto3.ui.ServiceChangeListener;
 import javafx.application.Platform;
+import javafx.scene.input.KeyCode;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
 /**
+ * Registers the GPIO components and their listeners.
+ * Switches the service states.
  */
 public class ServiceController {
   public final static String SERVICE_NAME_RADIO = "Radio";
   public final static String SERVICE_NAME_WEATHER = "Wetter";
   public final static String SERVICE_NAME_MUSIC = "Musik";
   public final static String SERVICE_NAME_SETTINGS = "System";
+
+  public static final String ROTARY_ENCODER_PUSH_BUTTON_NAME = "Rotary Push";
+  public static final String ROTARY_ENCODER_NAME = "Rotary Encoder";
 
   private static ServiceController instance;
 
@@ -49,6 +56,10 @@ public class ServiceController {
    * @param service the service to activate.
    */
   public void switchService(Service service) {
+    //ignore event if the same service has been selected.
+    if(serviceState.getService().equals(service)) {
+      return;
+    }
     serviceState.setService(Callete.getWeatherService());
     serviceState.setModels(Collections.<ServiceModel>emptyList());
 
@@ -68,6 +79,8 @@ public class ServiceController {
       serviceState.setService(Callete.getSystemService());
     }
 
+    //TODO
+    serviceState.setServiceIndex(0);
     serviceChanged();
   }
 
@@ -82,6 +95,9 @@ public class ServiceController {
     }
   }
 
+  /**
+   * Sets the initial service state, therefore the initial service.
+   */
   private void initServiceState() {
     serviceState.setService(Callete.getStreamingService());
     serviceState.setModels(Callete.getStreamingService().getStreams());
@@ -92,7 +108,7 @@ public class ServiceController {
     GPIOService gpioService = Callete.getGPIOService();
 
     int pin = Callete.getConfiguration().getInt("rotary.encoder.push.pin");
-    PushButton pushButton = gpioService.connectPushButton(pin, "Rotary Push");
+    PushButton pushButton = gpioService.connectPushButton(pin, ROTARY_ENCODER_PUSH_BUTTON_NAME);
     pushButton.addPushListener(new PushListener() {
       @Override
       public void pushed(final PushEvent pushEvent) {
@@ -124,7 +140,7 @@ public class ServiceController {
 
     int pinA = Callete.getConfiguration().getInt("rotary.encoder.pin.a");
     int pinB = Callete.getConfiguration().getInt("rotary.encoder.pin.b");
-    RotaryEncoder rotary = gpioService.connectRotaryEncoder(pinA, pinB, "Rotary Encoder");
+    RotaryEncoder rotary = gpioService.connectRotaryEncoder(pinA, pinB, ROTARY_ENCODER_NAME);
     rotary.addChangeListener(new RotaryEncoderListener() {
       @Override
       public void rotated(final RotaryEncoderEvent event) {
@@ -147,5 +163,45 @@ public class ServiceController {
         });
       }
     });
+  }
+
+  public void fireControlEvent(KeyCode code) {
+    if (code == KeyCode.RIGHT) {
+      Platform.runLater(new Runnable() {
+        @Override
+        public void run() {
+          SimulatorRotaryEncoder encoder= (SimulatorRotaryEncoder) Simulator.getInstance().getGpioComponent(ROTARY_ENCODER_NAME);
+          encoder.right();
+        }
+      });
+
+    }
+    if (code == KeyCode.DOWN) {
+      Platform.runLater(new Runnable() {
+        @Override
+        public void run() {
+          SimulatorPushButton encoder= (SimulatorPushButton) Simulator.getInstance().getGpioComponent(ROTARY_ENCODER_PUSH_BUTTON_NAME);
+          encoder.push(false);
+        }
+      });
+    }
+    if (code == KeyCode.UP) {
+      Platform.runLater(new Runnable() {
+        @Override
+        public void run() {
+          SimulatorPushButton encoder= (SimulatorPushButton) Simulator.getInstance().getGpioComponent(ROTARY_ENCODER_PUSH_BUTTON_NAME);
+          encoder.push(true);
+        }
+      });
+    }
+    if (code == KeyCode.LEFT) {
+      Platform.runLater(new Runnable() {
+        @Override
+        public void run() {
+          SimulatorRotaryEncoder encoder= (SimulatorRotaryEncoder) Simulator.getInstance().getGpioComponent(ROTARY_ENCODER_NAME);
+          encoder.left();
+        }
+      });
+    }
   }
 }

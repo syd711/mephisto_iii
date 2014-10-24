@@ -1,7 +1,6 @@
 package de.calette.mephisto3;
 
 import callete.api.Callete;
-import callete.api.util.SystemUtils;
 import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.ui.Center;
 import de.calette.mephisto3.ui.Footer;
@@ -11,6 +10,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -23,6 +23,7 @@ import javafx.stage.WindowEvent;
 public class Mephisto3 extends Application {
   public static final int WIDTH = 700;
   public static final int HEIGHT= 395;
+  private boolean debug = true;
 
   public static void main(String[] args) {
     launch(args);
@@ -30,7 +31,7 @@ public class Mephisto3 extends Application {
 
   @Override
   public void start(final Stage primaryStage) {
-    Callete.getGPIOService().setSimulationMode(true);
+    Callete.getGPIOService().setSimulationMode(debug);
 
     //force rendering of small fonts
     System.setProperty("prism.lcdtext", "false");
@@ -56,13 +57,15 @@ public class Mephisto3 extends Application {
     //footer
     root.setBottom(new Footer());
 
+    primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, new Mephisto3KeyEventFilter());
+    addDisposeListener(primaryStage);
+
     //apply debugging options on windows
-    if (SystemUtils.isWindows()) {
-      addDisposeListener(primaryStage);
+    if (debug) {
       CSSDebugger.dump(root);
     }
     else {
-//      primaryStage.initStyle(StageStyle.UNDECORATED);
+      primaryStage.initStyle(StageStyle.UNDECORATED);
     }
 
     //finally show the stage
