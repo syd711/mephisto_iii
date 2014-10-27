@@ -5,6 +5,7 @@ import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.util.TransitionQueue;
 import javafx.animation.TranslateTransition;
+import javafx.scene.CacheHint;
 import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 
@@ -20,11 +21,19 @@ public abstract class ControllablePanel extends HBox {
   private static final int SCROLL_WIDTH = Mephisto3.WIDTH+OFFSET;
   protected List<? extends ServiceModel> models;
   private TransitionQueue transitionQueue;
+  private TranslateTransition scrollTransition;
+
 
   public ControllablePanel(List<? extends ServiceModel> models) {
     super(10);
+    setOpacity(0);
     this.models = models;
     transitionQueue = new TransitionQueue(this);
+    setCache(true);
+    setCacheHint(CacheHint.SPEED);
+
+    scrollTransition = new TranslateTransition(Duration.millis(SCROLL_DURATION), this);
+    scrollTransition.setAutoReverse(false);
   }
 
   public void rotatedLeft(ServiceState serviceState) {
@@ -32,7 +41,8 @@ public abstract class ControllablePanel extends HBox {
     if(serviceState.getServiceIndex() == serviceState.getModels().size()-1) {
       offset = -((serviceState.getModels().size()-1)*SCROLL_WIDTH);
     }
-    transitionQueue.addTransition(createTranslateTransition(offset));
+    scrollTransition.setByX(offset);
+    transitionQueue.addTransition(scrollTransition);
     transitionQueue.play();
   }
 
@@ -41,7 +51,8 @@ public abstract class ControllablePanel extends HBox {
     if(serviceState.getServiceIndex() == 0) {
       offset = (serviceState.getModels().size()-1)*SCROLL_WIDTH;
     }
-    transitionQueue.addTransition(createTranslateTransition(offset));
+    scrollTransition.setByX(offset);
+    transitionQueue.addTransition(scrollTransition);
     transitionQueue.play();
   }
 
@@ -51,17 +62,4 @@ public abstract class ControllablePanel extends HBox {
   }
 
   abstract public void showPanel();
-
-  abstract public void hidePanel();
-
-  // ------------------- Helper ------------------------------
-
-  private TranslateTransition createTranslateTransition(int offset) {
-    TranslateTransition tt = new TranslateTransition(Duration.millis(SCROLL_DURATION), this);
-    tt.setByX(offset);
-    tt.setAutoReverse(false);
-    return tt;
-  }
-
-
 }

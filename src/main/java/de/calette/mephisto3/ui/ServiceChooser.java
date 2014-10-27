@@ -11,12 +11,14 @@ import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.util.TransitionQueue;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
+import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.CacheHint;
 import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.input.KeyEvent;
@@ -39,30 +41,34 @@ public class ServiceChooser implements ControlListener {
   public static final double SELECTION_SCALE_FACTOR = 1.4;
   public static final int DISPLAY_DELAY = 500;
 
-  private HBox overlay;
   private Stage dialog;
 
   private BorderPane root;
-
-  private HBox scroller;
-
   private int index = 0;
   private List<Text> serviceBoxes = new ArrayList<>();
+
+  private Transition showFader;
+  private Transition hideFader;
+  private TranslateTransition scrollTransition;
+
   private TransitionQueue transitionQueue;
 
   public ServiceChooser(BorderPane root) {
     this.root = root;
 
     dialog = new Stage();
-    overlay = new HBox();
+    HBox overlay = new HBox();
+
     overlay.setAlignment(Pos.CENTER);
     overlay.setId("chooser");
     overlay.setMinWidth(Mephisto3.WIDTH);
     overlay.setMinHeight(80);
 
-    scroller = new HBox();
+    HBox scroller = new HBox();
     scroller.setPadding(new Insets(0, 0, 0, 480));
     scroller.setAlignment(Pos.CENTER);
+    scroller.setCache(true);
+    scroller.setCacheHint(CacheHint.SPEED);
 
     transitionQueue = new TransitionQueue(scroller);
 
@@ -80,11 +86,23 @@ public class ServiceChooser implements ControlListener {
 
     scene.addEventFilter(KeyEvent.KEY_PRESSED, new Mephisto3KeyEventFilter());
     ServiceController.getInstance().addControlListener(this);
+
+    scrollTransition = new TranslateTransition(Duration.millis(ControllablePanel.SCROLL_DURATION), scroller);
+    scrollTransition.setAutoReverse(false);
+
+    showFader = TransitionUtil.createInFader(overlay, DISPLAY_DELAY);
+    hideFader = TransitionUtil.createOutFader(overlay, DISPLAY_DELAY);
+    hideFader.setOnFinished(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent actionEvent) {
+        dialog.hide();
+      }
+    });
   }
 
   public void show() {
     dialog.show();
-    TransitionUtil.createInFader(overlay, DISPLAY_DELAY).play();
+    showFader.play();
     TransitionUtil.createScaler(serviceBoxes.get(index), ControllablePanel.SCROLL_DURATION, SELECTION_SCALE_FACTOR).play();
   }
 
@@ -101,14 +119,7 @@ public class ServiceChooser implements ControlListener {
           @Override
           public void handle(ActionEvent actionEvent) {
             root.setEffect(new GaussianBlur(0));
-            final FadeTransition outFader = TransitionUtil.createOutFader(overlay,DISPLAY_DELAY);
-            outFader.setOnFinished(new EventHandler<ActionEvent>() {
-              @Override
-              public void handle(ActionEvent actionEvent) {
-                dialog.hide();
-              }
-            });
-            outFader.play();
+            hideFader.play();
 
             Platform.runLater(new Runnable() {
               @Override
@@ -130,25 +141,29 @@ public class ServiceChooser implements ControlListener {
 
   // --------------- Helper -----------------------------
 
-  private void scroll(int width) {
-    if(index == serviceBoxes.size()-1 && width<0) {
+  private void scroll(final int width) {
+    if (index == serviceBoxes.size() - 1 && width < 0) {
       return;
     }
-    if(index == 0 && width > 0 ) {
+    if (index == 0 && width > 0) {
       return;
     }
 
-    TranslateTransition tt = new TranslateTransition(Duration.millis(ControllablePanel.SCROLL_DURATION), scroller);
-    tt.setByX(width);
-    tt.setAutoReverse(false);
-    transitionQueue.addTransition(tt);
-    tt.play();
+    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                          scrollTransition.setByX(width);
+                          transitionQueue.addTransition(scrollTransition);
+                          transitionQueue.play();
+                        }
+                      }
+    );
+
 
     TransitionUtil.createScaler(serviceBoxes.get(index), ControllablePanel.SCROLL_DURATION, 1.0).play();
-    if(width > 0) {
+    if (width > 0) {
       index--;
-    }
-    else {
+    } else {
       index++;
     }
 
@@ -157,6 +172,8 @@ public class ServiceChooser implements ControlListener {
 
   private HBox createServiceBox(String label, Service service) {
     Text text = new Text(label);
+    text.setCache(true);
+    text.setCacheHint(CacheHint.SPEED);
     text.setUserData(service);
     serviceBoxes.add(text);
     text.getStyleClass().add("service-name");
@@ -166,6 +183,4 @@ public class ServiceChooser implements ControlListener {
     box.getChildren().add(text);
     return box;
   }
-
-
 }

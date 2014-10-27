@@ -13,7 +13,6 @@ import javafx.scene.text.Text;
 public class StreamPanel extends StackPane {
 
   public StreamPanel(Stream stream) {
-    setOpacity(0);
     VBox root = new VBox(20);
     root.setPadding(new Insets(30, 30, 30, 30));
     root.setMinWidth(Mephisto3.WIDTH);
@@ -33,9 +32,5 @@ public class StreamPanel extends StackPane {
     root.getChildren().add(url);
     root.getStyleClass().add("stream-panel");
     getChildren().add(root);
-  }
-
-  public void show() {
-    TransitionUtil.createInFader(this).play();
   }
 }
