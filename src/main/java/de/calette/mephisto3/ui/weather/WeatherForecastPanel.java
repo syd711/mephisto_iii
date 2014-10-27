@@ -1,7 +1,6 @@
-package de.calette.mephisto3.resources.forecast;
+package de.calette.mephisto3.ui.weather;
 
 import callete.api.services.weather.Weather;
-import de.calette.mephisto3.ui.weather.WeatherConditionMapper;
 import de.calette.mephisto3.util.ComponentUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,7 +14,7 @@ import java.text.SimpleDateFormat;
 /**
  * A single forecast panel.
  */
-public class ForecastPanel extends VBox {
+public class WeatherForecastPanel extends VBox {
   private static final String FORECAST_DATE_FORMAT = "dd";
   private static final String FORECAST_DAY_FORMAT = "EE";
   private static final SimpleDateFormat forecastDateFormat = new SimpleDateFormat(FORECAST_DATE_FORMAT);
@@ -23,9 +22,8 @@ public class ForecastPanel extends VBox {
   public static final int PADDING = 10;
   public static final int WIDTH = 120-(PADDING*2);
 
-  public ForecastPanel(String label, Weather forecast) {
+  public WeatherForecastPanel(String label, Weather forecast) {
     super(5);
-    setOpacity(0);
     setAlignment(Pos.TOP_LEFT);
     getStyleClass().add("forecast-panel");
     setMinWidth(WIDTH);
@@ -51,8 +49,9 @@ public class ForecastPanel extends VBox {
     getChildren().add(titleBox);
 
     //forecast image
-    final Canvas forecastImage = ComponentUtil.createImageCanvas(WeatherForecastResourceLoader.getResource("weather-cloud-sun.png"), 49, 36);
+    final Canvas forecastImage = ComponentUtil.createImageCanvas(WeatherConditionMapper.getWeatherForecastIcon(forecast), 55, 55);
     HBox image = new HBox();
+    image.setPadding(new Insets(10, 0, 10, 0));
     image.setAlignment(Pos.CENTER);
     image.setMinWidth(WIDTH);
     image.getChildren().add(forecastImage);

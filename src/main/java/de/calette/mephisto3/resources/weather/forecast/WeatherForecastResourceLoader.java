@@ -1,4 +1,4 @@
-package de.calette.mephisto3.resources.forecast;
+package de.calette.mephisto3.resources.weather.forecast;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

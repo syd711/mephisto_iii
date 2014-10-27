@@ -2,19 +2,12 @@ package de.calette.mephisto3.ui.weather;
 
 import callete.api.services.weather.Weather;
 import de.calette.mephisto3.Mephisto3;
-import de.calette.mephisto3.resources.forecast.ForecastPanel;
-import de.calette.mephisto3.util.TransitionUtil;
-import javafx.animation.FadeTransition;
-import javafx.animation.ParallelTransition;
-import javafx.animation.PauseTransition;
-import javafx.animation.SequentialTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,13 +21,12 @@ public class WeatherLocationPanel extends StackPane {
   private SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
   private SimpleDateFormat timeFormat = new SimpleDateFormat(TIME_FORMAT);
 
-  private List<ForecastPanel> forecastPanelList = new ArrayList<>();
+  private List<WeatherForecastPanel> forecastPanelList = new ArrayList<>();
 
 
   public WeatherLocationPanel(Weather weather) {
-    setOpacity(0);
-    VBox root = new VBox(15);
-    root.setPadding(new Insets(5, 20, 0, 20));
+    VBox root = new VBox(12);
+    root.setPadding(new Insets(0, 20, 0, 20));
     root.setMinWidth(Mephisto3.WIDTH);
 
     HBox topPanel = new HBox(30);
@@ -85,7 +77,7 @@ public class WeatherLocationPanel extends StackPane {
         dateString = "Morgen";
       }
 
-      final ForecastPanel forecastPanel = new ForecastPanel(dateString, forecast);
+      final WeatherForecastPanel forecastPanel = new WeatherForecastPanel(dateString, forecast);
       south.getChildren().add(forecastPanel);
       forecastPanelList.add(forecastPanel);
     }
@@ -93,28 +85,6 @@ public class WeatherLocationPanel extends StackPane {
     getChildren().add(root);
   }
 
-  public void show() {
-    final FadeTransition inFader = TransitionUtil.createInFader(this);
-    ParallelTransition parallelTransition = new ParallelTransition();
-    int count = 0;
-    for(ForecastPanel forecastPanel : forecastPanelList) {
-      SequentialTransition seqTransition = new SequentialTransition();
-      final FadeTransition forecastFader = TransitionUtil.createInFader(forecastPanel);
-      seqTransition.getChildren().add(new PauseTransition(Duration.millis(count*150)));
-      seqTransition.getChildren().add(forecastFader);
-      parallelTransition.getChildren().add(seqTransition);
-      count++;
-    }
-    parallelTransition.play();
-    inFader.play();
-  }
-
-  public void hidePanel() {
-    for(ForecastPanel forecastPanel : forecastPanelList) {
-      forecastPanel.setOpacity(0);
-    }
-    this.setOpacity(0);
-  }
 
   // ------------------------ Helper ------------------------------
 

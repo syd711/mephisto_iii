@@ -3,6 +3,7 @@ package de.calette.mephisto3.ui.weather;
 import callete.api.services.weather.Weather;
 import callete.api.services.weather.WeatherState;
 import de.calette.mephisto3.resources.weather.WeatherQuickInfoResourceLoader;
+import de.calette.mephisto3.resources.weather.forecast.WeatherForecastResourceLoader;
 
 public class WeatherConditionMapper {
 
@@ -10,6 +11,12 @@ public class WeatherConditionMapper {
     String name = weather.getWeatherState().toString().toLowerCase() +  ".png";
     name = name.replaceAll("_", "-");
     return WeatherQuickInfoResourceLoader.getResource(name);
+  }
+
+  public static String getWeatherForecastIcon(Weather weather) {
+    String name = weather.getWeatherState().toString().toLowerCase() +  ".png";
+    name = name.replaceAll("_", "-");
+    return WeatherForecastResourceLoader.getResource(name);
   }
 
   public static String getWeatherConditionText(WeatherState state) {
