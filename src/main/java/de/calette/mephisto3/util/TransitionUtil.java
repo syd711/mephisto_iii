@@ -1,6 +1,7 @@
 package de.calette.mephisto3.util;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.Interpolator;
 import javafx.animation.ScaleTransition;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
@@ -39,6 +40,7 @@ public class TransitionUtil {
     fadeTransition.setFromValue(0);
     fadeTransition.setToValue(1);
     fadeTransition.setAutoReverse(false);
+    fadeTransition.setInterpolator(Interpolator.EASE_BOTH);
     return fadeTransition;
   }
 
@@ -47,6 +49,7 @@ public class TransitionUtil {
     fadeTransition.setFromValue(1);
     fadeTransition.setToValue(0);
     fadeTransition.setAutoReverse(false);
+    fadeTransition.setInterpolator(Interpolator.EASE_BOTH);
     return fadeTransition;
   }
 
@@ -55,6 +58,7 @@ public class TransitionUtil {
     fadeTransition.setFromValue(1);
     fadeTransition.setToValue(0);
     fadeTransition.setAutoReverse(false);
+    fadeTransition.setInterpolator(Interpolator.EASE_BOTH);
     return fadeTransition;
   }
 
@@ -63,6 +67,7 @@ public class TransitionUtil {
     scaleTransition.setToX(factor);
     scaleTransition.setToY(factor);
     scaleTransition.setAutoReverse(false);
+    scaleTransition.setInterpolator(Interpolator.EASE_BOTH);
     return scaleTransition;
   }
 
@@ -75,6 +80,7 @@ public class TransitionUtil {
     fadeTransition.setCycleCount(3);
     fadeTransition.setToValue(1);
     fadeTransition.setAutoReverse(true);
+    fadeTransition.setInterpolator(Interpolator.EASE_BOTH);
     return fadeTransition;
   }
 

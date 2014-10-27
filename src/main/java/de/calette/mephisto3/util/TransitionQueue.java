@@ -4,6 +4,7 @@ import javafx.animation.SequentialTransition;
 import javafx.animation.Transition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
 
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ public class TransitionQueue {
   private boolean running = false;
 
   public TransitionQueue(Node node) {
+    node.setCache(true);
+    node.setCacheHint(CacheHint.SPEED);
     sequentialTransition = new SequentialTransition(node);
   }
 
