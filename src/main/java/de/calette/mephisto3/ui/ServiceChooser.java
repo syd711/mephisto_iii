@@ -3,11 +3,9 @@ package de.calette.mephisto3.ui;
 import callete.api.Callete;
 import callete.api.services.Service;
 import de.calette.mephisto3.Mephisto3;
-import de.calette.mephisto3.Mephisto3KeyEventFilter;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
-import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.util.TransitionQueue;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
@@ -19,14 +17,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
-import javafx.scene.Scene;
-import javafx.scene.effect.GaussianBlur;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -41,9 +33,6 @@ public class ServiceChooser implements ControlListener {
   public static final double SELECTION_SCALE_FACTOR = 1.4;
   public static final int DISPLAY_DELAY = 500;
 
-  private Stage dialog;
-
-  private BorderPane root;
   private int index = 0;
   private List<Text> serviceBoxes = new ArrayList<>();
 
@@ -52,19 +41,23 @@ public class ServiceChooser implements ControlListener {
   private TranslateTransition scrollTransition;
 
   private TransitionQueue transitionQueue;
+  private HBox overlay;
+  private Center center;
+  private boolean visible = false;
 
-  public ServiceChooser(BorderPane root) {
-    this.root = root;
+  public ServiceChooser(final Center center) {
+    this.center = center;
 
-    dialog = new Stage();
-    HBox overlay = new HBox();
+    overlay = new HBox();
+    overlay.setOpacity(0);
+    center.stackPane.getChildren().add(overlay);
 
     overlay.setAlignment(Pos.CENTER);
     overlay.setId("chooser");
     overlay.setMinWidth(Mephisto3.WIDTH);
     overlay.setMinHeight(80);
 
-    HBox scroller = new HBox();
+    final HBox scroller = new HBox();
     scroller.setPadding(new Insets(0, 0, 0, 480));
     scroller.setAlignment(Pos.CENTER);
     scroller.setCache(true);
@@ -78,13 +71,7 @@ public class ServiceChooser implements ControlListener {
     scroller.getChildren().add(createServiceBox(ServiceController.SERVICE_NAME_SETTINGS, Callete.getSystemService()));
 
     overlay.getChildren().add(scroller);
-    Scene scene = new Scene(overlay);
-    scene.getStylesheets().add(ResourceLoader.getResource("theme.css"));
-    scene.setFill(null);
-    dialog.initStyle(StageStyle.TRANSPARENT);
-    dialog.setScene(scene);
 
-    scene.addEventFilter(KeyEvent.KEY_PRESSED, new Mephisto3KeyEventFilter());
     ServiceController.getInstance().addControlListener(this);
 
     scrollTransition = new TranslateTransition(Duration.millis(ControllablePanel.SCROLL_DURATION), scroller);
@@ -95,43 +82,45 @@ public class ServiceChooser implements ControlListener {
     hideFader.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent actionEvent) {
-        dialog.hide();
+        ServiceController.getInstance().addControlListener(center);
+        visible = false;
       }
     });
   }
 
-  public void show() {
-    dialog.show();
-    showFader.play();
-    TransitionUtil.createScaler(serviceBoxes.get(index), ControllablePanel.SCROLL_DURATION, SELECTION_SCALE_FACTOR).play();
-  }
-
-  public boolean visible() {
-    return dialog.isShowing();
-  }
-
   @Override
   public void controlEvent(ServiceControlEvent event) {
-    if (dialog.isShowing()) {
-      if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
-        final FadeTransition blink = TransitionUtil.createBlink(serviceBoxes.get(index));
-        blink.setOnFinished(new EventHandler<ActionEvent>() {
-          @Override
-          public void handle(ActionEvent actionEvent) {
-            root.setEffect(new GaussianBlur(0));
-            hideFader.play();
+    if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
+      ServiceController.getInstance().removeControlListener(center);
+      if(!visible) {
+        visible = true;
+        center.activeControlPanel.setOpacity(0);
+        show();
+      }
+    }
+    else if (visible && event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
+      ServiceController.getInstance().setControlEnabled(false);
+      final Service service = (Service) serviceBoxes.get(index).getUserData();
 
-            Platform.runLater(new Runnable() {
-              @Override
-              public void run() {
-                final Service service = (Service) serviceBoxes.get(index).getUserData();
-                ServiceController.getInstance().switchService(service);
-              }
-            });
-          }
-        });
-        blink.play();
-      } else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
+      final FadeTransition blink = TransitionUtil.createBlink(serviceBoxes.get(index));
+      blink.setOnFinished(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent actionEvent) {
+          hideFader.play();
+
+          Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+              ServiceController.getInstance().switchService(service);
+            }
+          });
+        }
+      });
+      blink.play();
+    }
+
+    if(visible) {
+      if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
         scroll(-SERVICE_BOX_WIDTH);
       } else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
         scroll(SERVICE_BOX_WIDTH);
@@ -140,6 +129,11 @@ public class ServiceChooser implements ControlListener {
   }
 
   // --------------- Helper -----------------------------
+
+  private void show() {
+    showFader.play();
+    TransitionUtil.createScaler(serviceBoxes.get(index), ControllablePanel.SCROLL_DURATION, SELECTION_SCALE_FACTOR).play();
+  }
 
   private void scroll(final int width) {
     if (index == serviceBoxes.size() - 1 && width < 0) {

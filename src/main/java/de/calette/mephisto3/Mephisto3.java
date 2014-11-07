@@ -53,7 +53,7 @@ public class Mephisto3 extends Application {
     //header
     root.setTop(new Header());
     //center
-    root.setCenter(new Center(root));
+    root.setCenter(new Center());
     //footer
     root.setBottom(new Footer());
 

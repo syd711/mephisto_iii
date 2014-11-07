@@ -28,16 +28,14 @@ import java.util.Map;
  */
 public class Center extends BorderPane implements ControlListener, ServiceChangeListener {
 
-  private StackPane stackPane;
-  private ControllablePanel activeControlPanel;
+  protected StackPane stackPane;
+  protected ControllablePanel activeControlPanel;
   private ControllablePanel newControlPanel;
-  private BorderPane root;
   private ServiceChooser serviceChooser;
 
   private Map<Service, ControllablePanel> servicePanels = new HashMap<>();
 
-  public Center(BorderPane root) {
-    this.root = root;
+  public Center() {
     stackPane = new StackPane();
 
     activeControlPanel = getServicePanel(ServiceController.getInstance().getServiceState());
@@ -48,21 +46,15 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     ServiceController.getInstance().addControlListener(this);
     ServiceController.getInstance().addServiceChangeListener(this);
 
-    serviceChooser = new ServiceChooser(root);
+    serviceChooser = new ServiceChooser(this);
 
     activeControlPanel.showPanel();
   }
 
   @Override
   public void controlEvent(ServiceControlEvent event) {
-    //action are delegated to the function chooser
-    if(serviceChooser.visible()) {
-      return;
-    }
-
     if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
-      root.setEffect(new GaussianBlur(18));
-      serviceChooser.show();
+      //nothing, handled by the ServiceChooser
     }
     else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
       activeControlPanel.rotatedRight(event.getServiceState());
@@ -79,17 +71,30 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
   public void serviceChanged(ServiceState serviceState) {
     newControlPanel = getServicePanel(serviceState);
 
-    final FadeTransition outFader = TransitionUtil.createOutFader(activeControlPanel);
-    outFader.setOnFinished(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent actionEvent) {
-        stackPane.getChildren().removeAll(activeControlPanel);
-        activeControlPanel = newControlPanel;
-        stackPane.getChildren().add(activeControlPanel);
-        activeControlPanel.showPanel();
-      }
-    });
-    outFader.play();
+    if(!activeControlPanel.equals(newControlPanel)) {
+      activeControlPanel.setOpacity(0);
+      final FadeTransition outFader = TransitionUtil.createOutFader(activeControlPanel);
+      outFader.setOnFinished(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent actionEvent) {
+          stackPane.getChildren().removeAll(activeControlPanel);
+          activeControlPanel = newControlPanel;
+          stackPane.getChildren().add(activeControlPanel);
+          activeControlPanel.showPanel();
+        }
+      });
+      outFader.play();
+    }
+    else {
+      final FadeTransition inFader = TransitionUtil.createInFader(activeControlPanel);
+      inFader.setOnFinished(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent actionEvent) {
+          ServiceController.getInstance().setControlEnabled(true);
+        }
+      });
+      inFader.play();
+    }
   }
 
   private ControllablePanel getServicePanel(ServiceState state) {

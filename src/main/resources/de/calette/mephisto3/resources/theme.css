@@ -125,9 +125,6 @@
  * Service Chooser styling
  */
 #chooser {
-  -fx-background-color:black;
-  -fx-border-color: #3C1F42 black #3C1F42 black;
-  -fx-border-width: 1;
 }
 
 .service-name {

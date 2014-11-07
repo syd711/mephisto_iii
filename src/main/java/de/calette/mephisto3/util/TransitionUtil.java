@@ -32,7 +32,7 @@ public class TransitionUtil {
    * Creates a fade in effect without playing it
    */
   public static FadeTransition createInFader(Node node) {
-    return createInFader(node, 1000);
+    return createInFader(node, FADER_DEFAULT);
   }
 
   public static FadeTransition createInFader(Node node, long duration) {
