@@ -66,6 +66,40 @@
     -fx-fill: #fff;
 }
 
+/**
+ * System Panel
+ */
+.system-title {
+ -fx-font-size: 22px;
+ -fx-font-family: "Tahoma";
+ -fx-fill: #fff;
+}
+
+.system-key {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Tahoma";
+    -fx-fill: #fff;
+}
+
+.system-value {
+     -fx-font-size: 16px;
+     -fx-font-family: "Tahoma";
+     -fx-fill: #fff;
+}
+
+.progressIndicator {
+    -fx-progress-color: #3C1F42;
+    -fx-color: #fff;
+    -fx-min-width: 150px;
+    -fx-min-height: 150px;
+}
+.progressIndicator .percentage {
+    -fx-fill: white;
+    -fx-font-size: 16px;
+}
+
+
 
 /**
  * Streaming Panels formatting

@@ -2,6 +2,7 @@ package de.calette.mephisto3.control;
 
 import callete.api.Callete;
 import callete.api.services.Service;
+import callete.api.services.ServiceModel;
 import callete.api.services.gpio.*;
 import callete.api.services.impl.simulator.Simulator;
 import callete.api.services.impl.simulator.SimulatorPushButton;
@@ -75,6 +76,7 @@ public class ServiceController {
     }
     else if (service.equals(Callete.getSystemService())) {
       serviceState.setService(Callete.getSystemService());
+      serviceState.setModels(Collections.<ServiceModel>emptyList());
     }
 
     //TODO

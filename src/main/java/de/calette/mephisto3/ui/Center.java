@@ -8,6 +8,7 @@ import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.radio.StreamsPanel;
+import de.calette.mephisto3.ui.system.SystemPanel;
 import de.calette.mephisto3.ui.weather.WeatherPanel;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
@@ -72,7 +73,7 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     newControlPanel = getServicePanel(serviceState);
 
     if(!activeControlPanel.equals(newControlPanel)) {
-      activeControlPanel.setOpacity(0);
+      stackPane.setOpacity(0);
       final FadeTransition outFader = TransitionUtil.createOutFader(activeControlPanel);
       outFader.setOnFinished(new EventHandler<ActionEvent>() {
         @Override
@@ -81,6 +82,7 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
           activeControlPanel = newControlPanel;
           stackPane.getChildren().add(activeControlPanel);
           activeControlPanel.showPanel();
+          TransitionUtil.createInFader(stackPane).play();
         }
       });
       outFader.play();
@@ -99,10 +101,8 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
 
   private ControllablePanel getServicePanel(ServiceState state) {
     if(servicePanels.isEmpty()) {
-      WeatherPanel weatherPanel = new WeatherPanel();
       StreamsPanel streamsPanel = new StreamsPanel();
 
-      servicePanels.put(Callete.getWeatherService(), weatherPanel);
       servicePanels.put(Callete.getStreamingService(), streamsPanel);
     }
 
@@ -110,6 +110,11 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     new Thread() {
       @Override
       public void run() {
+        WeatherPanel weatherPanel = new WeatherPanel();
+        SystemPanel systemPanel = new SystemPanel();
+
+        servicePanels.put(Callete.getWeatherService(), weatherPanel);
+        servicePanels.put(Callete.getSystemService(), systemPanel);
 //        try {
 //          Callete.getGoogleMusicService().authenticate();
 //        } catch (MusicServiceAuthenticationException e) {

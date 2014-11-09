@@ -47,6 +47,8 @@ public class Footer extends BorderPane implements ServiceChangeListener, Control
 
   @Override
   public void serviceChanged(ServiceState serviceState) {
+    setVisible(!serviceState.getModels().isEmpty());
+
     sc.setMax(serviceState.getModels().size() - 1);
     if(serviceState.getModels().isEmpty()) {
       sc.setMax(0);

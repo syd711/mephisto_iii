@@ -86,29 +86,30 @@ public class Header extends BorderPane {
 
     setRight(timeBox);
 
+    //apply datetime timer
+    new Timer().schedule(new TimerTask() {
+      @Override
+      public void run() {
+        Platform.runLater(new Runnable() {
+          @Override
+          public void run() {
+            String date = dateFormat.format(new Date());
+            String time = timeFormat.format(new Date());
+            dateText.setText(date);
+            timeText.setText(time);
+            if(dateBox.getOpacity() == 0) {
+              TransitionUtil.createInFader(dateBox).play();
+              TransitionUtil.createInFader(timeBox).play();
+            }
+          }
+        });
+      }
+    }, 0, 60000);
+
+
     Executor.run(new Runnable() {
       @Override
       public void run() {
-        //apply datetime timer
-        new Timer().schedule(new TimerTask() {
-          @Override
-          public void run() {
-            Platform.runLater(new Runnable() {
-              @Override
-              public void run() {
-                String date = dateFormat.format(new Date());
-                String time = timeFormat.format(new Date());
-                dateText.setText(date);
-                timeText.setText(time);
-                if(dateBox.getOpacity() == 0) {
-                  TransitionUtil.createInFader(dateBox).play();
-                  TransitionUtil.createInFader(timeBox).play();
-                }
-              }
-            });
-          }
-        }, 0, 60000);
-
         //apply weather timer
         new Timer().schedule(new TimerTask() {
           @Override
