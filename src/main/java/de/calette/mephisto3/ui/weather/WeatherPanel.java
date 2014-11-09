@@ -39,4 +39,9 @@ public class WeatherPanel extends ControllablePanel {
   public void showPanel() {
     transition.play();
   }
+
+  @Override
+  public void hidePanel() {
+
+  }
 }

@@ -38,4 +38,9 @@ public class StreamsPanel extends ControllablePanel {
   public void showPanel() {
     this.transition.play();
   }
+
+  @Override
+  public void hidePanel() {
+
+  }
 }

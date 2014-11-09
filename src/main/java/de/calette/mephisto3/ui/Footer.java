@@ -53,9 +53,9 @@ public class Footer extends BorderPane implements ServiceChangeListener, Control
     if(serviceState.getModels().isEmpty()) {
       sc.setMax(0);
     }
-    //TODO
-//    sc.setValue(serviceState.getServiceIndex());
-    sc.setValue(0);
+
+    //scroll to active selection index
+    sc.setValue(serviceState.getServiceIndex());
   }
 
   @Override
@@ -64,7 +64,15 @@ public class Footer extends BorderPane implements ServiceChangeListener, Control
       return;
     }
 
-    final ServiceControlEvent.EVENT_TYPE eventType = event.getEventType();
+    ServiceControlEvent.EVENT_TYPE eventType = event.getEventType();
+
+    if (eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
+      event.getServiceState().decrementIndex();
+    }
+    else if (eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
+      event.getServiceState().incrementIndex();
+    }
+
     if(eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT) || eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
       final int serviceIndex = event.getServiceState().getServiceIndex();
       sc.setValue(serviceIndex);

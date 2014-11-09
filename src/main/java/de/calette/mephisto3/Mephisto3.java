@@ -5,7 +5,6 @@ import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.ui.Center;
 import de.calette.mephisto3.ui.Footer;
 import de.calette.mephisto3.ui.Header;
-import de.calette.mephisto3.util.CSSDebugger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;

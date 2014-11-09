@@ -79,8 +79,6 @@ public class ServiceController {
       serviceState.setModels(Collections.<ServiceModel>emptyList());
     }
 
-    //TODO
-    serviceState.setServiceIndex(0);
     serviceChanged();
   }
 
@@ -158,13 +156,12 @@ public class ServiceController {
         Platform.runLater(new Runnable() {
           @Override
           public void run() {
-            ServiceControlEvent.EVENT_TYPE eventType = ServiceControlEvent.EVENT_TYPE.PREVIOUS;
+            ServiceControlEvent.EVENT_TYPE eventType;
             if (event.rotatedLeft()) {
-              serviceState.decrementIndex();
+              eventType = ServiceControlEvent.EVENT_TYPE.PREVIOUS;
             }
             else {
               eventType = ServiceControlEvent.EVENT_TYPE.NEXT;
-              serviceState.incrementIndex();
             }
 
             final ServiceControlEvent serviceControlEvent = new ServiceControlEvent(eventType, serviceState);

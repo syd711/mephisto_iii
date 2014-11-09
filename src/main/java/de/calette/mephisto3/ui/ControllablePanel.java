@@ -62,4 +62,6 @@ public abstract class ControllablePanel extends HBox {
   }
 
   abstract public void showPanel();
+
+  abstract public void hidePanel();
 }

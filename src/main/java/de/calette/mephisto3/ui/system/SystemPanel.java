@@ -8,6 +8,7 @@ import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.ui.ControllablePanel;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.Transition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -18,6 +19,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Display different system information.
@@ -34,6 +38,7 @@ public class SystemPanel extends ControllablePanel {
   private Text freeDisk;
   private Text usedDisk;
 
+  private Timer refreshTimer;
 
   public SystemPanel() {
     super(Callete.getWeatherService().getWeather());
@@ -116,6 +121,31 @@ public class SystemPanel extends ControllablePanel {
 
   @Override
   public void showPanel() {
+    this.refreshTimer = new Timer();
+    this.refreshTimer.schedule(new TimerTask() {
+      @Override
+      public void run() {
+        Platform.runLater(new Runnable() {
+          @Override
+          public void run() {
+            refresh();
+          }
+        });
+      }
+    }, 0, 1000);
+
+    transition.play();
+  }
+
+  @Override
+  public void hidePanel() {
+    this.refreshTimer.cancel();
+    this.refreshTimer.purge();
+  }
+
+  //--------------- Helper ------------------------------------------------------
+
+  private void refresh() {
     final SystemService systemService = Callete.getSystemService();
     usedDisk.setText(SystemUtils.humanReadableByteCount(systemService.getUsedDiskSpace()));
     freeDisk.setText(SystemUtils.humanReadableByteCount(systemService.getAvailableDiskSpace()));
@@ -127,11 +157,7 @@ public class SystemPanel extends ControllablePanel {
 
     double memoryUsage = (systemService.getFreeMemory() * 100 / systemService.getTotalMemory()) / new Double(100);
     heapSpace.setProgress(memoryUsage);
-
-    transition.play();
   }
-
-  //--------------- Helper ------------------------------------------------------
 
   private Text createInfo(Pane parent, String key, String value) {
     HBox infoBox = new HBox(10);

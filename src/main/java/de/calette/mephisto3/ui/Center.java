@@ -2,7 +2,6 @@ package de.calette.mephisto3.ui;
 
 import callete.api.Callete;
 import callete.api.services.Service;
-import callete.api.services.music.MusicServiceAuthenticationException;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
@@ -14,7 +13,6 @@ import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 
@@ -50,6 +48,23 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     serviceChooser = new ServiceChooser(this);
 
     activeControlPanel.showPanel();
+
+    //TODO
+    new Thread() {
+      @Override
+      public void run() {
+        WeatherPanel weatherPanel = new WeatherPanel();
+        SystemPanel systemPanel = new SystemPanel();
+
+        servicePanels.put(Callete.getWeatherService(), weatherPanel);
+        servicePanels.put(Callete.getSystemService(), systemPanel);
+//        try {
+//          Callete.getGoogleMusicService().authenticate();
+//        } catch (MusicServiceAuthenticationException e) {
+//          e.printStackTrace();
+//        }
+      }
+    }.start();
   }
 
   @Override
@@ -76,6 +91,7 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     newControlPanel = getServicePanel(serviceState);
 
     if(!activeControlPanel.equals(newControlPanel)) {
+      activeControlPanel.hidePanel();
       stackPane.setOpacity(0);
       final FadeTransition outFader = TransitionUtil.createOutFader(activeControlPanel);
       outFader.setOnFinished(new EventHandler<ActionEvent>() {
@@ -105,26 +121,8 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
   private ControllablePanel getServicePanel(ServiceState state) {
     if(servicePanels.isEmpty()) {
       StreamsPanel streamsPanel = new StreamsPanel();
-
       servicePanels.put(Callete.getStreamingService(), streamsPanel);
     }
-
-    //TODO
-    new Thread() {
-      @Override
-      public void run() {
-        WeatherPanel weatherPanel = new WeatherPanel();
-        SystemPanel systemPanel = new SystemPanel();
-
-        servicePanels.put(Callete.getWeatherService(), weatherPanel);
-        servicePanels.put(Callete.getSystemService(), systemPanel);
-//        try {
-//          Callete.getGoogleMusicService().authenticate();
-//        } catch (MusicServiceAuthenticationException e) {
-//          e.printStackTrace();
-//        }
-      }
-    }.start();
 
     return servicePanels.get(state.getService());
   }

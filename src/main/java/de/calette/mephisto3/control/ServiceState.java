@@ -58,6 +58,7 @@ public class ServiceState {
       index--;
     }
     setServiceIndex(index);
+//    System.out.println(service + " has index " + index);
   }
 
   public void incrementIndex() {
@@ -69,5 +70,6 @@ public class ServiceState {
       index++;
     }
     setServiceIndex(index);
+//    System.out.println(service + " has index " + index);
   }
 }
