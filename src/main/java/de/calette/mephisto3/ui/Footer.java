@@ -60,6 +60,10 @@ public class Footer extends BorderPane implements ServiceChangeListener, Control
 
   @Override
   public void controlEvent(ServiceControlEvent event) {
+    if(!isVisible()) {
+      return;
+    }
+
     final ServiceControlEvent.EVENT_TYPE eventType = event.getEventType();
     if(eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT) || eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
       final int serviceIndex = event.getServiceState().getServiceIndex();

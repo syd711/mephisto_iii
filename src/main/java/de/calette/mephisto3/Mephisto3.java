@@ -62,7 +62,7 @@ public class Mephisto3 extends Application {
 
     //apply debugging options on windows
     if (debug) {
-      CSSDebugger.dump(root);
+//      CSSDebugger.dump(root);
     }
     else {
       primaryStage.initStyle(StageStyle.UNDECORATED);

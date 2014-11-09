@@ -6,6 +6,7 @@ import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
+import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.util.TransitionQueue;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
@@ -30,7 +31,7 @@ import java.util.List;
 public class ServiceChooser implements ControlListener {
 
   public static final int SERVICE_BOX_WIDTH = 160;
-  public static final double SELECTION_SCALE_FACTOR = 1.4;
+  public static final double SELECTION_SCALE_FACTOR = 1.6;
   public static final int DISPLAY_DELAY = 500;
 
   private int index = 0;
@@ -100,23 +101,24 @@ public class ServiceChooser implements ControlListener {
     }
     else if (visible && event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
       ServiceController.getInstance().setControlEnabled(false);
-      final Service service = (Service) serviceBoxes.get(index).getUserData();
+
 
       final FadeTransition blink = TransitionUtil.createBlink(serviceBoxes.get(index));
       blink.setOnFinished(new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent actionEvent) {
-          hideFader.play();
-
-          Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-              ServiceController.getInstance().switchService(service);
-            }
-          });
+          closeServiceChooser();
         }
       });
-      blink.play();
+
+      final Service service = (Service) serviceBoxes.get(index).getUserData();
+      final ServiceState serviceState = ServiceController.getInstance().getServiceState();
+      if(!serviceState.getService().equals(service)) {
+        blink.play();
+      }
+      else {
+        closeServiceChooser();
+      }
     }
 
     if(visible) {
@@ -129,6 +131,20 @@ public class ServiceChooser implements ControlListener {
   }
 
   // --------------- Helper -----------------------------
+
+  /**
+   * Closes the chooser, resets the UI state.
+   */
+  private void closeServiceChooser() {
+    final Service service = (Service) serviceBoxes.get(index).getUserData();
+    hideFader.play();
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        ServiceController.getInstance().switchService(service);
+      }
+    });
+  }
 
   private void show() {
     showFader.play();
