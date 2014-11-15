@@ -55,7 +55,7 @@ public class Footer extends BorderPane implements ServiceChangeListener, Control
     }
 
     //scroll to active selection index
-    sc.setValue(serviceState.getServiceIndex());
+    sc.setValue(serviceState.getServiceIndex()-1);
   }
 
   @Override

@@ -51,10 +51,10 @@ public class Mephisto3 extends Application {
 
     //header
     root.setTop(new Header());
-    //center
-    root.setCenter(new Center());
     //footer
     root.setBottom(new Footer());
+    //center
+    root.setCenter(new Center());
 
     primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, new Mephisto3KeyEventFilter());
     addDisposeListener(primaryStage);

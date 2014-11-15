@@ -2,9 +2,12 @@ package de.calette.mephisto3.ui;
 
 import callete.api.services.ServiceModel;
 import de.calette.mephisto3.Mephisto3;
+import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.util.TransitionQueue;
 import javafx.animation.TranslateTransition;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.CacheHint;
 import javafx.scene.layout.HBox;
 import javafx.util.Duration;
@@ -34,12 +37,19 @@ public abstract class ControllablePanel extends HBox {
 
     scrollTransition = new TranslateTransition(Duration.millis(SCROLL_DURATION), this);
     scrollTransition.setAutoReverse(false);
+    scrollTransition.setOnFinished(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent actionEvent) {
+        ServiceController.getInstance().setControlEnabled(true);
+      }
+    });
   }
 
   public void rotatedLeft(ServiceState serviceState) {
+    ServiceController.getInstance().setControlEnabled(false);
     int offset = SCROLL_WIDTH;
     if(serviceState.getServiceIndex() == serviceState.getModels().size()-1) {
-      offset = -((serviceState.getModels().size()-1)*SCROLL_WIDTH);
+      offset = -(serviceState.getModels().size()-1)*SCROLL_WIDTH;
     }
     scrollTransition.setByX(offset);
     transitionQueue.addTransition(scrollTransition);
@@ -47,9 +57,10 @@ public abstract class ControllablePanel extends HBox {
   }
 
   public void rotatedRight(ServiceState serviceState) {
+    ServiceController.getInstance().setControlEnabled(false);
     int offset = -SCROLL_WIDTH;
     if(serviceState.getServiceIndex() == 0) {
-      offset = (serviceState.getModels().size()-1)*SCROLL_WIDTH;
+      offset = ((serviceState.getModels().size()-1)*SCROLL_WIDTH);
     }
     scrollTransition.setByX(offset);
     transitionQueue.addTransition(scrollTransition);
