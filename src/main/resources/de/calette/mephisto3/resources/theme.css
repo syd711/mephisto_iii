@@ -67,6 +67,24 @@
 }
 
 /**
+ * Google Music Panel
+ */
+.album {
+ -fx-font-size: 16px;
+ -fx-font-family: "Tahoma";
+ -fx-text-fill: #fff;
+ -fx-font-weight: bold;
+ -fx-text-overrun: ellipsis;
+}
+
+.artist {
+ -fx-font-size: 16px;
+ -fx-font-family: "Tahoma";
+ -fx-text-fill: #fff;
+ -fx-text-overrun: ellipsis;
+}
+
+/**
  * System Panel
  */
 .system-title {
@@ -107,25 +125,29 @@
 .stream-name {
    -fx-font-size: 40px;
    -fx-font-family: "Tahoma";
-   -fx-fill: #fff;
+   -fx-text-fill: #fff;
+   -fx-text-overrun: ellipsis;
    -fx-font-smoothing-type: gray;
 }
 .stream-title {
    -fx-font-size: 30px;
    -fx-font-family: "Tahoma";
-   -fx-fill: #fff;
+   -fx-text-fill: #fff;
+   -fx-text-overrun: ellipsis;
    -fx-font-smoothing-type: gray;
 }
 .stream-artist {
    -fx-font-size: 25px;
    -fx-font-family: "Tahoma";
-   -fx-fill: #fff;
+   -fx-text-fill: #fff;
+   -fx-text-overrun: ellipsis;
    -fx-font-smoothing-type: gray;
 }
 .stream-url {
    -fx-font-size: 14px;
    -fx-font-family: "Tahoma";
-   -fx-fill: #fff;
+   -fx-text-fill: #fff;
+   -fx-text-overrun: ellipsis;
    -fx-font-smoothing-type: gray;
 }
 .stream-panel {

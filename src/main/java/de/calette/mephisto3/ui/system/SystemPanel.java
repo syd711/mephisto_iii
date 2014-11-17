@@ -28,8 +28,6 @@ import java.util.TimerTask;
  */
 public class SystemPanel extends ControllablePanel {
 
-  private Transition transition;
-
   ProgressIndicator diskSpace;
   private Text freeMem;
   private Text usedMem;
@@ -109,18 +107,11 @@ public class SystemPanel extends ControllablePanel {
     systemBox.getChildren().add(systemDetailsBox);
 
     getChildren().add(root);
-
-    this.transition = TransitionUtil.createInFader(this);
-    this.transition.setOnFinished(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent actionEvent) {
-        ServiceController.getInstance().setControlEnabled(true);
-      }
-    });
   }
 
   @Override
   public void showPanel() {
+    super.showPanel();
     this.refreshTimer = new Timer();
     this.refreshTimer.schedule(new TimerTask() {
       @Override
@@ -133,12 +124,11 @@ public class SystemPanel extends ControllablePanel {
         });
       }
     }, 0, 1000);
-
-    transition.play();
   }
 
   @Override
   public void hidePanel() {
+    super.hidePanel();
     this.refreshTimer.cancel();
     this.refreshTimer.purge();
   }

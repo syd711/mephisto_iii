@@ -91,10 +91,15 @@ public class ServiceController {
   }
 
   // ------------------- Helper -----------------------------------
-  private void serviceChanged() {
-    for (ServiceChangeListener listener : serviceChangeListeners) {
-      listener.serviceChanged(serviceState);
-    }
+  public void serviceChanged() {
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        for (ServiceChangeListener listener : serviceChangeListeners) {
+          listener.serviceChanged(serviceState);
+        }
+      }
+    });
   }
 
   /**

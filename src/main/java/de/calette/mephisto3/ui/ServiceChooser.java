@@ -53,7 +53,7 @@ public class ServiceChooser implements ControlListener {
     overlay.setOpacity(0);
     center.stackPane.getChildren().add(overlay);
 
-    overlay.setAlignment(Pos.CENTER);
+    overlay.setAlignment(Pos.TOP_CENTER);
     overlay.setId("chooser");
     overlay.setMinWidth(Mephisto3.WIDTH);
     overlay.setMinHeight(80);
@@ -95,7 +95,7 @@ public class ServiceChooser implements ControlListener {
       ServiceController.getInstance().removeControlListener(center);
       if(!visible) {
         visible = true;
-        center.activeControlPanel.setOpacity(0);
+        center.activeControlPanel.hidePanel();
         show();
       }
     }

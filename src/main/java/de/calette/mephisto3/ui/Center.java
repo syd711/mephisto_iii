@@ -2,10 +2,12 @@ package de.calette.mephisto3.ui;
 
 import callete.api.Callete;
 import callete.api.services.Service;
+import callete.api.services.music.MusicServiceAuthenticationException;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
+import de.calette.mephisto3.ui.google.GoogleMusicPanel;
 import de.calette.mephisto3.ui.radio.StreamsPanel;
 import de.calette.mephisto3.ui.system.SystemPanel;
 import de.calette.mephisto3.ui.weather.WeatherPanel;
@@ -30,7 +32,6 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
   protected StackPane stackPane;
   protected ControllablePanel activeControlPanel;
   private ControllablePanel newControlPanel;
-  private ServiceChooser serviceChooser;
 
   private Map<Service, ControllablePanel> servicePanels = new HashMap<>();
 
@@ -45,7 +46,7 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     ServiceController.getInstance().addControlListener(this);
     ServiceController.getInstance().addServiceChangeListener(this);
 
-    serviceChooser = new ServiceChooser(this);
+    new ServiceChooser(this);
 
     activeControlPanel.showPanel();
 
@@ -55,9 +56,11 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
       public void run() {
         WeatherPanel weatherPanel = new WeatherPanel();
         SystemPanel systemPanel = new SystemPanel();
+        GoogleMusicPanel googleMusicPanel = new GoogleMusicPanel();
 
         servicePanels.put(Callete.getWeatherService(), weatherPanel);
         servicePanels.put(Callete.getSystemService(), systemPanel);
+        servicePanels.put(Callete.getGoogleMusicService(), googleMusicPanel);
 //        try {
 //          Callete.getGoogleMusicService().authenticate();
 //        } catch (MusicServiceAuthenticationException e) {
@@ -107,14 +110,7 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
       outFader.play();
     }
     else {
-      final FadeTransition inFader = TransitionUtil.createInFader(activeControlPanel);
-      inFader.setOnFinished(new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent actionEvent) {
-          ServiceController.getInstance().setControlEnabled(true);
-        }
-      });
-      inFader.play();
+      activeControlPanel.showPanel();
     }
   }
 

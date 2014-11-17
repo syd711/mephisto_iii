@@ -16,8 +16,6 @@ import javafx.event.EventHandler;
  */
 public class StreamsPanel extends ControllablePanel {
 
-  private Transition transition;
-
   public StreamsPanel() {
     super(Callete.getStreamingService().getStreams());
     setMinWidth(Mephisto3.WIDTH);
@@ -25,22 +23,5 @@ public class StreamsPanel extends ControllablePanel {
       StreamPanel streamPanel = new StreamPanel((Stream) stream);
       getChildren().add(streamPanel);
     }
-    this.transition = TransitionUtil.createInFader(this);
-    this.transition.setOnFinished(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent actionEvent) {
-        ServiceController.getInstance().setControlEnabled(true);
-      }
-    });
-  }
-
-  @Override
-  public void showPanel() {
-    this.transition.play();
-  }
-
-  @Override
-  public void hidePanel() {
-
   }
 }

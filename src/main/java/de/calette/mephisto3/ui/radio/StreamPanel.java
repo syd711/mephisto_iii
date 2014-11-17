@@ -3,6 +3,7 @@ package de.calette.mephisto3.ui.radio;
 import callete.api.services.music.model.Stream;
 import de.calette.mephisto3.Mephisto3;
 import javafx.geometry.Insets;
+import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -15,13 +16,13 @@ public class StreamPanel extends StackPane {
     VBox root = new VBox(20);
     root.setPadding(new Insets(30, 30, 30, 30));
     root.setMinWidth(Mephisto3.WIDTH);
-    Text name = new Text("Antenne Voralberg");
+    Label name = new Label("Antenne Voralberg");
     name.getStyleClass().add("stream-name");
-    Text artist = new Text("The fabulous baker boys");
+    Label artist = new Label("The fabulous baker boys");
     artist.getStyleClass().add("stream-artist");
-    Text title = new Text("Sweet Child O Mine");
+    Label title = new Label("Sweet Child O Mine");
     title.getStyleClass().add("stream-title");
-    Text url = new Text(stream.getPlaybackUrl());
+    Label url = new Label(stream.getPlaybackUrl());
     url.getStyleClass().add("stream-url");
 
     root.getChildren().add(name);

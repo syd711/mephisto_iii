@@ -15,8 +15,6 @@ import javafx.event.EventHandler;
  */
 public class WeatherPanel extends ControllablePanel {
 
-  private Transition transition;
-
   public WeatherPanel() {
     super(Callete.getWeatherService().getWeather());
     setMinWidth(Mephisto3.WIDTH);
@@ -25,23 +23,5 @@ public class WeatherPanel extends ControllablePanel {
       WeatherLocationPanel panel = new WeatherLocationPanel((Weather) model);
       getChildren().add(panel);
     }
-
-    this.transition = TransitionUtil.createInFader(this);
-    this.transition.setOnFinished(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent actionEvent) {
-        ServiceController.getInstance().setControlEnabled(true);
-      }
-    });
-  }
-
-  @Override
-  public void showPanel() {
-    transition.play();
-  }
-
-  @Override
-  public void hidePanel() {
-
   }
 }

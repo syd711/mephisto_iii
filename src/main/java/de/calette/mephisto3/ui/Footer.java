@@ -18,7 +18,15 @@ import javafx.scene.layout.BorderPane;
 public class Footer extends BorderPane implements ServiceChangeListener, ControlListener {
   private ScrollBar sc;
 
+  private static Footer instance;
+
+  //TODO grrr
+  public static Footer getInstance() {
+    return instance;
+  }
+
   public Footer() {
+    instance = this;
     setMaxWidth(Mephisto3.WIDTH);
     setOpacity(0);
     sc = new ScrollBar();

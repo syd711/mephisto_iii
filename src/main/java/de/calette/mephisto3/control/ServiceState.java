@@ -43,6 +43,13 @@ public class ServiceState {
   }
 
   /**
+   * Returns the model for the active index.
+   */
+  public ServiceModel getActiveServiceModel() {
+    return models.get(getServiceIndex());
+  }
+
+  /**
    * Remembers the last selected position for the service.
    */
   public void setServiceIndex(int pos) {

@@ -5,6 +5,8 @@ import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.util.TransitionQueue;
+import de.calette.mephisto3.util.TransitionUtil;
+import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -27,6 +29,12 @@ public abstract class ControllablePanel extends HBox {
   private TranslateTransition scrollTransition;
 
 
+  private Transition inFader;
+  private Transition outFader;
+
+
+  private int scrollWidth = SCROLL_WIDTH;
+
   public ControllablePanel(List<? extends ServiceModel> models) {
     super(10);
     setOpacity(0);
@@ -43,13 +51,23 @@ public abstract class ControllablePanel extends HBox {
         ServiceController.getInstance().setControlEnabled(true);
       }
     });
+
+
+    this.outFader = TransitionUtil.createOutFader(this);
+    this.inFader = TransitionUtil.createInFader(this);
+    this.inFader.setOnFinished(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent actionEvent) {
+        ServiceController.getInstance().setControlEnabled(true);
+      }
+    });
   }
 
   public void rotatedLeft(ServiceState serviceState) {
     ServiceController.getInstance().setControlEnabled(false);
-    int offset = SCROLL_WIDTH;
+    int offset = scrollWidth;
     if(serviceState.getServiceIndex() == serviceState.getModels().size()-1) {
-      offset = -(serviceState.getModels().size()-1)*SCROLL_WIDTH;
+      offset = -(serviceState.getModels().size()-1)*scrollWidth;
     }
     scrollTransition.setByX(offset);
     transitionQueue.addTransition(scrollTransition);
@@ -58,13 +76,17 @@ public abstract class ControllablePanel extends HBox {
 
   public void rotatedRight(ServiceState serviceState) {
     ServiceController.getInstance().setControlEnabled(false);
-    int offset = -SCROLL_WIDTH;
+    int offset = -scrollWidth;
     if(serviceState.getServiceIndex() == 0) {
-      offset = ((serviceState.getModels().size()-1)*SCROLL_WIDTH);
+      offset = ((serviceState.getModels().size()-1)*scrollWidth);
     }
     scrollTransition.setByX(offset);
     transitionQueue.addTransition(scrollTransition);
     transitionQueue.play();
+  }
+
+  public void setScrollWidth(int scrollWidth) {
+    this.scrollWidth = scrollWidth;
   }
 
 
@@ -72,7 +94,11 @@ public abstract class ControllablePanel extends HBox {
 
   }
 
-  abstract public void showPanel();
+  public void showPanel() {
+    this.inFader.play();
+  }
 
-  abstract public void hidePanel();
+  public void hidePanel() {
+    this.outFader.play();
+  }
 }
