@@ -11,6 +11,7 @@ import de.calette.mephisto3.ui.google.GoogleMusicPanel;
 import de.calette.mephisto3.ui.radio.StreamsPanel;
 import de.calette.mephisto3.ui.system.SystemPanel;
 import de.calette.mephisto3.ui.weather.WeatherPanel;
+import de.calette.mephisto3.util.Executor;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
@@ -32,11 +33,14 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
   protected StackPane stackPane;
   protected ControllablePanel activeControlPanel;
   private ControllablePanel newControlPanel;
+  private ServiceChooser serviceChooser;
 
   private Map<Service, ControllablePanel> servicePanels = new HashMap<>();
 
   public Center() {
     stackPane = new StackPane();
+    serviceChooser = new ServiceChooser(this);
+
 
     activeControlPanel = getServicePanel(ServiceController.getInstance().getServiceState());
 
@@ -46,28 +50,9 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     ServiceController.getInstance().addControlListener(this);
     ServiceController.getInstance().addServiceChangeListener(this);
 
-    new ServiceChooser(this);
-
     activeControlPanel.showPanel();
 
-    //TODO
-    new Thread() {
-      @Override
-      public void run() {
-        WeatherPanel weatherPanel = new WeatherPanel();
-        SystemPanel systemPanel = new SystemPanel();
-        GoogleMusicPanel googleMusicPanel = new GoogleMusicPanel();
-
-        servicePanels.put(Callete.getWeatherService(), weatherPanel);
-        servicePanels.put(Callete.getSystemService(), systemPanel);
-        servicePanels.put(Callete.getGoogleMusicService(), googleMusicPanel);
-//        try {
-//          Callete.getGoogleMusicService().authenticate();
-//        } catch (MusicServiceAuthenticationException e) {
-//          e.printStackTrace();
-//        }
-      }
-    }.start();
+    loadServices();
   }
 
   @Override
@@ -88,6 +73,7 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
       activeControlPanel.pushed();
     }
   }
+
 
   @Override
   public void serviceChanged(ServiceState serviceState) {
@@ -114,12 +100,35 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     }
   }
 
+
+  //----------------- Helper ------------------------------
+
   private ControllablePanel getServicePanel(ServiceState state) {
     if(servicePanels.isEmpty()) {
       StreamsPanel streamsPanel = new StreamsPanel();
       servicePanels.put(Callete.getStreamingService(), streamsPanel);
+      serviceChooser.addService(ServiceController.SERVICE_NAME_RADIO, Callete.getStreamingService());
     }
 
     return servicePanels.get(state.getService());
+  }
+
+  private void loadServices() {
+    Executor.run(new Runnable() {
+      @Override
+      public void run() {
+        WeatherPanel weatherPanel = new WeatherPanel();
+        servicePanels.put(Callete.getWeatherService(), weatherPanel);
+        serviceChooser.addService(ServiceController.SERVICE_NAME_WEATHER, Callete.getWeatherService());
+
+        SystemPanel systemPanel = new SystemPanel();
+        servicePanels.put(Callete.getSystemService(), systemPanel);
+        serviceChooser.addService(ServiceController.SERVICE_NAME_SETTINGS, Callete.getSystemService());
+
+        GoogleMusicPanel googleMusicPanel = new GoogleMusicPanel();
+        servicePanels.put(Callete.getGoogleMusicService(), googleMusicPanel);
+        serviceChooser.addService(ServiceController.SERVICE_NAME_MUSIC, Callete.getGoogleMusicService());
+      }
+    });
   }
 }

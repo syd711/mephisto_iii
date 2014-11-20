@@ -35,9 +35,6 @@ public class Mephisto3 extends Application {
     //force rendering of small fonts
     System.setProperty("prism.lcdtext", "false");
 
-    //set thread name
-    Thread.currentThread().setName("Mephisto 3");
-
     //create root component with background
     StackPane rootStack = new StackPane();
     rootStack.setMaxWidth(WIDTH);

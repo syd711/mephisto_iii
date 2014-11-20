@@ -19,11 +19,15 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The chooser that selects the active function of the radio.
@@ -36,6 +40,7 @@ public class ServiceChooser implements ControlListener {
 
   private int index = 0;
   private List<Text> serviceBoxes = new ArrayList<>();
+  private Map<Service,Pane> serviceBoxesByService = new HashMap<>();
 
   private Transition showFader;
   private Transition hideFader;
@@ -45,6 +50,7 @@ public class ServiceChooser implements ControlListener {
   private HBox overlay;
   private Center center;
   private boolean visible = false;
+  private final HBox scroller = new HBox();
 
   public ServiceChooser(final Center center) {
     this.center = center;
@@ -58,18 +64,12 @@ public class ServiceChooser implements ControlListener {
     overlay.setMinWidth(Mephisto3.WIDTH);
     overlay.setMinHeight(80);
 
-    final HBox scroller = new HBox();
-    scroller.setPadding(new Insets(0, 0, 0, 480));
+    scroller.setPadding(new Insets(0, 0, 80, 480));
     scroller.setAlignment(Pos.CENTER);
     scroller.setCache(true);
     scroller.setCacheHint(CacheHint.SPEED);
 
     transitionQueue = new TransitionQueue(scroller);
-
-    scroller.getChildren().add(createServiceBox(ServiceController.SERVICE_NAME_RADIO, Callete.getStreamingService()));
-    scroller.getChildren().add(createServiceBox(ServiceController.SERVICE_NAME_WEATHER, Callete.getWeatherService()));
-    scroller.getChildren().add(createServiceBox(ServiceController.SERVICE_NAME_MUSIC, Callete.getGoogleMusicService()));
-    scroller.getChildren().add(createServiceBox(ServiceController.SERVICE_NAME_SETTINGS, Callete.getSystemService()));
 
     overlay.getChildren().add(scroller);
 
@@ -89,53 +89,86 @@ public class ServiceChooser implements ControlListener {
     });
   }
 
+  public void addService(final String label, final Service service) {
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        final Pane serviceBox = createServiceBox(label, service);
+        scroller.getChildren().add(serviceBox);
+        serviceBoxesByService.put(service, serviceBox);
+        TransitionUtil.createInFader(serviceBox).play();
+      }
+    });
+  }
+
   @Override
   public void controlEvent(ServiceControlEvent event) {
     if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
       ServiceController.getInstance().removeControlListener(center);
-      if(!visible) {
+      if (!visible) {
         visible = true;
         center.activeControlPanel.hidePanel();
         show();
       }
     }
     else if (visible && event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
-      ServiceController.getInstance().setControlEnabled(false);
-
-
-      final FadeTransition blink = TransitionUtil.createBlink(serviceBoxes.get(index));
-      blink.setOnFinished(new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent actionEvent) {
-          closeServiceChooser();
-        }
-      });
-
       final Service service = (Service) serviceBoxes.get(index).getUserData();
-      final ServiceState serviceState = ServiceController.getInstance().getServiceState();
-      if(!serviceState.getService().equals(service)) {
-        blink.play();
+      if (service.equals(Callete.getGoogleMusicService())) {
+        final Pane searchSelectionBox = serviceBoxesByService.get(service);
+        Text byArtist = new Text("Albums by Artist");
+        byArtist.setOpacity(0);
+        byArtist.getStyleClass().add("selector");
+        Text byName = new Text("Albums by Name");
+        byName.setOpacity(0);
+        byName.getStyleClass().add("selector");
+        searchSelectionBox.getChildren().add(byArtist);
+        searchSelectionBox.getChildren().add(byName);
+        TransitionUtil.createInFader(byName).play();
+        TransitionUtil.createInFader(byArtist).play();
       }
       else {
-        closeServiceChooser();
+        hideServiceChooser();
       }
     }
 
-    if(visible) {
+    if (visible) {
       if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
         scroll(-SERVICE_BOX_WIDTH);
-      } else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
+      }
+      else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
         scroll(SERVICE_BOX_WIDTH);
       }
     }
-  }
 
+  }
   // --------------- Helper -----------------------------
+
+  private void hideServiceChooser() {
+    ServiceController.getInstance().setControlEnabled(false);
+
+
+    final FadeTransition blink = TransitionUtil.createBlink(serviceBoxes.get(index));
+    blink.setOnFinished(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent actionEvent) {
+        playCloseAnimationAndHide();
+      }
+    });
+
+    final Service service = (Service) serviceBoxes.get(index).getUserData();
+    final ServiceState serviceState = ServiceController.getInstance().getServiceState();
+    if (!serviceState.getService().equals(service)) {
+      blink.play();
+    }
+    else {
+      playCloseAnimationAndHide();
+    }
+  }
 
   /**
    * Closes the chooser, resets the UI state.
    */
-  private void closeServiceChooser() {
+  private void playCloseAnimationAndHide() {
     final Service service = (Service) serviceBoxes.get(index).getUserData();
     hideFader.play();
     Platform.runLater(new Runnable() {
@@ -173,22 +206,26 @@ public class ServiceChooser implements ControlListener {
     TransitionUtil.createScaler(serviceBoxes.get(index), ControllablePanel.SCROLL_DURATION, 1.0).play();
     if (width > 0) {
       index--;
-    } else {
+    }
+    else {
       index++;
     }
 
     TransitionUtil.createScaler(serviceBoxes.get(index), ControllablePanel.SCROLL_DURATION, SELECTION_SCALE_FACTOR).play();
   }
 
-  private HBox createServiceBox(String label, Service service) {
+  private VBox createServiceBox(String label, Service service) {
     Text text = new Text(label);
     text.setCache(true);
     text.setCacheHint(CacheHint.SPEED);
     text.setUserData(service);
     serviceBoxes.add(text);
     text.getStyleClass().add("service-name");
-    HBox box = new HBox();
-    box.setAlignment(Pos.CENTER);
+    VBox box = new VBox(20);
+    box.setPadding(new Insets(80, 0, 0, 0));
+    box.setMinHeight(200);
+    box.setOpacity(0);
+    box.setAlignment(Pos.TOP_CENTER);
     box.setMinWidth(SERVICE_BOX_WIDTH);
     box.getChildren().add(text);
     return box;

@@ -69,6 +69,13 @@
 /**
  * Google Music Panel
  */
+ .selector {
+   -fx-font-size: 26px;
+   -fx-font-family: "Tahoma";
+   -fx-fill: #fff;
+   -fx-font-smoothing-type: gray;
+}
+
 .album {
  -fx-font-size: 16px;
  -fx-font-family: "Tahoma";

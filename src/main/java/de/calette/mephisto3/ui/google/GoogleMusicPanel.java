@@ -7,11 +7,8 @@ import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.ControllablePanel;
 import de.calette.mephisto3.ui.Footer;
-import de.calette.mephisto3.util.Executor;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -100,17 +97,11 @@ public class GoogleMusicPanel extends ControllablePanel {
    * Asynchronous load of google music
    */
   private void loadGoogleMusic() {
-    final Runnable runnable = new Runnable() {
-      @Override
-      public void run() {
-        try {
-          Callete.getGoogleMusicService().authenticate();
-        } catch (Exception e) {
-          LOG.error("Error authenticating Google music: " + e.getMessage(), e);
-        }
-      }
-    };
-    Executor.run(runnable);
+    try {
+      Callete.getGoogleMusicService().authenticate();
+    } catch (Exception e) {
+      LOG.error("Error authenticating Google music: " + e.getMessage(), e);
+    }
   }
 
   private void updateSelection(ServiceState serviceState) {
