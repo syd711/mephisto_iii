@@ -93,7 +93,7 @@ public class AlbumLetterSelector implements ControlListener {
       public void handle(ActionEvent actionEvent) {
         parentCenter.getChildren().remove(albumSelectorCenterStack);
         final AlbumSlider albumSlider = new AlbumSlider(parentCenter, selection.getAlbums());
-        albumSlider.showSlider();
+        albumSlider.showPanel();
       }
     });
     outFader.play();
