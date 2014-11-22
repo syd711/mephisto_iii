@@ -2,7 +2,6 @@ package de.calette.mephisto3.ui;
 
 import callete.api.Callete;
 import callete.api.services.Service;
-import callete.api.services.music.MusicServiceAuthenticationException;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
@@ -40,8 +39,6 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
   public Center() {
     stackPane = new StackPane();
     serviceChooser = new ServiceChooser(this);
-
-
     activeControlPanel = getServicePanel(ServiceController.getInstance().getServiceState());
 
     stackPane.getChildren().add(activeControlPanel);
