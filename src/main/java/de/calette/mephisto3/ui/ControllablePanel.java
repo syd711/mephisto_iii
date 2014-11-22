@@ -40,8 +40,6 @@ public abstract class ControllablePanel extends HBox {
     setOpacity(0);
     this.models = models;
     transitionQueue = new TransitionQueue(this);
-    setCache(true);
-    setCacheHint(CacheHint.SPEED);
 
     scrollTransition = new TranslateTransition(Duration.millis(SCROLL_DURATION), this);
     scrollTransition.setAutoReverse(false);

@@ -7,8 +7,12 @@ import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.resources.menu.MenuResourceLoader;
 import de.calette.mephisto3.util.ComponentUtil;
 import de.calette.mephisto3.util.TransitionQueue;
+import de.calette.mephisto3.util.TransitionUtil;
+import javafx.animation.FadeTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.HBox;
@@ -23,7 +27,7 @@ import java.util.Map;
 /**
  * UI Panel for selecting the album album sorted by name or artist.
  */
-public class AlbumSelector implements ControlListener {
+public class AlbumLetterSelector implements ControlListener {
 
 
   private int index = 0;
@@ -34,14 +38,14 @@ public class AlbumSelector implements ControlListener {
   private Pane albumSelectorCenterStack;
   private Pane parentCenter;
 
-  public AlbumSelector(Pane center, Map<String, List<Album>> albums) {
+  public AlbumLetterSelector(Pane center, Map<String, List<Album>> albums) {
     this.parentCenter = center;
     this.albums = albums;
 
     albumSelectorCenterStack = new StackPane();
-    Canvas selectorCanvas = ComponentUtil.createImageCanvas(MenuResourceLoader.getResource("selector.png"), 40, 40);
-    albumSelectorCenterStack.getChildren().add(selectorCanvas);
     center.getChildren().add(albumSelectorCenterStack);
+
+    addSelectorIcons();
 
     scroller = new HBox(0);
     transitionQueue = new TransitionQueue(scroller);
@@ -53,13 +57,14 @@ public class AlbumSelector implements ControlListener {
       scroller.getChildren().add(letterBox);
     }
 
-    scroller.setPadding(new Insets(120, 0, 0, (albums.keySet().size() * AlbumLetterBox.LETTER_BOX_WIDTH)-AlbumLetterBox.LETTER_BOX_WIDTH/2));
+    final int offset = (albums.keySet().size() * AlbumLetterBox.LETTER_BOX_WIDTH) - AlbumLetterBox.LETTER_BOX_WIDTH;
+    scroller.setPadding(new Insets(115, 0, 0, offset));
     albumSelectorCenterStack.getChildren().add(scroller);
 
     scrollTransition = new TranslateTransition(Duration.millis(50), scroller);
     scrollTransition.setAutoReverse(false);
 
-    ServiceController.getInstance().addControlListener(this);
+
   }
 
   @Override
@@ -68,11 +73,7 @@ public class AlbumSelector implements ControlListener {
 
     }
     else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
-      AlbumLetterBox selection = (AlbumLetterBox) scroller.getChildren().get(index);
-      parentCenter.getChildren().remove(albumSelectorCenterStack);
-      ServiceController.getInstance().removeControlListener(this);
-
-      new AlbumSlider(parentCenter, selection.getAlbums());
+      hideLetterSelector();
     }
     else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
       scroll(-AlbumLetterBox.LETTER_BOX_WIDTH);
@@ -82,6 +83,42 @@ public class AlbumSelector implements ControlListener {
     }
   }
 
+  private void hideLetterSelector() {
+    ServiceController.getInstance().removeControlListener(this);
+
+    final AlbumLetterBox selection = (AlbumLetterBox) scroller.getChildren().get(index);
+    final FadeTransition outFader = TransitionUtil.createOutFader(albumSelectorCenterStack);
+    outFader.setOnFinished(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent actionEvent) {
+        parentCenter.getChildren().remove(albumSelectorCenterStack);
+        final AlbumSlider albumSlider = new AlbumSlider(parentCenter, selection.getAlbums());
+        albumSlider.showSlider();
+      }
+    });
+    outFader.play();
+  }
+
+  public void showLetterSelector() {
+    ServiceController.getInstance().addControlListener(this);
+  }
+
+  //----------- Helper -------------------------
+
+
+
+  /**
+   * Creates the two arrow icons with up and down for marking the selection.
+   */
+  private void addSelectorIcons() {
+    Canvas selectorCanvas = ComponentUtil.createImageCanvas(MenuResourceLoader.getResource("selector.png"), 40, 40);
+    albumSelectorCenterStack.getChildren().add(selectorCanvas);
+
+    Canvas selectorDownCanvas = ComponentUtil.createImageCanvas(MenuResourceLoader.getResource("selector_down.png"), 40, 40);
+    selectorDownCanvas.setLayoutY(20);
+    albumSelectorCenterStack.getChildren().add(selectorDownCanvas);
+  }
+
   private void scroll(final int width) {
     if (index == albums.size() - 1 && width < 0) {
       return;
@@ -89,13 +126,14 @@ public class AlbumSelector implements ControlListener {
     if (index == 0 && width > 0) {
       return;
     }
+    final TranslateTransition translateTransition = new TranslateTransition(Duration.millis(50), scroller);
+    translateTransition.setByX(width);
+    transitionQueue.addTransition(translateTransition);
 
     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-          scrollTransition.setByX(width);
-          transitionQueue.addTransition(scrollTransition);
-          transitionQueue.play();
+                          transitionQueue.play();
         }
       }
     );
@@ -111,5 +149,6 @@ public class AlbumSelector implements ControlListener {
     }
     AlbumLetterBox newSelection = (AlbumLetterBox) scroller.getChildren().get(index);
     newSelection.select();
+
   }
 }

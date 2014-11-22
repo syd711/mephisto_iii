@@ -167,7 +167,11 @@
    -fx-font-smoothing-type: gray;
 }
 .stream-panel {
-   /*-fx-background-color: rgba(60, 30, 60, 0.5); -fx-background-radius: 10;*/
+
+}
+
+.debug {
+ -fx-background-color: rgba(60, 30, 60, 0.5); -fx-background-radius: 10;
 }
 
 /**

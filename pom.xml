@@ -58,6 +58,10 @@
                                 </goals>
                                 <configuration>
                                     <mainClass>callete.deployment.client.DeploymentClient</mainClass>
+                                    <arguments>
+                                        <!-- Comma separated ignore files/directories for deployment copy/cleanup-->
+                                        <argument>image_cache</argument>
+                                    </arguments>
                                 </configuration>
                             </execution>
                         </executions>

@@ -7,7 +7,7 @@ import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
-import de.calette.mephisto3.ui.google.AlbumSelector;
+import de.calette.mephisto3.ui.google.AlbumLetterSelector;
 import de.calette.mephisto3.util.TransitionQueue;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
@@ -68,8 +68,6 @@ public class ServiceChooser implements ControlListener {
 
     scroller.setPadding(new Insets(0, 0, 80, 480));
     scroller.setAlignment(Pos.CENTER);
-    scroller.setCache(true);
-    scroller.setCacheHint(CacheHint.SPEED);
 
     transitionQueue = new TransitionQueue(scroller);
 
@@ -114,7 +112,9 @@ public class ServiceChooser implements ControlListener {
           public void handle(ActionEvent actionEvent) {
             overlay.getChildren().remove(scroller);
             ServiceController.getInstance().removeControlListener(ServiceChooser.this);
-            AlbumSelector selector = new AlbumSelector(overlay, Callete.getGoogleMusicService().getAlbumsByArtistLetter());
+            AlbumLetterSelector selector = new AlbumLetterSelector(overlay, Callete.getGoogleMusicService().getAlbumsByArtistLetter());
+            selector.showLetterSelector();
+
           }
         });
         blink.play();

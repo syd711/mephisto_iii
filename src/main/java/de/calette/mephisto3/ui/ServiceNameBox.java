@@ -28,8 +28,6 @@ public class ServiceNameBox extends VBox {
     setMinWidth(SERVICE_BOX_WIDTH);
 
     text = new Text(label);
-    text.setCache(true);
-    text.setCacheHint(CacheHint.SPEED);
     text.getStyleClass().add("service-name");
 
     getChildren().add(text);

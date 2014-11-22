@@ -2,6 +2,7 @@ package de.calette.mephisto3.ui.google;
 
 import callete.api.services.music.model.Album;
 import de.calette.mephisto3.util.TransitionUtil;
+import javafx.geometry.Pos;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -20,6 +21,7 @@ public class AlbumLetterBox extends VBox {
     this.albums = albums;
     setUserData(key);
     setMinWidth(LETTER_BOX_WIDTH);
+    setAlignment(Pos.TOP_CENTER);
     text = new Text(key);
     text.getStyleClass().add("album-key");
     getChildren().add(text);
@@ -30,7 +32,7 @@ public class AlbumLetterBox extends VBox {
   }
 
   public void select() {
-    TransitionUtil.createScaler(text, 1.2).play();
+    TransitionUtil.createScaler(text, 1.25).play();
   }
 
   public List<Album> getAlbums() {

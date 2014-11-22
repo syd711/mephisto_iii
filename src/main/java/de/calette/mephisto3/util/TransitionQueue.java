@@ -22,8 +22,6 @@ public class TransitionQueue {
   private boolean running = false;
 
   public TransitionQueue(Node node) {
-    node.setCache(true);
-    node.setCacheHint(CacheHint.SPEED);
     sequentialTransition = new SequentialTransition(node);
   }
 
