@@ -61,7 +61,7 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
       return;
     }
     if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
-      //nothing, handled by the ServiceChooser
+      serviceChooser.showServiceChooser();
     }
     else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
       activeControlPanel.rotatedRight(event.getServiceState());

@@ -1,5 +1,6 @@
 package de.calette.mephisto3.util;
 
+import de.calette.mephisto3.ui.ControllablePanel;
 import javafx.animation.FadeTransition;
 import javafx.animation.Interpolator;
 import javafx.animation.ScaleTransition;
@@ -62,8 +63,8 @@ public class TransitionUtil {
     return fadeTransition;
   }
 
-  public static ScaleTransition createScaler(Node node, long duration, double factor) {
-    ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(duration), node);
+  public static ScaleTransition createScaler(Node node, double factor) {
+    ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(ControllablePanel.SCROLL_DURATION), node);
     scaleTransition.setToX(factor);
     scaleTransition.setToY(factor);
     scaleTransition.setAutoReverse(false);

@@ -76,12 +76,20 @@
    -fx-font-smoothing-type: gray;
 }
 
+.album-key {
+ -fx-font-size: 28px;
+ -fx-font-family: "Tahoma";
+ -fx-fill: #fff;
+ -fx-font-smoothing-type: gray;
+}
+
 .album {
  -fx-font-size: 16px;
  -fx-font-family: "Tahoma";
  -fx-text-fill: #fff;
  -fx-font-weight: bold;
  -fx-text-overrun: ellipsis;
+ -fx-font-smoothing-type: gray;
 }
 
 .artist {
@@ -89,6 +97,7 @@
  -fx-font-family: "Tahoma";
  -fx-text-fill: #fff;
  -fx-text-overrun: ellipsis;
+ -fx-font-smoothing-type: gray;
 }
 
 /**
