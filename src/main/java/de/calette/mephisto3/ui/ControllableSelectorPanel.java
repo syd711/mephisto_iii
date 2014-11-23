@@ -1,6 +1,5 @@
 package de.calette.mephisto3.ui;
 
-import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
@@ -13,17 +12,20 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Constructor;
 import java.util.List;
 
 /**
  * Super class for all regular controllable panels.
  */
 public abstract class ControllableSelectorPanel<T> extends HBox implements ControlListener {
+  private final static Logger LOG = LoggerFactory.getLogger(ControllableSelectorPanel.class);
 
   private Pane parent;
   private int scrollWidth;
@@ -32,7 +34,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
   private int itemCount;
   private boolean backSelection;
 
-  public ControllableSelectorPanel(double margin, Pane parent, boolean backSelection, int scrollWidth, List<T> models) {
+  public ControllableSelectorPanel(double margin, Pane parent, boolean backSelection, int scrollWidth, List<T> models, Class controlItemBoxClass) {
     super(margin);
     this.setOpacity(0);
     this.backSelection = backSelection;
@@ -54,7 +56,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
 
     //so lets create all children
     for (T model : models) {
-      ControllableItemPanel item = createControllableItemPanelFor(model);
+      ControllableItemPanel item = createControllableItemPanelFor(controlItemBoxClass, model);
       this.getChildren().add(item);
     }
 
@@ -173,9 +175,19 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
 
   /**
    * Factory method to be implemented by subclasses to determine the concrete panel.
+   * @param controlItemBoxClass name of the class to create for the item
    * @param model the user data model used for the ControllableItemPanel
    */
-  protected abstract ControllableItemPanel createControllableItemPanelFor(T model);
+  protected ControllableItemPanel createControllableItemPanelFor(Class controlItemBoxClass, T model) {
+    try {
+      final Class<?> modelClass = model.getClass();
+      Constructor constructor = controlItemBoxClass.getConstructor(new Class[]{modelClass});
+      return (ControllableItemPanel) constructor.newInstance(model);
+    } catch (Exception e) {
+      LOG.error("Error creating item panel: " + e.getMessage(), e);
+    }
+    return null;
+  }
 
   /**
    * Invoked then the hide transition is finished.
