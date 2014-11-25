@@ -2,6 +2,7 @@ package de.calette.mephisto3.ui;
 
 import callete.api.Callete;
 import callete.api.services.Service;
+import callete.api.services.music.model.AlbumCollection;
 import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
@@ -114,7 +115,7 @@ public class ServiceChooser implements ControlListener {
           public void handle(ActionEvent actionEvent) {
             overlay.getChildren().remove(scroller);
             ServiceController.getInstance().removeControlListener(ServiceChooser.this);
-            AlbumLetterSelector selector = new AlbumLetterSelector(ServiceChooser.this, albumSelectorCenterStack, Callete.getGoogleMusicService().getAlbumsByArtistLetter());
+            AlbumLetterSelector selector = new AlbumLetterSelector(ServiceChooser.this, albumSelectorCenterStack, (List<AlbumCollection>) playbackSelection.getUserData());
             selector.showPanel();
 
           }
@@ -230,8 +231,10 @@ public class ServiceChooser implements ControlListener {
       musicSelector.setOpacity(0);
 
       byArtist = new Text("Albums by Artist");
+      byArtist.setUserData(Callete.getGoogleMusicService().getAlbumsByArtistLetter());
       byArtist.getStyleClass().add("selector");
       byName = new Text("Albums by Name");
+      byName.setUserData(Callete.getGoogleMusicService().getAlbumByNameLetter());
       byName.getStyleClass().add("selector");
 
       musicSelector.getChildren().add(byArtist);

@@ -15,10 +15,12 @@ import java.util.List;
  */
 public class AlbumLetterSelector extends ControllableSelectorPanel<AlbumCollection> {
   private ServiceChooser serviceChooser;
+  private List<AlbumCollection> collections;
 
-  public AlbumLetterSelector(ServiceChooser serviceChooser, Pane parent, List<AlbumCollection> collection) {
-    super(0, parent, AlbumLetterBox.LETTER_BOX_WIDTH, collection, AlbumLetterBox.class);
+  public AlbumLetterSelector(ServiceChooser serviceChooser, Pane parent, List<AlbumCollection> collections) {
+    super(0, parent, AlbumLetterBox.LETTER_BOX_WIDTH, collections, AlbumLetterBox.class);
     setBackButton(0);
+    this.collections = collections;
     this.serviceChooser = serviceChooser;
   }
 
@@ -41,10 +43,10 @@ public class AlbumLetterSelector extends ControllableSelectorPanel<AlbumCollecti
   }
 
   @Override
-  protected void onHide(AlbumCollection userData) {
+  protected void onHide(AlbumCollection albumCollection) {
     //album selected
-    if (userData != null) {
-      final AlbumSlider albumSlider = new AlbumSlider(serviceChooser, getParentPane(), userData.getAlbums());
+    if (albumCollection != null) {
+      final AlbumSlider albumSlider = new AlbumSlider(serviceChooser, getParentPane(), collections, albumCollection);
       albumSlider.showPanel();
     }
     //back button selected

@@ -106,6 +106,8 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
       }
     });
     inFader.play();
+
+
   }
 
   /**

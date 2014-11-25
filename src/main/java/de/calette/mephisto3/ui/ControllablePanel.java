@@ -89,11 +89,6 @@ public abstract class ControllablePanel extends HBox {
     transitionQueue.play();
   }
 
-  public void setScrollWidth(int scrollWidth) {
-    this.scrollWidth = scrollWidth;
-  }
-
-
   public void pushed() {
 
   }
