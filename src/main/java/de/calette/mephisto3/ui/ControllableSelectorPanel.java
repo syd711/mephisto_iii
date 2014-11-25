@@ -100,14 +100,12 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     setPadding(new Insets(getTopPadding(), 0, 0, leftPadding));
 
     parent.getChildren().add(this);
+
+    //update panel view to the selected model
+    applyLastSelection();
+
     final ControllableItemPanel newSelection = (ControllableItemPanel) this.getChildren().get(index);
     newSelection.select();
-
-    if(selection != null) {
-      while(!selection.equals(getSelectedPanel().getUserData())) {
-        scroll(-scrollWidth);
-      }
-    }
 
     final FadeTransition inFader = TransitionUtil.createInFader(this);
     inFader.setOnFinished(new EventHandler<ActionEvent>() {
@@ -151,11 +149,10 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
       return;
     }
 
-    if(backTopPadding == -1) {
-      if(index == 1 && width > 0) {
-        updateSelection(width > 0);
-        return;
-      }
+    //ignore scrolling when back button is available and selected
+    if(backTopPadding == -1 && index == 1 && width > 0) {
+      updateSelection(width > 0);
+      return;
     }
 
     if(index != 0 || backTopPadding != -1) {
@@ -213,4 +210,20 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
    * @param userData the user data of the selected panel.
    */
   protected abstract void onHide(T userData);
+
+
+  /**
+   * Checks if a selection model was passed.
+   * If true, the selector scrolls silently to the position and updates the selection index.
+   */
+  private void applyLastSelection() {
+    if(selection != null) {
+      while(!selection.equals(getSelectedPanel().getUserData())) {
+        index++;
+      }
+      final TranslateTransition translateTransition = new TranslateTransition(Duration.millis(1), this);
+      translateTransition.setByX((index-1)*(-scrollWidth)); //TODO not sure if this applies without back button
+      translateTransition.play();
+    }
+  }
 }
