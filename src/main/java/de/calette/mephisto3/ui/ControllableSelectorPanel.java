@@ -34,6 +34,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
   private Class controlItemBoxClass;
   private List<T> models;
   private int backTopPadding = -1;
+  private T selection;
 
   public ControllableSelectorPanel(double margin, Pane parent, int scrollWidth, List<T> models, Class controlItemBoxClass) {
     super(margin);
@@ -47,6 +48,10 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
 
     this.itemCount = models.size();
     transitionQueue = new TransitionQueue(this);
+  }
+
+  public void setSelection(T selection) {
+    this.selection = selection;
   }
 
   public Pane getParentPane() {
@@ -98,6 +103,12 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     final ControllableItemPanel newSelection = (ControllableItemPanel) this.getChildren().get(index);
     newSelection.select();
 
+    if(selection != null) {
+      while(!selection.equals(getSelectedPanel().getUserData())) {
+        scroll(-scrollWidth);
+      }
+    }
+
     final FadeTransition inFader = TransitionUtil.createInFader(this);
     inFader.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
@@ -106,8 +117,6 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
       }
     });
     inFader.play();
-
-
   }
 
   /**
@@ -120,7 +129,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
       @Override
       public void handle(ActionEvent actionEvent) {
         parent.getChildren().remove(ControllableSelectorPanel.this);
-        T userData = (T) getSelection().getUserData();
+        T userData = (T) getSelectedPanel().getUserData();
         onHide(userData);
       }
     });
@@ -130,7 +139,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
   /**
    * Returns the selected ControllableItemPanel instance.
    */
-  public ControllableItemPanel getSelection() {
+  public ControllableItemPanel getSelectedPanel() {
     return (ControllableItemPanel) this.getChildren().get(index);
   }
 
@@ -159,8 +168,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
                           public void run() {
                             transitionQueue.play();
                           }
-                        }
-      );
+                        });
     }
 
     updateSelection(width > 0);

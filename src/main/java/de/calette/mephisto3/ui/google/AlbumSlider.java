@@ -14,10 +14,12 @@ import java.util.List;
 public class AlbumSlider extends ControllableSelectorPanel<Album> {
   private ServiceChooser serviceChooser;
   private List<AlbumCollection> collections;
+  private AlbumCollection albumCollection;
 
   public AlbumSlider(ServiceChooser serviceChooser, Pane parent, List<AlbumCollection> collections, AlbumCollection albumCollection) {
     super(20, parent, AlbumBox.COVER_WIDTH + 20, albumCollection.getAlbums(), AlbumBox.class);
     setBackButton(70);
+    this.albumCollection = albumCollection;
     this.collections = collections;
     this.serviceChooser = serviceChooser;
   }
@@ -25,6 +27,7 @@ public class AlbumSlider extends ControllableSelectorPanel<Album> {
   @Override
   protected void onHide(Album selection) {
     AlbumLetterSelector selector = new AlbumLetterSelector(serviceChooser, getParentPane(), collections);
+    selector.setSelection(albumCollection);
     selector.showPanel();
   }
 }
