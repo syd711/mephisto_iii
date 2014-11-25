@@ -15,11 +15,11 @@ public abstract class ControllableItemPanel extends VBox {
   }
 
   public void deselect() {
-    TransitionUtil.createScaler(this, 1.0).play();
+    TransitionUtil.createScaler(getScalingNode(), 1.0).play();
   }
 
   public void select() {
-    TransitionUtil.createScaler(this, getScaleFactor()).play();
+    TransitionUtil.createScaler(getScalingNode(), getScaleFactor()).play();
   }
 
 

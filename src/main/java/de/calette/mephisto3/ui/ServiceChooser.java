@@ -21,6 +21,7 @@ import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
@@ -53,12 +54,15 @@ public class ServiceChooser implements ControlListener {
   private Text byArtist;
   private Text byName;
   private Text playbackSelection;
+  private StackPane albumSelectorCenterStack;
 
   public ServiceChooser(final Center center) {
     this.center = center;
 
     overlay = new HBox();
     overlay.setOpacity(0);
+    this.albumSelectorCenterStack = new StackPane();
+    overlay.getChildren().add(albumSelectorCenterStack);
     center.stackPane.getChildren().add(overlay);
 
     overlay.setAlignment(Pos.TOP_CENTER);
@@ -66,12 +70,10 @@ public class ServiceChooser implements ControlListener {
     overlay.setMinWidth(Mephisto3.WIDTH);
     overlay.setMinHeight(80);
 
-    scroller.setPadding(new Insets(0, 0, 80, 480));
+    scroller.setPadding(new Insets(0, 0, 80, 460));
     scroller.setAlignment(Pos.CENTER);
 
     transitionQueue = new TransitionQueue(scroller);
-
-    overlay.getChildren().add(scroller);
 
     scrollTransition = new TranslateTransition(Duration.millis(ControllablePanel.SCROLL_DURATION), scroller);
     scrollTransition.setAutoReverse(false);
@@ -112,8 +114,8 @@ public class ServiceChooser implements ControlListener {
           public void handle(ActionEvent actionEvent) {
             overlay.getChildren().remove(scroller);
             ServiceController.getInstance().removeControlListener(ServiceChooser.this);
-            AlbumLetterSelector selector = new AlbumLetterSelector(overlay, Callete.getGoogleMusicService().getAlbumsByArtistLetter());
-            selector.showLetterSelector();
+            AlbumLetterSelector selector = new AlbumLetterSelector(ServiceChooser.this, albumSelectorCenterStack, Callete.getGoogleMusicService().getAlbumsByArtistLetter());
+            selector.showPanel();
 
           }
         });
@@ -172,6 +174,7 @@ public class ServiceChooser implements ControlListener {
    * Display method of the whole chooser, updates the control.
    */
   public void showServiceChooser() {
+    overlay.getChildren().add(scroller);
     showFader.play();
     center.activeControlPanel.hidePanel();
     ServiceController.getInstance().addControlListener(this);
@@ -215,6 +218,7 @@ public class ServiceChooser implements ControlListener {
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
+        overlay.getChildren().remove(scroller);
         ServiceController.getInstance().switchService(service);
       }
     });

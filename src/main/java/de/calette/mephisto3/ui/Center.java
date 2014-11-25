@@ -54,9 +54,6 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
 
   @Override
   public void controlEvent(ServiceControlEvent event) {
-    if(ServiceController.getInstance().getServiceState().getModels().isEmpty()) {
-      return;
-    }
     if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
       serviceChooser.showServiceChooser();
     }

@@ -1,41 +1,36 @@
 package de.calette.mephisto3.ui.google;
 
-import callete.api.services.music.model.Album;
-import de.calette.mephisto3.util.TransitionUtil;
+import callete.api.services.music.model.AlbumCollection;
+import de.calette.mephisto3.ui.ControllableItemPanel;
 import javafx.geometry.Pos;
-import javafx.scene.layout.VBox;
+import javafx.scene.Node;
 import javafx.scene.text.Text;
-
-import java.util.List;
 
 /**
  * The box that is shown for each letter.
  */
-public class AlbumLetterBox extends VBox {
+public class AlbumLetterBox extends ControllableItemPanel {
   public final static int LETTER_BOX_WIDTH = 40;
 
   private Text text;
-  private List<Album> albums;
 
-  public AlbumLetterBox(String key, List<Album> albums) {
-    this.albums = albums;
-    setUserData(key);
+  public AlbumLetterBox(AlbumCollection collection) {
+    super(0, collection);
+
     setMinWidth(LETTER_BOX_WIDTH);
     setAlignment(Pos.TOP_CENTER);
-    text = new Text(key);
+    text = new Text(collection.getLetter());
     text.getStyleClass().add("album-key");
     getChildren().add(text);
   }
 
-  public void deselect() {
-    TransitionUtil.createScaler(text, 1.0).play();
+  @Override
+  protected double getScaleFactor() {
+    return 1.3;
   }
 
-  public void select() {
-    TransitionUtil.createScaler(text, 1.25).play();
-  }
-
-  public List<Album> getAlbums() {
-    return albums;
+  @Override
+  protected Node getScalingNode() {
+    return text;
   }
 }

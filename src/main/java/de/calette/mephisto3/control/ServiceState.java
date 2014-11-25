@@ -12,14 +12,14 @@ import java.util.Map;
  */
 public class ServiceState {
   private Service service;
-  private List<? extends ServiceModel> models;
+  private List<?> models;
   private Map<Service, Integer> serviceIndex = new HashMap<>();
 
-  public List<? extends ServiceModel> getModels() {
+  public List<?> getModels() {
     return models;
   }
 
-  public void setModels(List<? extends ServiceModel> models) {
+  public void setModels(List<?> models) {
     this.models = models;
   }
 
@@ -40,13 +40,6 @@ public class ServiceState {
    */
   public int getServiceIndex() {
     return serviceIndex.get(service);
-  }
-
-  /**
-   * Returns the model for the active index.
-   */
-  public ServiceModel getActiveServiceModel() {
-    return models.get(getServiceIndex());
   }
 
   /**

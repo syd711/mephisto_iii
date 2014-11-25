@@ -3,7 +3,6 @@ package de.calette.mephisto3.ui;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
-import de.calette.mephisto3.ui.google.AlbumBox;
 import de.calette.mephisto3.util.TransitionQueue;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
@@ -32,41 +31,37 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
   private TransitionQueue transitionQueue;
   private int index;
   private int itemCount;
-  private boolean backSelection;
+  private Class controlItemBoxClass;
+  private List<T> models;
+  private int backTopPadding = -1;
 
-  public ControllableSelectorPanel(double margin, Pane parent, boolean backSelection, int scrollWidth, List<T> models, Class controlItemBoxClass) {
+  public ControllableSelectorPanel(double margin, Pane parent, int scrollWidth, List<T> models, Class controlItemBoxClass) {
     super(margin);
     this.setOpacity(0);
-    this.backSelection = backSelection;
-    this.itemCount = models.size();
-    if(backSelection) {
-      index = 1;
-      itemCount++;
-    }
+
+    this.models = models;
+    this.controlItemBoxClass = controlItemBoxClass;
     this.parent = parent;
     this.scrollWidth = scrollWidth;
     this.parent = parent;
+
+    this.itemCount = models.size();
     transitionQueue = new TransitionQueue(this);
-
-    //add back button if enabled
-    if(backSelection) {
-      AlbumBox backButton = new AlbumBox(null);
-      getChildren().add(backButton);
-    }
-
-    //so lets create all children
-    for (T model : models) {
-      ControllableItemPanel item = createControllableItemPanelFor(controlItemBoxClass, model);
-      this.getChildren().add(item);
-    }
-
-    //set the initial left padding to focus the first item
-    double leftPadding = itemCount*scrollWidth-scrollWidth-scrollWidth-scrollWidth;
-    setPadding(new Insets(20, 0, 0, leftPadding));
   }
 
   public Pane getParentPane() {
     return parent;
+  }
+
+  protected void setBackButton(int backTopPadding) {
+    BackButtonBox backButton = new BackButtonBox(scrollWidth, backTopPadding);
+    getChildren().add(backButton);
+    index = 1;
+    itemCount++;
+  }
+
+  protected int getTopPadding() {
+    return 20;
   }
 
   @Override
@@ -86,6 +81,19 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
    * Shows the panel, plays the onShow transitions, adds the control event listener.
    */
   public void showPanel() {
+    //so lets create all children
+    for (T model : models) {
+      ControllableItemPanel item = createControllableItemPanelFor(controlItemBoxClass, model);
+      this.getChildren().add(item);
+    }
+
+    //set the initial left padding to focus the first item
+    double leftPadding = itemCount*scrollWidth-scrollWidth-scrollWidth-scrollWidth;
+    if(backTopPadding != -1) {
+      leftPadding = itemCount*scrollWidth-scrollWidth;
+    }
+    setPadding(new Insets(getTopPadding(), 0, 0, leftPadding));
+
     parent.getChildren().add(this);
     final ControllableItemPanel newSelection = (ControllableItemPanel) this.getChildren().get(index);
     newSelection.select();
@@ -110,12 +118,12 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
       @Override
       public void handle(ActionEvent actionEvent) {
         parent.getChildren().remove(ControllableSelectorPanel.this);
-        onHide(getSelection().getUserData());
+        T userData = (T) getSelection().getUserData();
+        onHide(userData);
       }
     });
     outFader.play();
   }
-
 
   /**
    * Returns the selected ControllableItemPanel instance.
@@ -132,14 +140,14 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
       return;
     }
 
-    if(backSelection) {
+    if(backTopPadding == -1) {
       if(index == 1 && width > 0) {
         updateSelection(width > 0);
         return;
       }
     }
 
-    if(index != 0) {
+    if(index != 0 || backTopPadding != -1) {
       final TranslateTransition translateTransition = new TranslateTransition(Duration.millis(50), this);
       translateTransition.setByX(width);
       transitionQueue.addTransition(translateTransition);
@@ -194,5 +202,5 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
    * The user data the current selection was build with is passed here.
    * @param userData the user data of the selected panel.
    */
-  protected abstract void onHide(Object userData);
+  protected abstract void onHide(T userData);
 }

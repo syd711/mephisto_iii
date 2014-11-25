@@ -62,6 +62,9 @@ public abstract class ControllablePanel extends HBox {
   }
 
   public void rotatedLeft(ServiceState serviceState) {
+    if(serviceState.getModels().isEmpty()) {
+      return;
+    }
     ServiceController.getInstance().setControlEnabled(false);
     int offset = scrollWidth;
     if(serviceState.getServiceIndex() == serviceState.getModels().size()-1) {
@@ -73,6 +76,9 @@ public abstract class ControllablePanel extends HBox {
   }
 
   public void rotatedRight(ServiceState serviceState) {
+    if(serviceState.getModels().isEmpty()) {
+      return;
+    }
     ServiceController.getInstance().setControlEnabled(false);
     int offset = -scrollWidth;
     if(serviceState.getServiceIndex() == 0) {
@@ -97,6 +103,8 @@ public abstract class ControllablePanel extends HBox {
   }
 
   public void hidePanel() {
-    this.outFader.play();
+    if(this.getOpacity() != 0) {
+      this.outFader.play();
+    }
   }
 }
