@@ -1,16 +1,14 @@
 package de.calette.mephisto3.util;
 
 import de.calette.mephisto3.ui.ControllablePanel;
-import javafx.animation.FadeTransition;
-import javafx.animation.Interpolator;
-import javafx.animation.ScaleTransition;
-import javafx.animation.Transition;
+import javafx.animation.*;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
 /**
@@ -69,6 +67,45 @@ public class TransitionUtil {
     fadeTransition.setToValue(1);
     applyDefaults(node, fadeTransition);
     return fadeTransition;
+  }
+
+  /**
+   * Expands the width of the given Pane to the target width.
+   * @param node the pane to expand
+   * @param offset the offset width of the pane
+   */
+  public static Transition createMaxWidth(final Pane node, final int originalWidth, final int offset, final boolean increase) {
+    final Transition transition = new Transition() {
+      {
+        setCycleDuration(Duration.millis(200));
+      }
+      @Override
+      protected void interpolate(double v) {
+        double percent = v*100;
+        double newWidthOffset = offset*percent/100;
+
+        if(increase) {
+          node.setMinWidth(originalWidth+newWidthOffset);
+        }
+        else {
+          node.setMinWidth(originalWidth-newWidthOffset);
+        }
+      }
+    };
+    transition.setAutoReverse(false);
+    transition.setInterpolator(Interpolator.EASE_BOTH);
+    applyDefaults(node, transition);
+    return transition;
+  }
+
+  /**
+   * Translate transition used for scrolling
+   */
+  public static TranslateTransition createTranslateTransition(Node node, long duration, int width) {
+    TranslateTransition translateTransition = new TranslateTransition(Duration.millis(duration), node);
+    translateTransition.setByX(width);
+    applyDefaults(node, translateTransition);
+    return translateTransition;
   }
 
   /**

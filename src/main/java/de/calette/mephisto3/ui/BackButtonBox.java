@@ -10,13 +10,13 @@ import javafx.scene.canvas.Canvas;
 /**
  * Used to display a back button
  */
-public class BackButtonBox extends ControllableItemPanel {
+public class BackButtonBox extends ControllableVBoxItemPanelBase {
 
   private double scaleFactor = 1.05;
   private Canvas backButton;
 
   public BackButtonBox(int width, int backTopPadding) {
-    super(10, null);
+    super(10, null, null);
     setMinWidth(width);
     setPadding(new Insets(backTopPadding, 0, 0, 0));
     setAlignment(Pos.BASELINE_RIGHT);
@@ -30,12 +30,12 @@ public class BackButtonBox extends ControllableItemPanel {
   }
 
   @Override
-  protected Node getScalingNode() {
+  public Node getScalingNode() {
     return backButton;
   }
 
   @Override
-  protected double getScaleFactor() {
+  public double getScaleFactor() {
     return scaleFactor;
   }
 }

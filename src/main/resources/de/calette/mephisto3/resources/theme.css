@@ -92,6 +92,32 @@
  -fx-font-smoothing-type: gray;
 }
 
+.track {
+ -fx-font-size: 16px;
+ -fx-font-family: "Tahoma";
+ -fx-text-fill: #fff;
+ -fx-text-overrun: ellipsis;
+ -fx-font-smoothing-type: gray;
+}
+
+.track-bottom {
+ -fx-font-size: 16px;
+ -fx-font-family: "Tahoma";
+ -fx-text-overrun: ellipsis;
+ -fx-font-smoothing-type: gray;
+ -fx-text-fill: linear-gradient(white, transparent);
+}
+
+.track-selection {
+ -fx-background-color: rgba(60, 30, 60, 0.9); -fx-background-radius: 0;
+}
+
+
+.cover-canvas {
+ -fx-border-width: 1;
+ -fx-border-color: white;
+}
+
 .artist {
  -fx-font-size: 16px;
  -fx-font-family: "Tahoma";

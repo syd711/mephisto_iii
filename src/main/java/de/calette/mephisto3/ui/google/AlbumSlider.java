@@ -2,6 +2,7 @@ package de.calette.mephisto3.ui.google;
 
 import callete.api.services.music.model.Album;
 import callete.api.services.music.model.AlbumCollection;
+import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.ui.ControllableSelectorPanel;
 import de.calette.mephisto3.ui.ServiceChooser;
 import javafx.scene.layout.Pane;
@@ -22,6 +23,18 @@ public class AlbumSlider extends ControllableSelectorPanel<Album> {
     this.albumCollection = albumCollection;
     this.collections = collections;
     this.serviceChooser = serviceChooser;
+  }
+
+  @Override
+  public void hidePanel() {
+    if(getSelectedPanel().getUserData() == null) {
+      super.hidePanel();
+    }
+    else {
+      AlbumBox albumBox = (AlbumBox) getSelectedPanel();
+      albumBox.switchToDetailsMode();
+      ServiceController.getInstance().removeControlListener(this);
+    }
   }
 
   @Override

@@ -1,37 +1,31 @@
 package de.calette.mephisto3.ui;
 
-import de.calette.mephisto3.util.TransitionUtil;
 import javafx.scene.Node;
-import javafx.scene.layout.VBox;
 
 /**
- * Class to be extended from nodes that are used for ControllableSelectorPanels.
+ * Common interface for panes that are used as controllable items.
  */
-public abstract class ControllableItemPanel extends VBox {
+public interface ControllableItemPanel<T> {
 
-  public ControllableItemPanel(double margins, Object model) {
-    super(margins);
-    this.setUserData(model);
-  }
+  void deselect();
 
-  public void deselect() {
-    TransitionUtil.createScaler(getScalingNode(), 1.0).play();
-  }
-
-  public void select() {
-    TransitionUtil.createScaler(getScalingNode(), getScaleFactor()).play();
-  }
+  void select();
 
 
   /**
    * Returns the factor used during selection scaling.
    */
-  protected abstract double getScaleFactor();
+  double getScaleFactor();
 
   /**
    * Returns the component to scale, which may differ from this component.
    */
-  protected Node getScalingNode() {
-    return this;
-  }
+  Node getScalingNode();
+
+  /**
+   * Delegation used for the node's user data.
+   * @return
+   */
+  T getUserData();
+
 }

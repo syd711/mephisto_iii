@@ -76,8 +76,7 @@ public class ServiceChooser implements ControlListener {
 
     transitionQueue = new TransitionQueue(scroller);
 
-    scrollTransition = new TranslateTransition(Duration.millis(ControllablePanel.SCROLL_DURATION), scroller);
-    scrollTransition.setAutoReverse(false);
+    scrollTransition = TransitionUtil.createTranslateTransition(scroller, ControllablePanel.SCROLL_DURATION, 0);
 
     showFader = TransitionUtil.createInFader(overlay, DISPLAY_DELAY);
     hideFader = TransitionUtil.createOutFader(overlay, DISPLAY_DELAY);

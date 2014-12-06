@@ -41,8 +41,7 @@ public abstract class ControllablePanel extends HBox {
     this.models = models;
     transitionQueue = new TransitionQueue(this);
 
-    scrollTransition = new TranslateTransition(Duration.millis(SCROLL_DURATION), this);
-    scrollTransition.setAutoReverse(false);
+    scrollTransition = TransitionUtil.createTranslateTransition(this, SCROLL_DURATION, 0);
     scrollTransition.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent actionEvent) {

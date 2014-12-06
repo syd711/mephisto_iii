@@ -6,11 +6,13 @@ import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.util.TransitionQueue;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
+import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
@@ -89,7 +91,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     //so lets create all children
     for (T model : models) {
       ControllableItemPanel item = createControllableItemPanelFor(controlItemBoxClass, model);
-      this.getChildren().add(item);
+      this.getChildren().add((Node)item);
     }
 
     //set the initial left padding to focus the first item
@@ -156,8 +158,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     }
 
     if(index != 0 || backTopPadding != -1) {
-      final TranslateTransition translateTransition = new TranslateTransition(Duration.millis(50), this);
-      translateTransition.setByX(width);
+      Transition translateTransition = TransitionUtil.createTranslateTransition(this, 50, width);
       transitionQueue.addTransition(translateTransition);
 
       Platform.runLater(new Runnable() {
@@ -196,10 +197,10 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
   protected ControllableItemPanel createControllableItemPanelFor(Class controlItemBoxClass, T model) {
     try {
       final Class<?> modelClass = model.getClass();
-      Constructor constructor = controlItemBoxClass.getConstructor(new Class[]{modelClass});
-      return (ControllableItemPanel) constructor.newInstance(model);
+      Constructor constructor = controlItemBoxClass.getConstructor(new Class[]{ControllableSelectorPanel.class, modelClass});
+      return (ControllableItemPanel) constructor.newInstance(this, model);
     } catch (Exception e) {
-      LOG.error("Error creating item panel: " + e.getMessage(), e);
+      LOG.error("Error creating item panel for " + controlItemBoxClass + ": " + e.getMessage(), e);
     }
     return null;
   }
@@ -221,8 +222,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
       while(!selection.equals(getSelectedPanel().getUserData())) {
         index++;
       }
-      final TranslateTransition translateTransition = new TranslateTransition(Duration.millis(1), this);
-      translateTransition.setByX((index-1)*(-scrollWidth)); //TODO not sure if this applies without back button
+      final TranslateTransition translateTransition = TransitionUtil.createTranslateTransition(this, 1, (index-1)*(-scrollWidth));
       translateTransition.play();
     }
   }
