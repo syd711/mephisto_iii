@@ -19,13 +19,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.CacheHint;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -76,7 +74,7 @@ public class ServiceChooser implements ControlListener {
 
     transitionQueue = new TransitionQueue(scroller);
 
-    scrollTransition = TransitionUtil.createTranslateTransition(scroller, ControllablePanel.SCROLL_DURATION, 0);
+    scrollTransition = TransitionUtil.createTranslateByXTransition(scroller, ControllablePanel.SCROLL_DURATION, 0);
 
     showFader = TransitionUtil.createInFader(overlay, DISPLAY_DELAY);
     hideFader = TransitionUtil.createOutFader(overlay, DISPLAY_DELAY);

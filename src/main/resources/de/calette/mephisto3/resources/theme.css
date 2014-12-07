@@ -92,20 +92,17 @@
  -fx-font-smoothing-type: gray;
 }
 
+.album-box {
+ /*-fx-background-color: rgba(60, 30, 60, 0.5);*/
+}
+
 .track {
  -fx-font-size: 16px;
  -fx-font-family: "Tahoma";
  -fx-text-fill: #fff;
+ -fx-fill: #fff;
  -fx-text-overrun: ellipsis;
  -fx-font-smoothing-type: gray;
-}
-
-.track-bottom {
- -fx-font-size: 16px;
- -fx-font-family: "Tahoma";
- -fx-text-overrun: ellipsis;
- -fx-font-smoothing-type: gray;
- -fx-text-fill: linear-gradient(white, transparent);
 }
 
 .track-selection {

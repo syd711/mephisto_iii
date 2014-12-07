@@ -15,7 +15,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +36,11 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
   private List<T> models;
   private int backTopPadding = -1;
   private T selection;
+  private double margin;
 
   public ControllableSelectorPanel(double margin, Pane parent, int scrollWidth, List<T> models, Class controlItemBoxClass) {
     super(margin);
+    this.margin = margin;
     this.setOpacity(0);
 
     this.models = models;
@@ -95,7 +96,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     }
 
     //set the initial left padding to focus the first item
-    double leftPadding = itemCount*scrollWidth-scrollWidth-scrollWidth-scrollWidth;
+    double leftPadding = itemCount*scrollWidth-scrollWidth-scrollWidth-scrollWidth-this.margin;
     if(backTopPadding != -1) {
       leftPadding = itemCount*scrollWidth-scrollWidth;
     }
@@ -158,7 +159,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     }
 
     if(index != 0 || backTopPadding != -1) {
-      Transition translateTransition = TransitionUtil.createTranslateTransition(this, 50, width);
+      Transition translateTransition = TransitionUtil.createTranslateByXTransition(this, 50, width);
       transitionQueue.addTransition(translateTransition);
 
       Platform.runLater(new Runnable() {
@@ -222,7 +223,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
       while(!selection.equals(getSelectedPanel().getUserData())) {
         index++;
       }
-      final TranslateTransition translateTransition = TransitionUtil.createTranslateTransition(this, 1, (index-1)*(-scrollWidth));
+      final TranslateTransition translateTransition = TransitionUtil.createTranslateByXTransition(this, 1, (index - 1) * (-scrollWidth));
       translateTransition.play();
     }
   }

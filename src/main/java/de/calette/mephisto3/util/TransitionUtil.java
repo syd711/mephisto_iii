@@ -101,9 +101,19 @@ public class TransitionUtil {
   /**
    * Translate transition used for scrolling
    */
-  public static TranslateTransition createTranslateTransition(Node node, long duration, int width) {
+  public static TranslateTransition createTranslateByXTransition(Node node, long duration, int width) {
     TranslateTransition translateTransition = new TranslateTransition(Duration.millis(duration), node);
     translateTransition.setByX(width);
+    applyDefaults(node, translateTransition);
+    return translateTransition;
+  }
+
+  /**
+   * Translate transition used for scrolling
+   */
+  public static TranslateTransition createTranslateByYTransition(Node node, long duration, int height) {
+    TranslateTransition translateTransition = new TranslateTransition(Duration.millis(duration), node);
+    translateTransition.setByY(height);
     applyDefaults(node, translateTransition);
     return translateTransition;
   }

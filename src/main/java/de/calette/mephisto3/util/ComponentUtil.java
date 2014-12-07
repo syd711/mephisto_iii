@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 
 /**
  */
@@ -24,6 +25,13 @@ public class ComponentUtil {
 
   public static Label createLabel(Object label, String cssClass, Pane parent) {
     Label l = new Label(String.valueOf(label));
+    l.getStyleClass().add(cssClass);
+    parent.getChildren().add(l);
+    return l;
+  }
+
+  public static Text createText(Object label, String cssClass, Pane parent) {
+    Text l = new Text(String.valueOf(label));
     l.getStyleClass().add(cssClass);
     parent.getChildren().add(l);
     return l;

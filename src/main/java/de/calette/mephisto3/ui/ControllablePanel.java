@@ -10,9 +10,7 @@ import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.CacheHint;
 import javafx.scene.layout.HBox;
-import javafx.util.Duration;
 
 import java.util.List;
 
@@ -41,7 +39,7 @@ public abstract class ControllablePanel extends HBox {
     this.models = models;
     transitionQueue = new TransitionQueue(this);
 
-    scrollTransition = TransitionUtil.createTranslateTransition(this, SCROLL_DURATION, 0);
+    scrollTransition = TransitionUtil.createTranslateByXTransition(this, SCROLL_DURATION, 0);
     scrollTransition.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent actionEvent) {
