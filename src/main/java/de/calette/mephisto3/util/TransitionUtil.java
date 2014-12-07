@@ -74,7 +74,7 @@ public class TransitionUtil {
    * @param node the pane to expand
    * @param offset the offset width of the pane
    */
-  public static Transition createMaxWidth(final Pane node, final int originalWidth, final int offset, final boolean increase) {
+  public static Transition createMaxWidthTransition(final Pane node, final int originalWidth, final int offset, final boolean increase) {
     final Transition transition = new Transition() {
       {
         setCycleDuration(Duration.millis(200));

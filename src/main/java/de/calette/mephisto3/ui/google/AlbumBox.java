@@ -10,8 +10,6 @@ import de.calette.mephisto3.resources.menu.MenuResourceLoader;
 import de.calette.mephisto3.ui.ControllableHBoxItemPanelBase;
 import de.calette.mephisto3.ui.ControllableSelectorPanel;
 import de.calette.mephisto3.util.ComponentUtil;
-import de.calette.mephisto3.util.TransitionQueue;
-import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
@@ -28,6 +26,8 @@ import javafx.scene.layout.VBox;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
+
+import static de.calette.mephisto3.util.TransitionUtil.*;
 
 /**
  * Pane this displays the album cover, name and artist for the slider.
@@ -95,14 +95,14 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
    */
   public void switchToDetailsMode() {
     //scale no normal size: remove the selection highlighting
-    TransitionUtil.createScaler(this, 1).play();
+    createScaler(this, 1).play();
     //expand panel to full width
-    TransitionUtil.createMaxWidth(this, COVER_WIDTH, TRACKS_BOX_WIDTH, true).play();
+    createMaxWidthTransition(this, COVER_WIDTH, TRACKS_BOX_WIDTH, true).play();
     //add control listener to this panel
     ServiceController.getInstance().addControlListener(this);
 
     //hide cover labels
-    final FadeTransition outFader = TransitionUtil.createOutFader(albumLabelBox);
+    final FadeTransition outFader = createOutFader(albumLabelBox);
     outFader.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent actionEvent) {
@@ -117,11 +117,11 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         if (!StringUtils.isEmpty(getModel().getGenre())) {
           ComponentUtil.createLabel(getModel().getGenre(), "album", albumLabelBox);
         }
-        TransitionUtil.createInFader(albumLabelBox).play();
+        createInFader(albumLabelBox).play();
 
         createTracksBox();
         getChildren().add(tracksBox);
-        TransitionUtil.createInFader(tracksBox).play();
+        createInFader(tracksBox).play();
       }
     });
     outFader.play();
@@ -213,9 +213,9 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         //scroll down
         boolean doScroll = getModel().getSize() - newIndex >= 5;
         if (doScroll) {
-          TransitionUtil.createInFader(tracksBox.getChildren().get(newIndex + 4)).play();
-          TransitionUtil.createOutFader(tracksBox.getChildren().get(newIndex - SCROLL_INDEX)).play();
-          TransitionUtil.createTranslateByYTransition(tracksBox, 200, -TRACK_ITEM_HEIGHT).play();
+          createInFader(tracksBox.getChildren().get(newIndex + 4)).play();
+          createOutFader(tracksBox.getChildren().get(newIndex - SCROLL_INDEX)).play();
+          createTranslateByYTransition(tracksBox, 200, -TRACK_ITEM_HEIGHT).play();
         }
 
       }
@@ -223,9 +223,9 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         //scroll up
         boolean doScroll = getModel().getSize() - newIndex > 5;
         if (doScroll) {
-          TransitionUtil.createOutFader(tracksBox.getChildren().get(oldIndex + 4)).play();
-          TransitionUtil.createInFader(tracksBox.getChildren().get(oldIndex - SCROLL_INDEX)).play();
-          TransitionUtil.createTranslateByYTransition(tracksBox, 200, TRACK_ITEM_HEIGHT).play();
+          createOutFader(tracksBox.getChildren().get(oldIndex + 4)).play();
+          createInFader(tracksBox.getChildren().get(oldIndex - SCROLL_INDEX)).play();
+          createTranslateByYTransition(tracksBox, 200, TRACK_ITEM_HEIGHT).play();
         }
       }
     }
@@ -234,13 +234,13 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
   private void switchToSliderMode() {
     ServiceController.getInstance().removeControlListener(this);
 
-    final FadeTransition outFader = TransitionUtil.createOutFader(tracksBox);
+    final FadeTransition outFader = createOutFader(tracksBox);
     outFader.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent actionEvent) {
-        final ScaleTransition scaler = TransitionUtil.createScaler(AlbumBox.this, scaleFactor);
-        final Transition maxWidth = TransitionUtil.createMaxWidth(AlbumBox.this, COVER_WIDTH + TRACKS_BOX_WIDTH, TRACKS_BOX_WIDTH, false);
-        final FadeTransition labelFader = TransitionUtil.createOutFader(albumLabelBox);
+        final ScaleTransition scaler = createScaler(AlbumBox.this, scaleFactor);
+        final Transition maxWidth = createMaxWidthTransition(AlbumBox.this, COVER_WIDTH + TRACKS_BOX_WIDTH, TRACKS_BOX_WIDTH, false);
+        final FadeTransition labelFader = createOutFader(albumLabelBox);
 
         ParallelTransition pt = new ParallelTransition(scaler, maxWidth, labelFader);
         pt.setOnFinished(new EventHandler<ActionEvent>() {
@@ -254,7 +254,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
             tracksBox.getChildren().clear();
             AlbumBox.this.getChildren().remove(tracksBox);
 
-            TransitionUtil.createInFader(albumLabelBox).play();
+            createInFader(albumLabelBox).play();
             ServiceController.getInstance().addControlListener(getParentControlPanel());
           }
         });
