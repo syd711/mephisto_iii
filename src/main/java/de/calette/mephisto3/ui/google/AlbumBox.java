@@ -10,10 +10,7 @@ import de.calette.mephisto3.resources.menu.MenuResourceLoader;
 import de.calette.mephisto3.ui.ControllableHBoxItemPanelBase;
 import de.calette.mephisto3.ui.ControllableSelectorPanel;
 import de.calette.mephisto3.util.ComponentUtil;
-import javafx.animation.FadeTransition;
-import javafx.animation.ParallelTransition;
-import javafx.animation.ScaleTransition;
-import javafx.animation.Transition;
+import javafx.animation.*;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -213,9 +210,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         //scroll down
         boolean doScroll = getModel().getSize() - newIndex >= 5;
         if (doScroll) {
-          createInFader(tracksBox.getChildren().get(newIndex + 4)).play();
-          createOutFader(tracksBox.getChildren().get(newIndex - SCROLL_INDEX)).play();
-          createTranslateByYTransition(tracksBox, 200, -TRACK_ITEM_HEIGHT).play();
+          scroll(newIndex + 4, newIndex - SCROLL_INDEX, -TRACK_ITEM_HEIGHT);
         }
 
       }
@@ -223,12 +218,25 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         //scroll up
         boolean doScroll = getModel().getSize() - newIndex > 5;
         if (doScroll) {
-          createOutFader(tracksBox.getChildren().get(oldIndex + 4)).play();
-          createInFader(tracksBox.getChildren().get(oldIndex - SCROLL_INDEX)).play();
-          createTranslateByYTransition(tracksBox, 200, TRACK_ITEM_HEIGHT).play();
+          scroll(oldIndex - SCROLL_INDEX, oldIndex + 4, TRACK_ITEM_HEIGHT);
         }
       }
     }
+  }
+
+  private void scroll(int inFaderIndex, int outFaderIndex, int scrollWidth) {
+    ServiceController.getInstance().setControlEnabled(false);
+    final FadeTransition outFader = createOutFader(tracksBox.getChildren().get(outFaderIndex));
+    final FadeTransition inFader = createInFader(tracksBox.getChildren().get(inFaderIndex));
+    final TranslateTransition translateByYTransition = createTranslateByYTransition(tracksBox, 200, scrollWidth);
+    ParallelTransition pt = new ParallelTransition(outFader, inFader, translateByYTransition);
+    pt.setOnFinished(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent actionEvent) {
+        ServiceController.getInstance().setControlEnabled(true);
+      }
+    });
+    pt.play();
   }
 
   private void switchToSliderMode() {
