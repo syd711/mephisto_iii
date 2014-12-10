@@ -109,6 +109,10 @@
  -fx-background-color: rgba(60, 30, 60, 0.9); -fx-background-radius: 0;
 }
 
+.track-active {
+ -fx-background-color: rgba(60, 30, 60, 0.9); -fx-background-radius: 0;
+}
+
 
 .cover-canvas {
  -fx-border-width: 1;
@@ -169,7 +173,7 @@
    -fx-font-smoothing-type: gray;
 }
 .stream-title {
-   -fx-font-size: 30px;
+   -fx-font-size: 40px;
    -fx-font-family: "Tahoma";
    -fx-text-fill: #fff;
    -fx-text-overrun: ellipsis;

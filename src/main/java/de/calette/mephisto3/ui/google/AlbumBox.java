@@ -1,7 +1,13 @@
 package de.calette.mephisto3.ui.google;
 
+import callete.api.Callete;
 import callete.api.services.music.model.Album;
+import callete.api.services.music.model.PlaylistItem;
 import callete.api.services.music.model.Song;
+import callete.api.services.music.player.PlaybackChangeEvent;
+import callete.api.services.music.player.PlaybackChangeEventListener;
+import callete.api.services.music.player.PlaylistChangeEvent;
+import callete.api.services.music.player.PlaylistChangeListener;
 import callete.api.util.ImageCache;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
@@ -10,7 +16,9 @@ import de.calette.mephisto3.resources.menu.MenuResourceLoader;
 import de.calette.mephisto3.ui.ControllableHBoxItemPanelBase;
 import de.calette.mephisto3.ui.ControllableSelectorPanel;
 import de.calette.mephisto3.util.ComponentUtil;
+import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.*;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -21,6 +29,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -29,7 +39,9 @@ import static de.calette.mephisto3.util.TransitionUtil.*;
 /**
  * Pane this displays the album cover, name and artist for the slider.
  */
-public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements ControlListener {
+public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements ControlListener, PlaybackChangeEventListener {
+  private final static Logger LOG = LoggerFactory.getLogger(AlbumBox.class);
+
   public static final int COVER_WIDTH = 200;
   public static final int COVER_HEIGHT = 200;
   public static final int TRACKS_WIDTH = 390;
@@ -40,7 +52,6 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
   public static final int TRACKS_BOX_WIDTH = 480;
 
   private double scaleFactor = 1.05;
-  private Canvas cover;
   private VBox albumLabelBox = new VBox(5);
   private VBox tracksBox;
   private int selectionIndex = -1;
@@ -60,11 +71,12 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
 
     if (album != null) {
       if (!StringUtils.isEmpty(album.getArtUrl())) {
-        cover = ImageCache.loadCover(album, COVER_WIDTH, COVER_HEIGHT);
+        Canvas cover = ImageCache.loadCover(album, COVER_WIDTH, COVER_HEIGHT);
         cover.getStyleClass().add("cover-canvas");
         compactView.getChildren().add(cover);
       }
       else {
+        LOG.warn("No cover found for " + album + ", using spacer instead.");
         VBox spacer = new VBox();
         spacer.setMinHeight(COVER_HEIGHT);
         compactView.getChildren().add(spacer);
@@ -97,6 +109,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     createMaxWidthTransition(this, COVER_WIDTH, TRACKS_BOX_WIDTH, true).play();
     //add control listener to this panel
     ServiceController.getInstance().addControlListener(this);
+    Callete.getMusicPlayer().addPlaybackChangeEventListener(this);
 
     //hide cover labels
     final FadeTransition outFader = createOutFader(albumLabelBox);
@@ -109,7 +122,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         ComponentUtil.createLabel(getModel().getSize() + " Titel", "track", albumLabelBox);
         ComponentUtil.createLabel(getModel().getDuration(), "track", albumLabelBox);
         if (getModel().getYear() > 0) {
-          ComponentUtil.createLabel(getModel().getYear(), "album", albumLabelBox);
+          ComponentUtil.createLabel(String.valueOf(getModel().getYear()), "album", albumLabelBox);
         }
         if (!StringUtils.isEmpty(getModel().getGenre())) {
           ComponentUtil.createLabel(getModel().getGenre(), "album", albumLabelBox);
@@ -124,35 +137,28 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     outFader.play();
   }
 
-  private void createTracksBox() {
-    //create track box with initial opacity
-    //box used for details mode
-    tracksBox = new VBox(0);
-    tracksBox.setMaxWidth(TRACKS_BOX_WIDTH-20);
-    tracksBox.setOpacity(0);
-    final List<Song> songs = getModel().getSongs();
-    for (Song song : songs) {
-      HBox trackBox = new HBox();
-      trackBox.setPadding(new Insets(4, 8, 4, 4));
-
-      if (song.getTrack() > MAX_DISPLAY_TRACKS) {
-        trackBox.setOpacity(0);
-      }
-
-      String styleClass = "track";
-
-      HBox posBox = new HBox();
-      posBox.setAlignment(Pos.CENTER_RIGHT);
-      posBox.setMinWidth(25);
-      trackBox.getChildren().add(posBox);
-      ComponentUtil.createLabel(song.getTrack(), styleClass, posBox);
-      final Label title = ComponentUtil.createLabel(song.getName(), styleClass, trackBox);
-      title.setPadding(new Insets(0, 0, 0, 10));
-      title.setMaxWidth(TRACKS_WIDTH);
-      title.setMinWidth(TRACKS_WIDTH);
-      ComponentUtil.createText(song.getDuration(), styleClass, trackBox);
-      tracksBox.getChildren().add(trackBox);
+  @Override
+  public void playbackChanged(PlaybackChangeEvent event) {
+    if(tracksBox == null || tracksBox.getChildren().isEmpty()) {
+      return;
     }
+
+    LOG.info("Received playback change event for " + this + " with item " + event.getActiveItem());
+
+    final PlaylistItem activeItem = event.getActiveItem();
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        for(Node node : tracksBox.getChildren()) {
+          if(activeItem != null && node.getUserData().equals(activeItem)) {
+            node.getStyleClass().add("track-active");
+          }
+          else {
+            node.getStyleClass().remove("track-active");
+          }
+        }
+      }
+    });
   }
 
   @Override
@@ -167,7 +173,18 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         switchToSliderMode();
       }
       else {
-
+        final Node node = tracksBox.getChildren().get(selectionIndex);
+        FadeTransition blink = TransitionUtil.createBlink(node);
+        blink.setOnFinished(new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(ActionEvent actionEvent) {
+            Song song = (Song) node.getUserData();
+            Callete.getMusicPlayer().getPlaylist().setPlaylist(getModel());
+            Callete.getMusicPlayer().getPlaylist().setActiveItem(song);
+            Callete.getMusicPlayer().play();
+          }
+        });
+        blink.play();
       }
     }
     else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
@@ -183,6 +200,51 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         selectionIndex--;
         updateSelection(oldIndex, selectionIndex);
       }
+    }
+  }
+
+  //----------------------- Helper methods ------------------------------------------
+
+  /**
+   * Creates the additional track list panel shown when
+   * the details mode of an album is shown.
+   */
+  private void createTracksBox() {
+    //create track box with initial opacity
+    //box used for details mode
+    tracksBox = new VBox(0);
+    tracksBox.setMaxWidth(TRACKS_BOX_WIDTH-20);
+    tracksBox.setOpacity(0);
+    final List<Song> songs = getModel().getSongs();
+
+    PlaylistItem item = Callete.getMusicPlayer().getPlaylist().getActiveItem();
+
+    for (Song song : songs) {
+      HBox trackBox = new HBox();
+      trackBox.setUserData(song);
+      trackBox.setPadding(new Insets(4, 8, 4, 4));
+
+      if(item != null && song.equals(item)) {
+        trackBox.getStyleClass().add("track-active");
+      }
+
+      if (song.getTrack() > MAX_DISPLAY_TRACKS) {
+        trackBox.setOpacity(0);
+      }
+
+      String styleClass = "track";
+
+      HBox posBox = new HBox();
+      posBox.setAlignment(Pos.CENTER_RIGHT);
+      posBox.setMinWidth(25);
+      trackBox.getChildren().add(posBox);
+      ComponentUtil.createLabel(String.valueOf(song.getTrack()), styleClass, posBox);
+      final Label title = ComponentUtil.createLabel(song.getName(), styleClass, trackBox);
+      title.setPadding(new Insets(0, 0, 0, 10));
+      title.setMaxWidth(TRACKS_WIDTH);
+      title.setMinWidth(TRACKS_WIDTH);
+      ComponentUtil.createText(song.getDuration(), styleClass, trackBox);
+      tracksBox.getChildren().add(trackBox);
     }
   }
 
@@ -241,6 +303,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
 
   private void switchToSliderMode() {
     ServiceController.getInstance().removeControlListener(this);
+    Callete.getMusicPlayer().removePlaybackChangeEventListener(this);
 
     final FadeTransition outFader = createOutFader(tracksBox);
     outFader.setOnFinished(new EventHandler<ActionEvent>() {
@@ -270,5 +333,10 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
       }
     });
     outFader.play();
+  }
+
+  @Override
+  public String toString() {
+    return "Album Box '" + getModel()+ "'";
   }
 }

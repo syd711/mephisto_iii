@@ -2,14 +2,16 @@ package de.calette.mephisto3.util;
 
 import de.calette.mephisto3.ui.ControllablePanel;
 import javafx.animation.*;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+
+import java.util.Random;
 
 /**
  * Utility class for creating transitions with default values.
@@ -71,7 +73,8 @@ public class TransitionUtil {
 
   /**
    * Expands the width of the given Pane to the target width.
-   * @param node the pane to expand
+   *
+   * @param node   the pane to expand
    * @param offset the offset width of the pane
    */
   public static Transition createMaxWidthTransition(final Pane node, final int originalWidth, final int offset, final boolean increase) {
@@ -79,16 +82,17 @@ public class TransitionUtil {
       {
         setCycleDuration(Duration.millis(200));
       }
+
       @Override
       protected void interpolate(double v) {
-        double percent = v*100;
-        double newWidthOffset = offset*percent/100;
+        double percent = v * 100;
+        double newWidthOffset = offset * percent / 100;
 
-        if(increase) {
-          node.setMinWidth(originalWidth+newWidthOffset);
+        if (increase) {
+          node.setMinWidth(originalWidth + newWidthOffset);
         }
         else {
-          node.setMinWidth(originalWidth-newWidthOffset);
+          node.setMinWidth(originalWidth - newWidthOffset);
         }
       }
     };
@@ -120,7 +124,8 @@ public class TransitionUtil {
 
   /**
    * Applies common settings for transitions and their nodes.
-    * @param node the node the transition is working on
+   *
+   * @param node       the node the transition is working on
    * @param transition the transition to apply the defaults for
    */
   private static void applyDefaults(Node node, Transition transition) {
@@ -128,7 +133,7 @@ public class TransitionUtil {
     transition.setInterpolator(Interpolator.EASE_BOTH);
 
     //apply speed as default cache strategy.
-    if(!node.getCacheHint().equals(CacheHint.SPEED)) {
+    if (!node.getCacheHint().equals(CacheHint.SPEED)) {
       node.setCache(true);
       node.setCacheHint(CacheHint.SPEED);
     }

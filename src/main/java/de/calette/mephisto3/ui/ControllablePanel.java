@@ -26,10 +26,8 @@ public abstract class ControllablePanel extends HBox {
   private TransitionQueue transitionQueue;
   private TranslateTransition scrollTransition;
 
-
   private Transition inFader;
   private Transition outFader;
-
 
   private int scrollWidth = SCROLL_WIDTH;
 
@@ -86,7 +84,7 @@ public abstract class ControllablePanel extends HBox {
     transitionQueue.play();
   }
 
-  public void pushed() {
+  public void pushed(ServiceState serviceState) {
 
   }
 

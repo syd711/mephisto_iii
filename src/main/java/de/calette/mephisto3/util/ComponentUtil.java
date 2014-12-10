@@ -23,15 +23,15 @@ public class ComponentUtil {
     return canvas;
   }
 
-  public static Label createLabel(Object label, String cssClass, Pane parent) {
-    Label l = new Label(String.valueOf(label));
+  public static Label createLabel(String label, String cssClass, Pane parent) {
+    Label l = new Label(label);
     l.getStyleClass().add(cssClass);
     parent.getChildren().add(l);
     return l;
   }
 
-  public static Text createText(Object label, String cssClass, Pane parent) {
-    Text l = new Text(String.valueOf(label));
+  public static Text createText(String label, String cssClass, Pane parent) {
+    Text l = new Text(label);
     l.getStyleClass().add(cssClass);
     parent.getChildren().add(l);
     return l;
