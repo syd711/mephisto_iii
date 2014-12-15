@@ -20,8 +20,7 @@ import java.util.List;
  */
 public abstract class ControllablePanel extends HBox {
   public static final int SCROLL_DURATION = 200;
-  private static final int OFFSET = 10;
-  private static final int SCROLL_WIDTH = Mephisto3.WIDTH+OFFSET;
+  private static final int SCROLL_WIDTH = Mephisto3.WIDTH;
   protected List<? extends ServiceModel> models;
   private TransitionQueue transitionQueue;
   private TranslateTransition scrollTransition;
@@ -32,7 +31,7 @@ public abstract class ControllablePanel extends HBox {
   private int scrollWidth = SCROLL_WIDTH;
 
   public ControllablePanel(List<? extends ServiceModel> models) {
-    super(10);
+    super(0);
     setOpacity(0);
     this.models = models;
     transitionQueue = new TransitionQueue(this);

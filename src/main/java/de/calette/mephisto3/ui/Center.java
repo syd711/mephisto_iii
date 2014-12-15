@@ -2,6 +2,7 @@ package de.calette.mephisto3.ui;
 
 import callete.api.Callete;
 import callete.api.services.Service;
+import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
@@ -37,6 +38,9 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
   private Map<Service, ControllablePanel> servicePanels = new HashMap<>();
 
   public Center() {
+    setMaxWidth(Mephisto3.WIDTH);
+    setMaxHeight(Mephisto3.HEIGHT);
+
     stackPane = new StackPane();
     serviceChooser = new ServiceChooser(this);
     activeControlPanel = getServicePanel(ServiceController.getInstance().getServiceState());

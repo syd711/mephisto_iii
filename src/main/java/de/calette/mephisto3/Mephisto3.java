@@ -37,21 +37,12 @@ public class Mephisto3 extends Application {
 
     //create root component with background
     StackPane rootStack = new StackPane();
-    rootStack.setMaxWidth(WIDTH);
-    rootStack.setMaxHeight(HEIGHT);
-    BorderPane root = new BorderPane();
-    rootStack.getChildren().add(root);
+    rootStack.getChildren().add(new Center());
+
     Scene scene = new Scene(rootStack, (double) WIDTH, (double) HEIGHT);
     scene.getStylesheets().add(ResourceLoader.getResource("theme.css"));
     primaryStage.setScene(scene);
     primaryStage.getScene().setRoot(rootStack);
-
-    //header
-    root.setTop(new Header());
-    //footer
-    root.setBottom(new Footer());
-    //center
-    root.setCenter(new Center());
 
     primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, new Mephisto3KeyEventFilter());
     addDisposeListener(primaryStage);
