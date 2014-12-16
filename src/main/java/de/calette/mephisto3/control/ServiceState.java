@@ -72,4 +72,8 @@ public class ServiceState {
     setServiceIndex(index);
 //    System.out.println(service + " has index " + index);
   }
+
+  public Object getSelection() {
+    return models.get(getServiceIndex());
+  }
 }

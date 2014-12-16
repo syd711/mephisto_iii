@@ -34,6 +34,7 @@ import java.util.Map;
  * The chooser that selects the active function of the radio.
  */
 public class ServiceChooser implements ControlListener {
+  public static final int SCROLL_DURATION = 200;
   public static final int DISPLAY_DELAY = 500;
 
   private int index = 0;
@@ -74,7 +75,7 @@ public class ServiceChooser implements ControlListener {
 
     transitionQueue = new TransitionQueue(scroller);
 
-    scrollTransition = TransitionUtil.createTranslateByXTransition(scroller, ControllablePanel.SCROLL_DURATION, 0);
+    scrollTransition = TransitionUtil.createTranslateByXTransition(scroller, SCROLL_DURATION, 0);
 
     showFader = TransitionUtil.createInFader(overlay, DISPLAY_DELAY);
     hideFader = TransitionUtil.createOutFader(overlay, DISPLAY_DELAY);

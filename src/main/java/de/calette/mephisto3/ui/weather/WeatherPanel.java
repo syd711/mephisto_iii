@@ -14,9 +14,9 @@ public class WeatherPanel extends ControllablePanel {
     super(Callete.getWeatherService().getWeather());
     setMinWidth(Mephisto3.WIDTH);
 
-    for (ServiceModel model : models) {
-      WeatherLocationPanel panel = new WeatherLocationPanel((Weather) model);
-      getChildren().add(panel);
-    }
+//    for (ServiceModel model : models) {
+//      WeatherLocationPanel panel = new WeatherLocationPanel((Weather) model);
+//      getChildren().add(panel);
+//    }
   }
 }

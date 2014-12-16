@@ -1,6 +1,7 @@
 package de.calette.mephisto3.util;
 
 import de.calette.mephisto3.ui.ControllablePanel;
+import de.calette.mephisto3.ui.ServiceChooser;
 import javafx.animation.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -52,7 +53,7 @@ public class TransitionUtil {
   }
 
   public static ScaleTransition createScaler(Node node, double factor) {
-    ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(ControllablePanel.SCROLL_DURATION), node);
+    ScaleTransition scaleTransition = new ScaleTransition(Duration.millis(ServiceChooser.SCROLL_DURATION), node);
     scaleTransition.setToX(factor);
     scaleTransition.setToY(factor);
     applyDefaults(node, scaleTransition);

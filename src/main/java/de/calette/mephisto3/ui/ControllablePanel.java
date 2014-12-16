@@ -11,6 +11,7 @@ import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 
 import java.util.List;
 
@@ -18,35 +19,17 @@ import java.util.List;
  * Abstract superclass for all center panels
  * that are controlled via the rotary encoder.
  */
-public abstract class ControllablePanel extends HBox {
-  public static final int SCROLL_DURATION = 200;
-  private static final int SCROLL_WIDTH = Mephisto3.WIDTH;
-  protected List<? extends ServiceModel> models;
-  private TransitionQueue transitionQueue;
-  private TranslateTransition scrollTransition;
+public abstract class ControllablePanel extends StackPane {
 
   private Transition inFader;
   private Transition outFader;
 
-  private int scrollWidth = SCROLL_WIDTH;
-
   public ControllablePanel(List<? extends ServiceModel> models) {
-    super(0);
     setOpacity(0);
-    this.models = models;
-    transitionQueue = new TransitionQueue(this);
-
-    scrollTransition = TransitionUtil.createTranslateByXTransition(this, SCROLL_DURATION, 0);
-    scrollTransition.setOnFinished(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent actionEvent) {
-        ServiceController.getInstance().setControlEnabled(true);
-      }
-    });
-
 
     this.outFader = TransitionUtil.createOutFader(this);
     this.inFader = TransitionUtil.createInFader(this);
+
     this.inFader.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent actionEvent) {
@@ -59,31 +42,24 @@ public abstract class ControllablePanel extends HBox {
     if(serviceState.getModels().isEmpty()) {
       return;
     }
-    ServiceController.getInstance().setControlEnabled(false);
-    int offset = scrollWidth;
-    if(serviceState.getServiceIndex() == serviceState.getModels().size()-1) {
-      offset = -(serviceState.getModels().size()-1)*scrollWidth;
-    }
-    scrollTransition.setByX(offset);
-    transitionQueue.addTransition(scrollTransition);
-    transitionQueue.play();
+    serviceStateChanged(serviceState);
   }
 
   public void rotatedRight(ServiceState serviceState) {
     if(serviceState.getModels().isEmpty()) {
       return;
     }
-    ServiceController.getInstance().setControlEnabled(false);
-    int offset = -scrollWidth;
-    if(serviceState.getServiceIndex() == 0) {
-      offset = ((serviceState.getModels().size()-1)*scrollWidth);
-    }
-    scrollTransition.setByX(offset);
-    transitionQueue.addTransition(scrollTransition);
-    transitionQueue.play();
+    serviceStateChanged(serviceState);
   }
 
+  /**
+   * Maybe implemented by subclasses if push event is used.
+   * @param serviceState the current selection state.
+   */
   public void pushed(ServiceState serviceState) {
+  }
+
+  protected void serviceStateChanged(ServiceState serviceState) {
 
   }
 

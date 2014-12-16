@@ -190,6 +190,8 @@
    -fx-font-smoothing-type: gray;
 }
 .stream-status-panel {
+    /*-fx-background-color:white;*/
+    -fx-background-color: linear-gradient(to bottom, derive(gray, 80%), white);
 }
 
 .stream-panel {
@@ -204,11 +206,11 @@
  * Footer styling
  */
 #scroller {
-  -fx-background-color:black;
+  -fx-background-color:#333333;
 }
 
 #scroller .thumb {
-  -fx-background-color:#3C1F42;
+  -fx-background-color:#666666;
   -fx-background-radius: 0em;
 }
 
@@ -220,7 +222,7 @@
 
 #scroller .increment-button,
 #scroller .decrement-button {
-  -fx-padding:9px;
+  -fx-padding:6px;
 }
 
 /**
@@ -232,6 +234,6 @@
 .service-name {
    -fx-font-size: 32px;
    -fx-font-family: "Tahoma";
-   -fx-fill: #fff;
+   -fx-fill: #000;
    -fx-font-smoothing-type: gray;
 }
