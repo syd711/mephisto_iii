@@ -10,6 +10,7 @@ import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
@@ -26,6 +27,7 @@ public abstract class ControllablePanel extends StackPane {
 
   public ControllablePanel(List<? extends ServiceModel> models) {
     setOpacity(0);
+    setAlignment(Pos.TOP_LEFT);
 
     this.outFader = TransitionUtil.createOutFader(this);
     this.inFader = TransitionUtil.createInFader(this);

@@ -5,138 +5,265 @@ import callete.api.services.music.model.Stream;
 import callete.api.services.music.player.MusicPlayerPlaylist;
 import callete.api.services.music.player.PlaylistMetaData;
 import callete.api.services.music.player.PlaylistMetaDataChangeListener;
+import callete.api.services.music.resources.ArtistResources;
 import callete.api.services.music.resources.ImageResource;
 import de.calette.mephisto3.Mephisto3;
+import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
+import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.ui.ControllablePanel;
-import de.calette.mephisto3.ui.Footer;
+import de.calette.mephisto3.ui.PlayerStatusBox;
+import de.calette.mephisto3.ui.ServiceScroller;
 import de.calette.mephisto3.util.ComponentUtil;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.apache.commons.lang.StringUtils;
-
-import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * All components for the Radio control.
  */
 public class StreamsPanel extends ControllablePanel implements PlaylistMetaDataChangeListener {
-  private final static String NO_DATA_TITLE = " - keine Informationen verfügbar -";
+  private final static Logger LOG = LoggerFactory.getLogger(StreamsPanel.class);
 
-  private Stream stream;
+  private final static int IMAGE_SIZE = 400;
+  private final static String NO_DATA_TITLE = " - keine Informationen verfügbar -";
+  private final static String LOADING_DATA_TITLE = "Warte auf Metadaten...";
+
   private Label nameLabel;
   private Label artistLabel;
   private Label titleLabel;
-  private Canvas randomFXImageCanvas;
+  private Label urlLabel;
+
+  private ImageView imageView;
+  private Image randomFXImage;
+  private Image defaultBackground = new Image(ResourceLoader.getResource("radio_background.png"), 700, 345, false, true);
+  private VBox root;
+
+  private Stream selectedStream;
+  private Stream activeStream;
+
+  private PlaylistMetaData currentMetaData;
+  private ServiceScroller serviceScroller = new ServiceScroller();
+  private PlayerStatusBox playerStatusBox = new PlayerStatusBox();
+  private ArtistResources artistResources;
 
   public StreamsPanel() {
     super(Callete.getStreamingService().getStreams());
-    Callete.getMusicPlayer().getPlaylist().addMetaDataChangeListener(this);
-
     setMinWidth(Mephisto3.WIDTH);
 
-    //initial station selection
-    final List<Stream> streams = Callete.getStreamingService().getStreams();
-    stream = streams.get(0);
-
-    final MusicPlayerPlaylist playlist = Callete.getMusicPlayer().getPlaylist();
-    playlist.setActiveItem(stream);
-    Callete.getMusicPlayer().play();
-
-    buildUI();
+    startStreaming();
+    buildUI(activeStream);
   }
 
   @Override
   public void pushed(ServiceState serviceState) {
-    final int serviceIndex = serviceState.getServiceIndex();
-    final Stream stream = (Stream) serviceState.getModels().get(serviceIndex);
+    randomFXImage = null;
+    activeStream = (Stream) serviceState.getSelection();
+    serviceState.saveState();
     final MusicPlayerPlaylist playlist = Callete.getMusicPlayer().getPlaylist();
-    playlist.setActiveItem(stream);
+    playlist.setActiveItem(activeStream);
     Callete.getMusicPlayer().play();
-  }
-
-  @Override
-  public void updateMetaData(final PlaylistMetaData metaData) {
-    if (!metaData.getItem().equals(stream)) {
-      return;
-    }
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
-        if (metaData.getItem().equals(stream)) {
-          String artist = metaData.getArtist();
-          artistLabel.setText(applyArtist(artist));
-          titleLabel.setText(applyTitle(metaData.getTitle()));
-          if(!StringUtils.isEmpty(artist) && randomFXImageCanvas == null) {
-            ImageResource imageResource = Callete.getArtistResourcesService().getImageResourcesFor(artist);
-            if(imageResource != null) {
-              Canvas image = imageResource.getRandomFXImageCanvas(Mephisto3.WIDTH, 345);
-              if(image != null) {
-                randomFXImageCanvas = image;
-                getChildren().add(image);
-              }
-            }
-          }
-        }
+        playerStatusBox.setName(activeStream.getName());
+        playerStatusBox.setTitle("");
+        playerStatusBox.setImage(null);
+        artistLabel.setText(LOADING_DATA_TITLE);
       }
     });
   }
 
   @Override
+  public void updateMetaData(final PlaylistMetaData metaData) {
+    if (!metaData.getItem().equals(activeStream)) {
+      return;
+    }
+    //store data for re-selection
+    currentMetaData = metaData;
+
+    //apply the labels if the current stream is the active stream
+    if(activeStream.equals(selectedStream)) {
+      Platform.runLater(new Runnable() {
+        @Override
+        public void run() {
+          nameLabel.setText(applyName(metaData));
+          artistLabel.setText(applyArtist(metaData));
+          titleLabel.setText(applyTitle(metaData));
+          playerStatusBox.applyMetaData(metaData);
+        }
+      });
+    }
+
+    //apply the background image: image there is no artist, use the default background
+    if (StringUtils.isEmpty(metaData.getArtist())) {
+      if(activeStream.equals(selectedStream) && !imageView.getImage().equals(defaultBackground)) {
+        imageView.setImage(defaultBackground);
+      }
+      return;
+    }
+
+    //ok, so there is an artist, check if is has been applied yet or if the artist has changed.
+    if(artistResources == null || !artistResources.getArtist().equals(metaData.getArtist())) {
+      //reset existing image so that the new is applied
+      randomFXImage = null;
+      artistResources = Callete.getArtistResourcesService().getImageResourcesFor(metaData.getArtist());
+    }
+
+    //no data found for artist, so apply default image again
+    if(artistResources.isEmpty()) {
+      if(!imageView.getImage().equals(defaultBackground)) {
+        Platform.runLater(new Runnable() {
+          @Override
+          public void run() {
+            imageView.setImage(defaultBackground);
+          }
+        });
+      }
+      return;
+    }
+
+    //apply a new artist image if there there is a available resource bundle.
+    if(randomFXImage == null && artistResources != null) {
+      ImageResource randomImage = artistResources.getRandomImage(Mephisto3.WIDTH, 345, IMAGE_SIZE);
+      ImageResource randomPlayerImage = artistResources.getRandomImage(42,42, 45);
+      if(randomImage != null) {
+        randomFXImage = ComponentUtil.toFXImage(randomImage);
+        final Image randomPlayerFXImage = ComponentUtil.toFXImage(randomPlayerImage);
+        Platform.runLater(new Runnable() {
+          @Override
+          public void run() {
+            //the user may have selected another stream while the image has been loaded.
+            if(activeStream.equals(selectedStream)) {
+              imageView.setImage(randomFXImage);
+              playerStatusBox.setImage(randomPlayerFXImage);
+            }
+          }
+        });
+      }
+    }
+  }
+
+  @Override
+  public void showPanel() {
+    Callete.getMusicPlayer().getPlaylist().addMetaDataChangeListener(this);
+    serviceScroller.showScroller();
+    super.showPanel();
+  }
+
+  @Override
+  public void hidePanel() {
+    Callete.getMusicPlayer().getPlaylist().removeMetaDataChangeListener(this);
+    serviceScroller.hideScroller();
+    super.hidePanel();
+  }
+
+  @Override
   protected void serviceStateChanged(ServiceState serviceState) {
-    Stream stream = (Stream) serviceState.getSelection();
-    nameLabel.setText(stream.getName());
-    artistLabel.setText("");
-    titleLabel.setText("");
+    selectedStream = (Stream) serviceState.getSelection();
+    nameLabel.setText(selectedStream.getName());
+    urlLabel.setText(selectedStream.getPlaybackUrl());
+
+    if (selectedStream == activeStream) {
+      if (randomFXImage != null) {
+        imageView.setImage(randomFXImage);
+      }
+      else {
+        imageView.setImage(defaultBackground);
+      }
+      artistLabel.setText(applyArtist(currentMetaData));
+      titleLabel.setText(applyTitle(currentMetaData));
+    }
+    else {
+      imageView.setImage(defaultBackground);
+      artistLabel.setText(NO_DATA_TITLE);
+      titleLabel.setText("");
+    }
   }
 
   // ------------------------------- Helper -------------------------------------
 
+  /**
+   * No matter if the UI is build yet, start playing the stream.
+   */
+  private void startStreaming() {
+    //initial station selection
+    activeStream = (Stream) ServiceController.getInstance().getServiceState().getSelection();
+    selectedStream = activeStream;
 
-  private void buildUI() {
-    VBox root = new VBox(0);
+    final MusicPlayerPlaylist playlist = Callete.getMusicPlayer().getPlaylist();
+    playlist.setActiveItem(activeStream);
+    Callete.getMusicPlayer().play();
+    LOG.info("Starting playback of last stream selection: " + activeStream);
+  }
+
+
+  private void buildUI(Stream stream) {
+    root = new VBox(0);
     root.setMinWidth(Mephisto3.WIDTH);
     VBox labelBox = new VBox(20);
+    labelBox.getStyleClass().add("streams-panel");
     labelBox.setMinHeight(Mephisto3.HEIGHT - 60);
-    labelBox.setAlignment(Pos.BASELINE_LEFT);
+    labelBox.setAlignment(Pos.TOP_LEFT);
     root.getChildren().add(labelBox);
     labelBox.setPadding(new Insets(20, 30, 30, 30));
 
+
+    imageView = new ImageView(defaultBackground);
+    ColorAdjust brightness = new ColorAdjust();
+    brightness.setBrightness(-0.3);
+    imageView.setEffect(brightness);
+    getChildren().add(imageView);
+
     nameLabel = ComponentUtil.createLabel(stream.getName(), "stream-name", labelBox);
-    artistLabel = ComponentUtil.createLabel(applyArtist(stream.getArtist()), "stream-artist", labelBox);
-    titleLabel = ComponentUtil.createLabel(applyTitle(stream.getTitle()), "stream-title", labelBox);
-    labelBox.getChildren().add(new Text("\n"));
-    ComponentUtil.createLabel(stream.getPlaybackUrl(), "stream-url", labelBox);
+    artistLabel = ComponentUtil.createLabel(NO_DATA_TITLE, "stream-artist", labelBox);
+    titleLabel = ComponentUtil.createLabel("", "stream-title", labelBox);
+    HBox spacer = new HBox();
+    spacer.setMinHeight(50);
+    labelBox.getChildren().add(spacer);
+    urlLabel = ComponentUtil.createLabel(stream.getPlaybackUrl(), "stream-url", labelBox);
 
     root.getStyleClass().add("stream-panel");
+    root.getChildren().add(serviceScroller);
 
-    HBox radioStatusBox = new HBox(5);
-    radioStatusBox.setMinHeight(50);
-    radioStatusBox.getStyleClass().add("stream-status-panel");
-
-    root.getChildren().add(new Footer());
-
-    root.getChildren().add(radioStatusBox);
+    root.getChildren().add(playerStatusBox);
     getChildren().add(root);
   }
 
-  private String applyArtist(String artist) {
-    if (StringUtils.isEmpty(artist)) {
-      artist = NO_DATA_TITLE;
+  private String applyArtist(PlaylistMetaData metaData) {
+    if(metaData == null) {
+      return NO_DATA_TITLE;
     }
-    return artist;
+    if (StringUtils.isEmpty(metaData.getArtist()) || String.valueOf(metaData.getArtist()).equals(metaData.getTitle())) {
+      return NO_DATA_TITLE;
+    }
+    return metaData.getArtist();
   }
 
-  private String applyTitle(String title) {
-    if (StringUtils.isEmpty(title)) {
-      title = "";
+  private String applyTitle(PlaylistMetaData metaData) {
+    if(metaData == null){
+      return "";
     }
-    return title;
+    if (StringUtils.isEmpty(metaData.getTitle()) || String.valueOf(metaData.getArtist()).equals(String.valueOf(metaData.getTitle()))) {
+      return "";
+    }
+    return metaData.getTitle();
+  }
+
+  private String applyName(PlaylistMetaData metaData) {
+    if (StringUtils.isEmpty(metaData.getName()) && metaData.getName().equals(activeStream.getName())) {
+      return metaData.getName();
+    }
+    return activeStream.getName();
   }
 }

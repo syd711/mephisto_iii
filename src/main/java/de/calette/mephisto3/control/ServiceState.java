@@ -1,7 +1,9 @@
 package de.calette.mephisto3.control;
 
+import callete.api.Callete;
 import callete.api.services.Service;
 import callete.api.services.ServiceModel;
+import jdk.nashorn.internal.codegen.CompilerConstants;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +13,9 @@ import java.util.Map;
  * Model that represents the current state of the UI.
  */
 public class ServiceState {
+  public final static String SETTING_SERVICE_NAME = "service.name";
+  public final static String SETTING_SERVICE_SELECTION = "service.selection";
+
   private Service service;
   private List<?> models;
   private Map<Service, Integer> serviceIndex = new HashMap<>();
@@ -75,5 +80,10 @@ public class ServiceState {
 
   public Object getSelection() {
     return models.get(getServiceIndex());
+  }
+
+  public void saveState() {
+    Callete.saveSetting(SETTING_SERVICE_NAME, service.toString());
+    Callete.saveSetting(SETTING_SERVICE_SELECTION, getServiceIndex());
   }
 }

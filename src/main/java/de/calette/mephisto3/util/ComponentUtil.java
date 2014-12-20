@@ -1,5 +1,7 @@
 package de.calette.mephisto3.util;
 
+import callete.api.services.impl.music.player.MPDPlayer;
+import callete.api.services.music.resources.ImageResource;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
@@ -7,10 +9,19 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.imageio.ImageIO;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  */
 public class ComponentUtil {
+  private final static Logger LOG = LoggerFactory.getLogger(ComponentUtil.class);
   /**
    * Creates an image canvas with the given width and height.
    */
@@ -35,5 +46,17 @@ public class ComponentUtil {
     l.getStyleClass().add(cssClass);
     parent.getChildren().add(l);
     return l;
+  }
+
+  public static Image toFXImage(ImageResource image) {
+    try {
+      ByteArrayOutputStream os = new ByteArrayOutputStream();
+      ImageIO.write(image.getImage(), image.getImageFormat(), os);
+      InputStream is = new ByteArrayInputStream(os.toByteArray());
+      return new Image(is, image.getImage().getWidth(), image.getImage().getHeight(), false, true);
+    } catch (IOException e) {
+      LOG.error("Error converting buffered image to FX image: " + e.getMessage(), e);
+    }
+    return null;
   }
 }

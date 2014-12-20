@@ -50,9 +50,6 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
 
     ServiceController.getInstance().addControlListener(this);
     ServiceController.getInstance().addServiceChangeListener(this);
-
-    activeControlPanel.showPanel();
-
     loadServices();
   }
 

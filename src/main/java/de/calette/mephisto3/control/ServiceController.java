@@ -7,6 +7,7 @@ import callete.api.services.gpio.*;
 import callete.api.services.impl.simulator.Simulator;
 import callete.api.services.impl.simulator.SimulatorPushButton;
 import callete.api.services.impl.simulator.SimulatorRotaryEncoder;
+import callete.api.services.music.model.Stream;
 import de.calette.mephisto3.ui.ServiceChangeListener;
 import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
@@ -107,7 +108,15 @@ public class ServiceController {
    */
   private void initServiceState() {
     serviceState.setService(Callete.getStreamingService());
-    serviceState.setModels(Callete.getStreamingService().getStreams());
+    List<Stream> streams = Callete.getStreamingService().getStreams();
+    serviceState.setModels(streams);
+
+    //update index with last save state
+    int index = Callete.getSettings().getInt(ServiceState.SETTING_SERVICE_SELECTION, 0);
+    if(index>=streams.size()) {
+      index = 0;
+    }
+    serviceState.setServiceIndex(index);
     serviceChanged();
   }
 
@@ -167,6 +176,13 @@ public class ServiceController {
             }
             else {
               eventType = ServiceControlEvent.EVENT_TYPE.NEXT;
+            }
+
+            if (eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
+              serviceState.decrementIndex();
+            }
+            else if (eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
+              serviceState.incrementIndex();
             }
 
             final ServiceControlEvent serviceControlEvent = new ServiceControlEvent(eventType, serviceState);

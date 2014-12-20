@@ -189,13 +189,33 @@
    -fx-text-overrun: ellipsis;
    -fx-font-smoothing-type: gray;
 }
-.stream-status-panel {
-    /*-fx-background-color:white;*/
-    -fx-background-color: linear-gradient(to bottom, derive(gray, 80%), white);
+
+/**
+ * Player status
+ */
+.player-status-panel {
+    -fx-background-color: linear-gradient(to bottom, derive(gray, 60%), white);
 }
 
-.stream-panel {
-    -fx-background-image: url("radio_background.png");
+.player-status-image {
+ -fx-border-color:#666666;
+ -fx-border-width:1.0;
+}
+
+.player-name-label {
+   -fx-font-size: 16px;
+   -fx-font-family: "Tahoma";
+   -fx-text-fill: #333333;
+   -fx-text-overrun: ellipsis;
+   -fx-font-smoothing-type: gray;
+}
+
+.player-title-label {
+   -fx-font-size: 14px;
+   -fx-font-family: "Tahoma";
+   -fx-text-fill: #333333;
+   -fx-text-overrun: ellipsis;
+   -fx-font-smoothing-type: gray;
 }
 
 .debug {

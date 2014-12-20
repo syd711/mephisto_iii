@@ -15,20 +15,11 @@ import javafx.scene.layout.BorderPane;
  * The footer only contains the scrollbar, indicating
  * the position of the current selection, e.g. for radio stations.
  */
-public class Footer extends BorderPane implements ServiceChangeListener, ControlListener {
+public class ServiceScroller extends BorderPane implements ControlListener {
   private ScrollBar sc;
 
-  private static Footer instance;
-
-  //TODO grrr
-  public static Footer getInstance() {
-    return instance;
-  }
-
-  public Footer() {
-    instance = this;
+  public ServiceScroller() {
     setMaxWidth(Mephisto3.WIDTH);
-    setOpacity(0);
     sc = new ScrollBar();
     sc.setOrientation(Orientation.HORIZONTAL);
     //this will hide the already invisible scroll buttons
@@ -39,31 +30,17 @@ public class Footer extends BorderPane implements ServiceChangeListener, Control
     ServiceState serviceState = ServiceController.getInstance().getServiceState();
     sc.setMax(serviceState.getModels().size()-1);
     sc.setVisibleAmount(0.9);
-    sc.setValue(0);
+    sc.setValue(serviceState.getServiceIndex());
 
     setCenter(sc);
+  }
 
-    ServiceController.getInstance().addServiceChangeListener(this);
+  public void showScroller() {
     ServiceController.getInstance().addControlListener(this);
-    show();
   }
 
-  public void show() {
-    TransitionUtil.createInFader(this).play();
-  }
-
-
-  @Override
-  public void serviceChanged(ServiceState serviceState) {
-    setVisible(!serviceState.getModels().isEmpty());
-
-    sc.setMax(serviceState.getModels().size() - 1);
-    if(serviceState.getModels().isEmpty()) {
-      sc.setMax(0);
-    }
-
-    //scroll to active selection index
-    sc.setValue(serviceState.getServiceIndex()-1);
+  public void hideScroller() {
+    ServiceController.getInstance().removeControlListener(this);
   }
 
   @Override
@@ -73,14 +50,6 @@ public class Footer extends BorderPane implements ServiceChangeListener, Control
     }
 
     ServiceControlEvent.EVENT_TYPE eventType = event.getEventType();
-
-    if (eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
-      event.getServiceState().decrementIndex();
-    }
-    else if (eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
-      event.getServiceState().incrementIndex();
-    }
-
     if(eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT) || eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
       final int serviceIndex = event.getServiceState().getServiceIndex();
       sc.setValue(serviceIndex);
