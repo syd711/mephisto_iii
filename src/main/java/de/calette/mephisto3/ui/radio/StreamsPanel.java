@@ -10,7 +10,6 @@ import callete.api.services.music.resources.ImageResource;
 import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
-import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.ui.ControllablePanel;
 import de.calette.mephisto3.ui.PlayerStatusBox;
 import de.calette.mephisto3.ui.ServiceScroller;
@@ -48,9 +47,7 @@ public class StreamsPanel extends ControllablePanel implements PlaylistMetaDataC
   private Label urlLabel;
 
   private ImageView artistBackgroundImageView;
-  private ImageView backgroundImageView;
   private Image randomFXImage;
-  private Image defaultBackground = Mephisto3.DEFAULT_BACKGROUND;
   private VBox root;
 
   private Stream selectedStream;
@@ -97,8 +94,8 @@ public class StreamsPanel extends ControllablePanel implements PlaylistMetaDataC
       Platform.runLater(new Runnable() {
         @Override
         public void run() {
-          if (artistResources.isEmpty() || (activeStream.equals(selectedStream) && !artistBackgroundImageView.getImage().equals(defaultBackground))) {
-            setBackground(defaultBackground);
+          if (artistResources.isEmpty() || (activeStream.equals(selectedStream) && artistBackgroundImageView.getOpacity() != 0)) {
+            setBackgroundImage(null);
             playerStatusBox.setImage(null);
           }
         }
@@ -126,7 +123,7 @@ public class StreamsPanel extends ControllablePanel implements PlaylistMetaDataC
             public void run() {
               //the user may have selected another stream while the image has been loaded.
               if (metaData.getItem().equals(activeStream)) {
-                setBackground(randomFXImage);
+                setBackgroundImage(randomFXImage);
                 playerStatusBox.setImage(randomPlayerFXImage);
               }
             }
@@ -158,16 +155,16 @@ public class StreamsPanel extends ControllablePanel implements PlaylistMetaDataC
 
     if (selectedStream == activeStream) {
       if (randomFXImage != null) {
-        setBackground(randomFXImage);
+        setBackgroundImage(randomFXImage);
       }
       else {
-        setBackground(defaultBackground);
+        setBackgroundImage(null);
       }
       artistLabel.setText(applyArtist(currentMetaData));
       titleLabel.setText(applyTitle(currentMetaData));
     }
     else {
-      setBackground(defaultBackground);
+      setBackgroundImage(null);
       artistLabel.setText(NO_DATA_TITLE);
       titleLabel.setText("");
     }
@@ -217,19 +214,28 @@ public class StreamsPanel extends ControllablePanel implements PlaylistMetaDataC
    * Updates the background image with fading
    * @param image the image to apply
    */
-  private void setBackground(final Image image) {
-    if(image.equals(defaultBackground) && artistBackgroundImageView.getImage().equals(defaultBackground)) {
+  private void setBackgroundImage(final Image image) {
+    if(image == null && artistBackgroundImageView.getOpacity() == 0) {
       return;
     }
-    FadeTransition outFader = TransitionUtil.createOutFader(artistBackgroundImageView, 100);
-    outFader.setOnFinished(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent actionEvent) {
-        artistBackgroundImageView.setImage(image);
-        TransitionUtil.createInFader(artistBackgroundImageView, 100).play();
-      }
-    });
-    outFader.play();
+
+    if(artistBackgroundImageView.getOpacity() == 0 && image != null) {
+      artistBackgroundImageView.setImage(image);
+      TransitionUtil.createInFader(artistBackgroundImageView, 100).play();
+    }
+    else {
+      FadeTransition outFader = TransitionUtil.createOutFader(artistBackgroundImageView, 100);
+      outFader.setOnFinished(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent actionEvent) {
+          if(image != null) {
+            artistBackgroundImageView.setImage(image);
+            TransitionUtil.createInFader(artistBackgroundImageView, 100).play();
+          }
+        }
+      });
+      outFader.play();
+    }
   }
 
 
@@ -244,12 +250,10 @@ public class StreamsPanel extends ControllablePanel implements PlaylistMetaDataC
     labelBox.setPadding(new Insets(20, 30, 30, 30));
 
 
-    artistBackgroundImageView = new ImageView(defaultBackground);
+    artistBackgroundImageView = new ImageView();
     ColorAdjust brightness = new ColorAdjust();
     brightness.setBrightness(-0.3);
     artistBackgroundImageView.setEffect(brightness);
-    backgroundImageView = new ImageView(defaultBackground);
-    getChildren().add(backgroundImageView);
     getChildren().add(artistBackgroundImageView);
 
     nameLabel = ComponentUtil.createLabel(stream.getName(), "stream-name", labelBox);
