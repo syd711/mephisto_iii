@@ -45,20 +45,10 @@ public class ServiceScroller extends BorderPane implements ControlListener {
 
   @Override
   public void controlEvent(ServiceControlEvent event) {
-    if(!isVisible()) {
-      return;
-    }
-
     ServiceControlEvent.EVENT_TYPE eventType = event.getEventType();
     if(eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT) || eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
       final int serviceIndex = event.getServiceState().getServiceIndex();
       sc.setValue(serviceIndex);
-    }
-    else if(eventType.equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
-      this.setVisible(false);
-    }
-    else if(eventType.equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
-      this.setVisible(true);
     }
   }
 }

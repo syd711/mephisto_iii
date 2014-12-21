@@ -7,6 +7,7 @@ import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
+import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.ui.google.GoogleMusicPanel;
 import de.calette.mephisto3.ui.radio.StreamsPanel;
 import de.calette.mephisto3.ui.system.SystemPanel;
@@ -16,6 +17,9 @@ import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 
@@ -29,7 +33,6 @@ import java.util.Map;
  * The center region is replaced with ControllablePanel instances.
  */
 public class Center extends BorderPane implements ControlListener, ServiceChangeListener {
-
   protected StackPane stackPane;
   protected ControllablePanel activeControlPanel;
   private ControllablePanel newControlPanel;
@@ -42,9 +45,11 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     setMaxHeight(Mephisto3.HEIGHT);
 
     stackPane = new StackPane();
+    ImageView imageView = new ImageView(Mephisto3.DEFAULT_BACKGROUND);
+    stackPane.getChildren().add(imageView);
+
     serviceChooser = new ServiceChooser(this);
     activeControlPanel = getServicePanel(ServiceController.getInstance().getServiceState());
-
     stackPane.getChildren().add(activeControlPanel);
     setCenter(stackPane);
 

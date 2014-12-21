@@ -9,10 +9,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
 import java.util.Timer;
@@ -37,10 +34,11 @@ public class SystemPanel extends ControllablePanel {
     super(Callete.getWeatherService().getWeather());
     setMinWidth(Mephisto3.WIDTH);
 
+
     final SystemService systemService = Callete.getSystemService();
 
     BorderPane root = new BorderPane();
-    root.setPadding(new Insets(10, 20, 10, 20));
+    root.setPadding(new Insets(30, 20, 10, 20));
 
     HBox center = new HBox(30);
     center.setAlignment(Pos.TOP_CENTER);

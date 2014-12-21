@@ -1,3 +1,10 @@
+.root {
+  -fx-background-image: url("radio_background.png");
+}
+
+.controllable-panel {
+/*-fx-background-color:#333333;*/
+}
 /**
  * Header Styling
  */
@@ -254,6 +261,6 @@
 .service-name {
    -fx-font-size: 32px;
    -fx-font-family: "Tahoma";
-   -fx-fill: #000;
+   -fx-fill: #fff;
    -fx-font-smoothing-type: gray;
 }

@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -17,6 +18,8 @@ import javafx.stage.WindowEvent;
  * In the beginning, there was main...
  */
 public class Mephisto3 extends Application {
+  public static Image DEFAULT_BACKGROUND = new Image(ResourceLoader.getResource("radio_background.png"), 700, 395, false, true);
+
   public static final int WIDTH = 700;
   public static final int HEIGHT= 395;
   private boolean debug = true;

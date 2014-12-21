@@ -70,7 +70,7 @@ public class ServiceChooser implements ControlListener {
     overlay.setMinWidth(Mephisto3.WIDTH);
     overlay.setMinHeight(80);
 
-    scroller.setPadding(new Insets(0, 0, 80, 460));
+    scroller.setPadding(new Insets(50, 0, 80, 460));
     scroller.setAlignment(Pos.CENTER);
 
     transitionQueue = new TransitionQueue(scroller);

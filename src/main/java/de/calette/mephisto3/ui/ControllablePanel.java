@@ -27,6 +27,7 @@ public abstract class ControllablePanel extends StackPane {
 
   public ControllablePanel(List<? extends ServiceModel> models) {
     setOpacity(0);
+    getStyleClass().add("controllable-panel");
     setAlignment(Pos.TOP_LEFT);
 
     this.outFader = TransitionUtil.createOutFader(this);

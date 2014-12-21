@@ -1,6 +1,5 @@
 package de.calette.mephisto3.ui;
 
-import callete.api.services.music.player.PlaylistMetaData;
 import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.util.ComponentUtil;
 import javafx.geometry.Insets;
@@ -21,7 +20,6 @@ public class PlayerStatusBox extends BorderPane {
   private ImageView imageView;
   private Label nameLabel;
   private Label titleLabel;
-  private Image image;
 
   public PlayerStatusBox() {
     setMinHeight(50);
@@ -37,11 +35,6 @@ public class PlayerStatusBox extends BorderPane {
 
   public void setName(String name) {
     nameLabel.setText(name);
-  }
-
-  public void applyMetaData(PlaylistMetaData metaData) {
-    nameLabel.setText(metaData.getName());
-    titleLabel.setText(metaData.getArtist() + " - " + metaData.getTitle());
   }
 
   //---------- Helper -------------------------------------------------------
