@@ -3,7 +3,6 @@ package de.calette.mephisto3.ui;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.scene.Node;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 
 /**
  * Class to be extended from nodes that are used for ControllableSelectorPanels.

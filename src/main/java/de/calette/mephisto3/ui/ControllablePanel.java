@@ -4,14 +4,11 @@ import callete.api.services.ServiceModel;
 import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
-import de.calette.mephisto3.util.TransitionQueue;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.Transition;
-import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 
 import java.util.List;
@@ -27,6 +24,7 @@ public abstract class ControllablePanel extends StackPane {
 
   public ControllablePanel(List<? extends ServiceModel> models) {
     setOpacity(0);
+    setMinWidth(Mephisto3.WIDTH);
     getStyleClass().add("controllable-panel");
     setAlignment(Pos.TOP_LEFT);
 

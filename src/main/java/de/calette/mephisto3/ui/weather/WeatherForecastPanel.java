@@ -2,10 +2,14 @@ package de.calette.mephisto3.ui.weather;
 
 import callete.api.services.weather.Weather;
 import de.calette.mephisto3.util.ComponentUtil;
+import de.calette.mephisto3.util.TransitionUtil;
+import javafx.animation.ParallelTransition;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.layout.HBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
@@ -15,55 +19,51 @@ import java.text.SimpleDateFormat;
  * A single forecast panel.
  */
 public class WeatherForecastPanel extends VBox {
-  private static final String FORECAST_DATE_FORMAT = "dd";
-  private static final String FORECAST_DAY_FORMAT = "EE";
-  private static final SimpleDateFormat forecastDateFormat = new SimpleDateFormat(FORECAST_DATE_FORMAT);
+  private static final String FORECAST_DAY_FORMAT = "EE, dd.";
   private static final SimpleDateFormat forecastDayFormat = new SimpleDateFormat(FORECAST_DAY_FORMAT);
-  public static final int PADDING = 10;
-  public static final int WIDTH = 120-(PADDING*2);
 
-  public WeatherForecastPanel(String label, Weather forecast) {
-    super(5);
-    setAlignment(Pos.TOP_LEFT);
+  private Text tempLabel;
+  private Text titleLabel;
+  private ImageView img;
+
+  public WeatherForecastPanel(Weather forecast) {
+    super(3);
     getStyleClass().add("forecast-panel");
-    setMinWidth(WIDTH);
-    setMinHeight(145);
-    setPadding(new Insets(PADDING,PADDING,PADDING, PADDING));
+    setAlignment(Pos.TOP_CENTER);
 
-    //title
-    HBox titleBox = new HBox(5);
-    titleBox.setAlignment(Pos.TOP_LEFT);
-    String title = label;
-    if(label == null) {
-      title = forecastDayFormat.format(forecast.getForecastDate());
-    }
-    final Text day = new Text(title);
-    day.getStyleClass().add("forecast-title-bold");
-    titleBox.getChildren().add(day);
-    if(label == null) {
-      final Text date = new Text(forecastDateFormat.format(forecast.getForecastDate()));
-      date.getStyleClass().add("forecast-title");
-      titleBox.getChildren().add(date);
-    }
+    setPadding(new Insets(0, 10, 10, 10));
+    String day = forecastDayFormat.format(forecast.getForecastDate());
+    titleLabel = ComponentUtil.createText(day, "forecast-title", this);
+    img = new ImageView(new Image(WeatherConditionMapper.getWeatherForecastIcon(forecast), 55, 55, false, true));
+    getChildren().add(img);
 
-    getChildren().add(titleBox);
+    tempLabel = ComponentUtil.createText(forecast.getHighTemp() + "/" + forecast.getLowTemp() + " °C", "forecast-temp", this);
+  }
 
-    //forecast image
-    final Canvas forecastImage = ComponentUtil.createImageCanvas(WeatherConditionMapper.getWeatherForecastIcon(forecast), 55, 55);
-    HBox image = new HBox();
-    image.setPadding(new Insets(10, 0, 10, 0));
-    image.setAlignment(Pos.CENTER);
-    image.setMinWidth(WIDTH);
-    image.getChildren().add(forecastImage);
-    getChildren().add(image);
+  public void setForecast(final Weather forecast) {
+    final Image image = new Image(WeatherConditionMapper.getWeatherForecastIcon(forecast));
 
-    //subtext
-    Text forecastTemp = new Text(forecast.getLowTemp() + "/" + forecast.getHighTemp() + " °C");
-    forecastTemp.getStyleClass().add("forecast-sub");
-    getChildren().add(forecastTemp);
+    ParallelTransition pt = new ParallelTransition(
+            TransitionUtil.createOutFader(tempLabel),
+            TransitionUtil.createOutFader(titleLabel),
+            TransitionUtil.createOutFader(img)
+    );
+    pt.setOnFinished(new EventHandler<ActionEvent>() {
+      @Override
+      public void handle(ActionEvent actionEvent) {
+        String day = forecastDayFormat.format(forecast.getForecastDate());
+        titleLabel.setText(day);
+        img.setImage(image);
+        tempLabel.setText(forecast.getHighTemp() + "/" + forecast.getLowTemp() + " °C");
 
-    Text condition = new Text(WeatherConditionMapper.getWeatherConditionText(forecast.getWeatherState()));
-    condition.getStyleClass().add("forecast-sub");
-    getChildren().add(condition);
+        ParallelTransition inFader = new ParallelTransition(
+                TransitionUtil.createInFader(tempLabel),
+                TransitionUtil.createInFader(titleLabel),
+                TransitionUtil.createInFader(img)
+        );
+        inFader.play();
+      }
+    });
+    pt.play();
   }
 }

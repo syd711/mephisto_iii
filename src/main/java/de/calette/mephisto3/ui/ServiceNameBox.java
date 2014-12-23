@@ -4,7 +4,6 @@ import callete.api.services.Service;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.CacheHint;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 

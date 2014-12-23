@@ -5,8 +5,8 @@ import callete.api.services.music.model.Stream;
 import callete.api.services.music.player.MusicPlayerPlaylist;
 import callete.api.services.music.player.PlaylistMetaData;
 import callete.api.services.music.player.PlaylistMetaDataChangeListener;
-import callete.api.services.music.resources.ArtistResources;
-import callete.api.services.music.resources.ImageResource;
+import callete.api.services.resources.ArtistResources;
+import callete.api.services.resources.ImageResource;
 import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
@@ -60,8 +60,6 @@ public class StreamsPanel extends ControllablePanel implements PlaylistMetaDataC
 
   public StreamsPanel() {
     super(Callete.getStreamingService().getStreams());
-    setMinWidth(Mephisto3.WIDTH);
-
     startStreaming();
     buildUI(activeStream);
   }
@@ -107,7 +105,7 @@ public class StreamsPanel extends ControllablePanel implements PlaylistMetaDataC
     if (artistResources == null || !artistResources.getArtist().equals(metaData.getArtist())) {
       //reset existing image so that the new is applied
       randomFXImage = null;
-      artistResources = Callete.getArtistResourcesService().getImageResourcesFor(metaData.getArtist());
+      artistResources = Callete.getResourcesService().getImageResourcesFor(metaData.getArtist());
     }
 
     //apply a new artist image if there there is a available resource bundle.
@@ -192,8 +190,6 @@ public class StreamsPanel extends ControllablePanel implements PlaylistMetaDataC
         }
       }
     });
-
-
   }
 
   /**

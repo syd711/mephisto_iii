@@ -137,6 +137,7 @@ public class ServiceController {
           public void run() {
             ServiceControlEvent.EVENT_TYPE push = ServiceControlEvent.EVENT_TYPE.PUSH;
             if (pushEvent.isLongPush()) {
+              serviceState.setModels(null);
               push = ServiceControlEvent.EVENT_TYPE.LONG_PUSH;
             }
             for (ControlListener listener : new ArrayList<>(controlListeners)) {
@@ -178,12 +179,16 @@ public class ServiceController {
               eventType = ServiceControlEvent.EVENT_TYPE.NEXT;
             }
 
-            if (eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
-              serviceState.decrementIndex();
+            //skip this in service chooser mode
+            if(serviceState.getModels() != null) {
+              if (eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
+                serviceState.decrementIndex();
+              }
+              else if (eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
+                serviceState.incrementIndex();
+              }
             }
-            else if (eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
-              serviceState.incrementIndex();
-            }
+
 
             final ServiceControlEvent serviceControlEvent = new ServiceControlEvent(eventType, serviceState);
             for (ControlListener listener : controlListeners) {

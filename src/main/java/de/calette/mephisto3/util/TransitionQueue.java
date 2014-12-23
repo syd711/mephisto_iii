@@ -4,7 +4,6 @@ import javafx.animation.SequentialTransition;
 import javafx.animation.Transition;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.CacheHint;
 import javafx.scene.Node;
 
 import java.util.ArrayList;

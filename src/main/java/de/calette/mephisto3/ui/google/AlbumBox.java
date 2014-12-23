@@ -6,8 +6,6 @@ import callete.api.services.music.model.PlaylistItem;
 import callete.api.services.music.model.Song;
 import callete.api.services.music.player.PlaybackChangeEvent;
 import callete.api.services.music.player.PlaybackChangeEventListener;
-import callete.api.services.music.player.PlaylistChangeEvent;
-import callete.api.services.music.player.PlaylistChangeListener;
 import callete.api.util.ImageCache;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;

@@ -1,7 +1,6 @@
 package de.calette.mephisto3.util;
 
-import callete.api.services.impl.music.player.MPDPlayer;
-import callete.api.services.music.resources.ImageResource;
+import callete.api.services.resources.ImageResource;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;

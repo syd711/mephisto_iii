@@ -1,18 +1,11 @@
 package de.calette.mephisto3.util;
 
-import de.calette.mephisto3.ui.ControllablePanel;
 import de.calette.mephisto3.ui.ServiceChooser;
 import javafx.animation.*;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-
-import java.util.Random;
 
 /**
  * Utility class for creating transitions with default values.

@@ -156,7 +156,7 @@ public class ServiceChooser implements ControlListener {
 
   // --------------- Helper -----------------------------
   private void togglePlaybackSelection() {
-    Text oldSelection = null;
+    Text oldSelection;
     if(playbackSelection == null || playbackSelection == byName) {
       playbackSelection = byArtist;
       oldSelection = byName;
