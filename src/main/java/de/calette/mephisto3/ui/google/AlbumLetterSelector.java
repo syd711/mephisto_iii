@@ -39,7 +39,7 @@ public class AlbumLetterSelector extends ControllableSelectorPanel<AlbumCollecti
 
   @Override
   protected int getTopPadding() {
-    return 115;
+    return 140;
   }
 
   @Override

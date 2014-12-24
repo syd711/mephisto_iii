@@ -58,14 +58,16 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
   public AlbumBox(ControllableSelectorPanel parentControl, Album album) {
     super(10, parentControl, album);
     this.getStyleClass().add("album-box");
+    this.getStyleClass().add("debug");
     setMinWidth(COVER_WIDTH);
+    setMaxHeight(345);
 
     //box used for labels below the cover
     albumLabelBox.setPadding(new Insets(10, 0, 0, 0));
 
     //box for compact view in slider mode
     VBox compactView = new VBox();
-
+    compactView.setPadding(new Insets(20, 0, 0, 10));
 
     if (album != null) {
       if (!StringUtils.isEmpty(album.getArtUrl())) {
@@ -104,7 +106,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     //scale no normal size: remove the selection highlighting
     createScaler(this, 1).play();
     //expand panel to full width
-    createMaxWidthTransition(this, COVER_WIDTH, TRACKS_BOX_WIDTH, true).play();
+    createMaxWidthTransition(this, COVER_WIDTH, TRACKS_BOX_WIDTH+20, true).play();
     //add control listener to this panel
     ServiceController.getInstance().addControlListener(this);
     Callete.getMusicPlayer().addPlaybackChangeEventListener(this);
@@ -137,7 +139,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
 
   @Override
   public void playbackChanged(PlaybackChangeEvent event) {
-    if(tracksBox == null || tracksBox.getChildren().isEmpty()) {
+    if (tracksBox == null || tracksBox.getChildren().isEmpty()) {
       return;
     }
 
@@ -147,8 +149,8 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
-        for(Node node : tracksBox.getChildren()) {
-          if(activeItem != null && node.getUserData().equals(activeItem)) {
+        for (Node node : tracksBox.getChildren()) {
+          if (activeItem != null && node.getUserData().equals(activeItem)) {
             node.getStyleClass().add("track-active");
           }
           else {
@@ -211,7 +213,8 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     //create track box with initial opacity
     //box used for details mode
     tracksBox = new VBox(0);
-    tracksBox.setMaxWidth(TRACKS_BOX_WIDTH-20);
+    tracksBox.setPadding(new Insets(20, 0, 0, 0));
+    tracksBox.setMaxWidth(TRACKS_BOX_WIDTH - 20);
     tracksBox.setOpacity(0);
     final List<Song> songs = getModel().getSongs();
 
@@ -222,7 +225,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
       trackBox.setUserData(song);
       trackBox.setPadding(new Insets(4, 8, 4, 4));
 
-      if(item != null && song.equals(item)) {
+      if (item != null && song.equals(item)) {
         trackBox.getStyleClass().add("track-active");
       }
 
@@ -335,6 +338,6 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
 
   @Override
   public String toString() {
-    return "Album Box '" + getModel()+ "'";
+    return "Album Box '" + getModel() + "'";
   }
 }

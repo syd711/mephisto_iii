@@ -11,7 +11,6 @@ import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.ControllablePanel;
-import de.calette.mephisto3.ui.PlayerStatusBox;
 import de.calette.mephisto3.ui.ServiceScroller;
 import de.calette.mephisto3.util.ComponentUtil;
 import de.calette.mephisto3.util.TransitionUtil;

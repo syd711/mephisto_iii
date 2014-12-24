@@ -1,4 +1,4 @@
-package de.calette.mephisto3.ui;
+package de.calette.mephisto3.ui.radio;
 
 import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.util.ComponentUtil;

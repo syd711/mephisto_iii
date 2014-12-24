@@ -69,7 +69,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
   }
 
   protected int getTopPadding() {
-    return 20;
+    return 0;
   }
 
   @Override

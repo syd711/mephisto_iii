@@ -80,7 +80,10 @@ public class SlideshowPanel extends StackPane {
 
         showView.setImage(image);
         TransitionUtil.createInFader(showView, TRANSITION_MILLIS).play();
-        TransitionUtil.createOutFader(hideView, TRANSITION_MILLIS).play();
+
+        if(hideView.getOpacity() == 1) {
+          TransitionUtil.createOutFader(hideView, TRANSITION_MILLIS).play();
+        }
       }
     });
   }
