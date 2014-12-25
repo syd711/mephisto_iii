@@ -92,7 +92,13 @@
  -fx-text-fill: #fff;
  -fx-font-weight: bold;
  -fx-text-overrun: ellipsis;
- -fx-font-smoothing-type: gray;
+}
+
+.album-artist {
+ -fx-font-size: 16px;
+ -fx-font-family: "Tahoma";
+ -fx-text-fill: #fff;
+ -fx-text-overrun: ellipsis;
 }
 
 .album-box {
@@ -201,7 +207,8 @@
  * Player status
  */
 .player-status-panel {
-    -fx-background-color: linear-gradient(to bottom, derive(gray, 60%), white);
+    /*-fx-background-color: linear-gradient(to bottom, derive(gray, 60%), white);*/
+    -fx-background-color: white;
 }
 
 .player-status-image {

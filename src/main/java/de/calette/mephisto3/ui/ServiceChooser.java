@@ -9,6 +9,7 @@ import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.google.AlbumLetterSelector;
+import de.calette.mephisto3.ui.google.GooglePlayerStatusBox;
 import de.calette.mephisto3.util.TransitionQueue;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
@@ -56,6 +57,8 @@ public class ServiceChooser implements ControlListener {
   private Text playbackSelection;
   private StackPane albumSelectorCenterStack;
 
+  private GooglePlayerStatusBox googlePlayer = new GooglePlayerStatusBox();
+
   public ServiceChooser(final Center center) {
     this.center = center;
 
@@ -64,6 +67,7 @@ public class ServiceChooser implements ControlListener {
     this.albumSelectorCenterStack = new StackPane();
     overlay.getChildren().add(albumSelectorCenterStack);
     center.stackPane.getChildren().add(overlay);
+    center.stackPane.getChildren().add(googlePlayer);
 
     overlay.setAlignment(Pos.TOP_CENTER);
     overlay.setId("chooser");
@@ -115,6 +119,8 @@ public class ServiceChooser implements ControlListener {
             ServiceController.getInstance().removeControlListener(ServiceChooser.this);
             AlbumLetterSelector selector = new AlbumLetterSelector(ServiceChooser.this, albumSelectorCenterStack, (List<AlbumCollection>) playbackSelection.getUserData());
             selector.showPanel();
+
+            googlePlayer.showPlayer();
 
           }
         });

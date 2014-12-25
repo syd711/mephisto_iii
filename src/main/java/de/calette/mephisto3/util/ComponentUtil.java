@@ -1,6 +1,8 @@
 package de.calette.mephisto3.util;
 
+import callete.api.services.music.model.Album;
 import callete.api.services.resources.ImageResource;
+import callete.api.util.ImageCache;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
@@ -45,6 +47,11 @@ public class ComponentUtil {
     l.getStyleClass().add(cssClass);
     parent.getChildren().add(l);
     return l;
+  }
+
+  public static ImageView loadAlbumCover(Album album, int width, int height) {
+    String url = ImageCache.loadCover(album);
+    return new ImageView(new Image(url, width, height, false, true));
   }
 
   public static Image toFXImage(ImageResource image) {

@@ -18,7 +18,7 @@ public class AlbumSlider extends ControllableSelectorPanel<Album> {
   private AlbumCollection albumCollection;
 
   public AlbumSlider(ServiceChooser serviceChooser, Pane parent, List<AlbumCollection> collections, AlbumCollection albumCollection) {
-    super(20, parent, AlbumBox.COVER_WIDTH + 20, albumCollection.getAlbums(), AlbumBox.class);
+    super(10, parent, AlbumBox.BOX_WIDTH+10, albumCollection.getAlbums(), AlbumBox.class);
     setBackButton(70);
     this.albumCollection = albumCollection;
     this.collections = collections;

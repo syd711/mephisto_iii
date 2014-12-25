@@ -6,7 +6,6 @@ import callete.api.services.music.model.PlaylistItem;
 import callete.api.services.music.model.Song;
 import callete.api.services.music.player.PlaybackChangeEvent;
 import callete.api.services.music.player.PlaybackChangeEventListener;
-import callete.api.util.ImageCache;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
@@ -14,6 +13,7 @@ import de.calette.mephisto3.resources.menu.MenuResourceLoader;
 import de.calette.mephisto3.ui.ControllableHBoxItemPanelBase;
 import de.calette.mephisto3.ui.ControllableSelectorPanel;
 import de.calette.mephisto3.util.ComponentUtil;
+import de.calette.mephisto3.util.Executor;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.*;
 import javafx.application.Platform;
@@ -24,6 +24,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang.StringUtils;
@@ -40,14 +41,16 @@ import static de.calette.mephisto3.util.TransitionUtil.*;
 public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements ControlListener, PlaybackChangeEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(AlbumBox.class);
 
-  public static final int COVER_WIDTH = 200;
+  private static final int COVER_WIDTH = 200;
+  public static final int BOX_WIDTH = 220;
   public static final int COVER_HEIGHT = 200;
   public static final int TRACKS_WIDTH = 390;
   public static final int TRACK_ITEM_HEIGHT = 30;
   public static final int MAX_DISPLAY_TRACKS = 11;
   //index when the tracks should be starting scrolling
   public static final int SCROLL_INDEX = 7;
-  public static final int TRACKS_BOX_WIDTH = 480;
+  public static final int TRACKS_BOX_WIDTH = 500;
+  public static final int TOP_PADDING = 15;
 
   private double scaleFactor = 1.05;
   private VBox albumLabelBox = new VBox(5);
@@ -59,19 +62,19 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     super(10, parentControl, album);
     this.getStyleClass().add("album-box");
     this.getStyleClass().add("debug");
-    setMinWidth(COVER_WIDTH);
+    setMinWidth(BOX_WIDTH);
     setMaxHeight(345);
 
     //box used for labels below the cover
-    albumLabelBox.setPadding(new Insets(10, 0, 0, 0));
+    albumLabelBox.setPadding(new Insets(TOP_PADDING, 0, 0, 0));
 
     //box for compact view in slider mode
     VBox compactView = new VBox();
-    compactView.setPadding(new Insets(20, 0, 0, 10));
+    compactView.setPadding(new Insets(TOP_PADDING, 0, 0, 10));
 
     if (album != null) {
       if (!StringUtils.isEmpty(album.getArtUrl())) {
-        Canvas cover = ImageCache.loadCover(album, COVER_WIDTH, COVER_HEIGHT);
+        ImageView cover = ComponentUtil.loadAlbumCover(album, COVER_WIDTH, COVER_HEIGHT);
         cover.getStyleClass().add("cover-canvas");
         compactView.getChildren().add(cover);
       }
@@ -83,7 +86,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
       }
 
       ComponentUtil.createLabel(getModel().getName(), "album", albumLabelBox);
-      ComponentUtil.createLabel(getModel().getArtist(), "album", albumLabelBox);
+      ComponentUtil.createLabel(getModel().getArtist(), "album-artist", albumLabelBox);
 
       compactView.getChildren().add(albumLabelBox);
     }
@@ -105,11 +108,13 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
   public void switchToDetailsMode() {
     //scale no normal size: remove the selection highlighting
     createScaler(this, 1).play();
-    //expand panel to full width
-    createMaxWidthTransition(this, COVER_WIDTH, TRACKS_BOX_WIDTH+20, true).play();
+
     //add control listener to this panel
     ServiceController.getInstance().addControlListener(this);
     Callete.getMusicPlayer().addPlaybackChangeEventListener(this);
+
+    //expand panel to full width
+    Transition maxWidthTransition = createMaxWidthTransition(this, COVER_WIDTH, TRACKS_BOX_WIDTH, true);
 
     //hide cover labels
     final FadeTransition outFader = createOutFader(albumLabelBox);
@@ -134,7 +139,9 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         createInFader(tracksBox).play();
       }
     });
-    outFader.play();
+
+    ParallelTransition pt = new ParallelTransition(maxWidthTransition, outFader);
+    pt.play();
   }
 
   @Override
@@ -178,10 +185,15 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         blink.setOnFinished(new EventHandler<ActionEvent>() {
           @Override
           public void handle(ActionEvent actionEvent) {
-            Song song = (Song) node.getUserData();
-            Callete.getMusicPlayer().getPlaylist().setPlaylist(getModel());
-            Callete.getMusicPlayer().getPlaylist().setActiveItem(song);
-            Callete.getMusicPlayer().play();
+            Executor.run(new Runnable() {
+              @Override
+              public void run() {
+                Song song = (Song) node.getUserData();
+                Callete.getMusicPlayer().getPlaylist().setPlaylist(getModel());
+                Callete.getMusicPlayer().getPlaylist().setActiveItem(song);
+                Callete.getMusicPlayer().play();
+              }
+            });
           }
         });
         blink.play();
@@ -213,7 +225,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     //create track box with initial opacity
     //box used for details mode
     tracksBox = new VBox(0);
-    tracksBox.setPadding(new Insets(20, 0, 0, 0));
+    tracksBox.setPadding(new Insets(TOP_PADDING, 0, 0, 0));
     tracksBox.setMaxWidth(TRACKS_BOX_WIDTH - 20);
     tracksBox.setOpacity(0);
     final List<Song> songs = getModel().getSongs();
@@ -311,7 +323,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
       @Override
       public void handle(ActionEvent actionEvent) {
         final ScaleTransition scaler = createScaler(AlbumBox.this, scaleFactor);
-        final Transition maxWidth = createMaxWidthTransition(AlbumBox.this, COVER_WIDTH + TRACKS_BOX_WIDTH, TRACKS_BOX_WIDTH, false);
+        final Transition maxWidth = createMaxWidthTransition(AlbumBox.this, BOX_WIDTH + TRACKS_BOX_WIDTH, TRACKS_BOX_WIDTH, false);
         final FadeTransition labelFader = createOutFader(albumLabelBox);
 
         ParallelTransition pt = new ParallelTransition(scaler, maxWidth, labelFader);
@@ -320,7 +332,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
           public void handle(ActionEvent actionEvent) {
             albumLabelBox.getChildren().clear();
             ComponentUtil.createLabel(getModel().getName(), "album", albumLabelBox);
-            ComponentUtil.createLabel(getModel().getArtist(), "album", albumLabelBox);
+            ComponentUtil.createLabel(getModel().getArtist(), "album-artist", albumLabelBox);
 
             selectionIndex = -1;
             tracksBox.getChildren().clear();
