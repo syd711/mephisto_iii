@@ -3,6 +3,8 @@ package de.calette.mephisto3.ui.google;
 import callete.api.Callete;
 import callete.api.services.music.model.Album;
 import callete.api.services.music.model.Song;
+import callete.api.services.music.player.PlaybackChangeEvent;
+import callete.api.services.music.player.PlaybackChangeListener;
 import callete.api.services.music.player.PlaylistChangeEvent;
 import callete.api.services.music.player.PlaylistChangeListener;
 import callete.api.util.DateUtil;
@@ -28,7 +30,7 @@ import java.util.TimerTask;
 /**
  * Displays the current status of the media player.
  */
-public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeListener {
+public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeListener, PlaybackChangeListener {
   public static final int COVER_HEIGHT = 52;
   public static final int COVER_WIDTH = 52;
 
@@ -46,7 +48,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
   public GooglePlayerStatusBox() {
     VBox spacer = new VBox();
     this.setOpacity(0);
-    spacer.setMinHeight(335);
+    spacer.setMinHeight(332);
     setTop(spacer);
     setLeft(createImageBox());
     setCenter(createStatusBox());
@@ -54,11 +56,13 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
 
   public void showPlayer() {
     Callete.getMusicPlayer().getPlaylist().addChangeListener(this);
+    Callete.getMusicPlayer().addPlaybackChangeEventListener(this);
     TransitionUtil.createInFader(this).play();
   }
 
   public void hidePlayer() {
     Callete.getMusicPlayer().getPlaylist().removeChangeListener(this);
+    Callete.getMusicPlayer().removePlaybackChangeEventListener(this);
     TransitionUtil.createOutFader(this).play();
   }
 
@@ -120,69 +124,84 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
 
   @Override
   public void playlistChanged(final PlaylistChangeEvent e) {
+    Platform.runLater(() -> {
+      final Song song = (Song) e.getActiveItem();
+      Album album = song.getAlbum();
+
+      nameLabel.setText(song.getName());
+      titleLabel.setText(song.getArtist());
+      String info = "";
+      if (album.getYear() > 0) {
+        info = String.valueOf(album.getYear());
+      }
+      if (!StringUtils.isEmpty(album.getGenre())) {
+        if (info.length() > 0) {
+          info += ", ";
+        }
+        info += album.getGenre();
+      }
+
+      albumInfoLabel.setText(info);
+      progress.setOpacity(1);
+
+      //reset progress to zero
+      progress.setProgress(0);
+      currentDurationLabel.setText("0:00");
+      totalDurationLabel.setText(song.getDuration());
+
+      //reset timer
+      if (timer != null) {
+        timer.purge();
+        timer.cancel();
+        timer = null;
+      }
+    });
+
+  }
+
+  @Override
+  public void playbackChanged(PlaybackChangeEvent event) {
+    final Song song = (Song) event.getActiveItem();
+    final Album album = song.getAlbum();
+    //reset timer
+    if (timer != null) {
+      timer.purge();
+      timer.cancel();
+      timer = null;
+    }
+
+    timer = new Timer();
+    currentDuration = 0;
+    timer.schedule(new TimerTask() {
+      @Override
+      public void run() {
+        Platform.runLater(new Runnable() {
+          @Override
+          public void run() {
+            currentDuration++;
+
+            String time = DateUtil.formatTime(currentDuration);
+            currentDurationLabel.setText(time);
+            long duration = song.getDurationMillis() / 1000;
+            double progressValue = 1.0 / duration;
+            progressValue = progress.getProgress() + progressValue;
+            progress.setProgress(progressValue);
+            if (progressValue > 1) {
+              timer.purge();
+              timer.cancel();
+              progress.setProgress(1.0);
+            }
+          }
+        });
+      }
+    }, 0, 1000);
+
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
-        final Song song = (Song) e.getActiveItem();
-        Album album = song.getAlbum();
-
-        //reset progress to zero
-        progress.setProgress(0);
-
-        titleLabel.setText(song.getName());
-        nameLabel.setText(song.getArtist());
-        String info = "";
-        if (album.getYear() > 0) {
-          info = String.valueOf(album.getYear());
-        }
-        if (!StringUtils.isEmpty(album.getGenre())) {
-          if (info.length() > 0) {
-            info += ", ";
-          }
-          info += album.getGenre();
-        }
-
-        albumInfoLabel.setText(info);
-        progress.setOpacity(1);
-        totalDurationLabel.setText(song.getDuration());
-
-        //reset timer
-        if (timer != null) {
-          timer.purge();
-          timer.cancel();
-          timer = null;
-        }
-
-        timer = new Timer();
-        currentDuration = 0;
-        timer.schedule(new TimerTask() {
-          @Override
-          public void run() {
-            Platform.runLater(new Runnable() {
-              @Override
-              public void run() {
-                currentDuration++;
-
-                String time = DateUtil.formatTime(currentDuration);
-                currentDurationLabel.setText(time);
-                long duration = song.getDurationMillis() / 1000;
-                double progressValue = 1.0 / duration;
-                progressValue = progress.getProgress() + progressValue;
-                progress.setProgress(progressValue);
-                if (progressValue > 1) {
-                  timer.purge();
-                  timer.cancel();
-                  progress.setProgress(1.0);
-                }
-              }
-            });
-          }
-        }, 0, 1000);
-
         ImageView cover = ComponentUtil.loadAlbumCover(album, COVER_WIDTH, COVER_HEIGHT);
         setImage(cover.getImage());
       }
     });
-
   }
 }

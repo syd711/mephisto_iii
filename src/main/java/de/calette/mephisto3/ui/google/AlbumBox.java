@@ -5,7 +5,7 @@ import callete.api.services.music.model.Album;
 import callete.api.services.music.model.PlaylistItem;
 import callete.api.services.music.model.Song;
 import callete.api.services.music.player.PlaybackChangeEvent;
-import callete.api.services.music.player.PlaybackChangeEventListener;
+import callete.api.services.music.player.PlaybackChangeListener;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
@@ -17,8 +17,6 @@ import de.calette.mephisto3.util.Executor;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.*;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -39,7 +37,7 @@ import static de.calette.mephisto3.util.TransitionUtil.*;
 /**
  * Pane this displays the album cover, name and artist for the slider.
  */
-public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements ControlListener, PlaybackChangeEventListener {
+public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements ControlListener, PlaybackChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(AlbumBox.class);
 
   private static final int COVER_WIDTH = 200;
@@ -52,9 +50,10 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
   public static final int SCROLL_INDEX = 7;
   public static final int TRACKS_BOX_WIDTH = 500;
   public static final int TOP_PADDING = 15;
+  public static final int SHADOW_WIDTH = 3;
 
   private double scaleFactor = 1.05;
-  private VBox albumLabelBox = new VBox(5);
+  private VBox albumInfoBox = new VBox(3);
   private VBox tracksBox;
   private int selectionIndex = -1;
 
@@ -66,37 +65,15 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     setMaxHeight(345);
     setPadding(new Insets(0, 0, 0, 10));
 
-    //box used for labels below the cover
-    albumLabelBox.setPadding(new Insets(TOP_PADDING, 0, 0, 0));
-
     //box for compact view in slider mode
     VBox compactView = new VBox();
-    compactView.getStyleClass().add("debug");
     compactView.setPadding(new Insets(TOP_PADDING, 0, 0, 0));
 
+    //box used for labels below the cover
+    albumInfoBox.setPadding(new Insets(5, 5, 5, 5));
+    albumInfoBox.getStyleClass().add("album-info-text");
     if (album != null) {
-      if (!StringUtils.isEmpty(album.getArtUrl())) {
-        ImageView cover = ComponentUtil.loadAlbumCover(album, COVER_WIDTH, COVER_HEIGHT);
-
-        BorderPane p = new BorderPane();
-        p.setCenter(cover);
-        p.setMaxHeight(cover.getImage().getHeight()+1);
-        p.setMaxWidth(cover.getImage().getWidth()+1);
-
-        p.getStyleClass().add("cover-box");
-        compactView.getChildren().add(p);
-      }
-      else {
-        LOG.warn("No cover found for " + album + ", using spacer instead.");
-        VBox spacer = new VBox();
-        spacer.setMinHeight(COVER_HEIGHT);
-        compactView.getChildren().add(spacer);
-      }
-
-      ComponentUtil.createLabel(getModel().getName(), "default-16", albumLabelBox);
-      ComponentUtil.createLabel(getModel().getArtist(), "default-16", albumLabelBox);
-
-      compactView.getChildren().add(albumLabelBox);
+      createAlbumInfoBox(album, compactView);
     }
     else {
       setAlignment(Pos.BASELINE_RIGHT);
@@ -125,27 +102,29 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     Transition maxWidthTransition = createMaxWidthTransition(this, COVER_WIDTH, TRACKS_BOX_WIDTH, true);
 
     //hide cover labels
-    final FadeTransition outFader = createOutFader(albumLabelBox);
-    outFader.setOnFinished(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent actionEvent) {
-        //remove title name name...
-        albumLabelBox.getChildren().clear();
-        //...add tracks, year and genre instead.
-        ComponentUtil.createLabel(getModel().getSize() + " Titel", "track", albumLabelBox);
-        ComponentUtil.createLabel(getModel().getDuration(), "track", albumLabelBox);
-        if (getModel().getYear() > 0) {
-          ComponentUtil.createLabel(String.valueOf(getModel().getYear()), "default-16", albumLabelBox);
-        }
-        if (!StringUtils.isEmpty(getModel().getGenre())) {
-          ComponentUtil.createLabel(getModel().getGenre(), "default-16", albumLabelBox);
-        }
-        createInFader(albumLabelBox).play();
+    final FadeTransition outFader = createOutFader(albumInfoBox);
+    outFader.setOnFinished(actionEvent -> {
+      //remove title name name...
+      albumInfoBox.getChildren().clear();
+      //...add tracks, year and genre instead.
+      ComponentUtil.createLabel(getModel().getName(), "default-16", albumInfoBox);
+      ComponentUtil.createLabel(getModel().getArtist(), "default-16", albumInfoBox);
 
-        createTracksBox();
-        getChildren().add(tracksBox);
-        createInFader(tracksBox).play();
+      ComponentUtil.createCustomLabel(getModel().getSize() + " Titel, " + getModel().getDuration(), "player-info-label", albumInfoBox);
+
+      String pos4 = "";
+      if (getModel().getYear() > 0) {
+        pos4 = String.valueOf(getModel().getYear());
       }
+      if (pos4.length() > 0 && !StringUtils.isEmpty(getModel().getGenre())) {
+        pos4+= ", " + getModel().getGenre();
+      }
+      ComponentUtil.createCustomLabel(pos4, "player-info-label", albumInfoBox);
+      createInFader(albumInfoBox).play();
+
+      createTracksBox();
+      getChildren().add(tracksBox);
+      createInFader(tracksBox).play();
     });
 
     ParallelTransition pt = new ParallelTransition(maxWidthTransition, outFader);
@@ -161,16 +140,13 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     LOG.info("Received playback change event for " + this + " with item " + event.getActiveItem());
 
     final PlaylistItem activeItem = event.getActiveItem();
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        for (Node node : tracksBox.getChildren()) {
-          if (activeItem != null && node.getUserData().equals(activeItem)) {
-            node.getStyleClass().add("track-active");
-          }
-          else {
-            node.getStyleClass().remove("track-active");
-          }
+    Platform.runLater(() -> {
+      for (Node node : tracksBox.getChildren()) {
+        if (activeItem != null && node.getUserData().equals(activeItem)) {
+          node.getStyleClass().add("track-active");
+        }
+        else {
+          node.getStyleClass().remove("track-active");
         }
       }
     });
@@ -190,20 +166,12 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
       else {
         final Node node = tracksBox.getChildren().get(selectionIndex);
         FadeTransition blink = TransitionUtil.createBlink(node);
-        blink.setOnFinished(new EventHandler<ActionEvent>() {
-          @Override
-          public void handle(ActionEvent actionEvent) {
-            Executor.run(new Runnable() {
-              @Override
-              public void run() {
-                Song song = (Song) node.getUserData();
-                Callete.getMusicPlayer().getPlaylist().setPlaylist(getModel());
-                Callete.getMusicPlayer().getPlaylist().setActiveItem(song);
-                Callete.getMusicPlayer().play();
-              }
-            });
-          }
-        });
+        blink.setOnFinished(actionEvent -> Executor.run(() -> {
+          Song song = (Song) node.getUserData();
+          Callete.getMusicPlayer().getPlaylist().setPlaylist(getModel());
+          Callete.getMusicPlayer().getPlaylist().setActiveItem(song);
+          Callete.getMusicPlayer().play();
+        }));
         blink.play();
       }
     }
@@ -244,6 +212,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
       HBox trackBox = new HBox();
       trackBox.setUserData(song);
       trackBox.setPadding(new Insets(4, 8, 4, 4));
+//      trackBox.getStyleClass().add("track-row");
 
       if (item != null && song.equals(item)) {
         trackBox.getStyleClass().add("track-active");
@@ -313,13 +282,34 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     final FadeTransition inFader = createInFader(tracksBox.getChildren().get(inFaderIndex));
     final TranslateTransition translateByYTransition = createTranslateByYTransition(tracksBox, 200, scrollWidth);
     ParallelTransition pt = new ParallelTransition(outFader, inFader, translateByYTransition);
-    pt.setOnFinished(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent actionEvent) {
-        ServiceController.getInstance().setControlEnabled(true);
-      }
-    });
+    pt.setOnFinished(actionEvent -> ServiceController.getInstance().setControlEnabled(true));
     pt.play();
+  }
+
+  private void createAlbumInfoBox(Album album, VBox compactView) {
+    BorderPane p = new BorderPane();
+
+    p.setMaxHeight(COVER_WIDTH + SHADOW_WIDTH);
+    p.setMaxWidth(COVER_HEIGHT + SHADOW_WIDTH);
+    p.getStyleClass().add("cover-box");
+
+    if (!StringUtils.isEmpty(album.getArtUrl())) {
+      ImageView cover = ComponentUtil.loadAlbumCover(album, COVER_WIDTH, COVER_HEIGHT);
+      p.setCenter(cover);
+    }
+    else {
+      LOG.warn("No cover found for " + album + ", using spacer instead.");
+      VBox spacer = new VBox();
+      spacer.setMinWidth(COVER_WIDTH);
+      spacer.setMinHeight(COVER_HEIGHT);
+      p.setCenter(spacer);
+    }
+
+    ComponentUtil.createLabel(getModel().getName(), "default-16", albumInfoBox);
+    ComponentUtil.createLabel(getModel().getArtist(), "player-info-label", albumInfoBox);
+    p.setBottom(albumInfoBox);
+
+    compactView.getChildren().add(p);
   }
 
   private void switchToSliderMode() {
@@ -327,31 +317,25 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     Callete.getMusicPlayer().removePlaybackChangeEventListener(this);
 
     final FadeTransition outFader = createOutFader(tracksBox);
-    outFader.setOnFinished(new EventHandler<ActionEvent>() {
-      @Override
-      public void handle(ActionEvent actionEvent) {
-        final ScaleTransition scaler = createScaler(AlbumBox.this, scaleFactor);
-        final Transition maxWidth = createMaxWidthTransition(AlbumBox.this, BOX_WIDTH + TRACKS_BOX_WIDTH, TRACKS_BOX_WIDTH, false);
-        final FadeTransition labelFader = createOutFader(albumLabelBox);
+    outFader.setOnFinished(actionEvent -> {
+      final ScaleTransition scaler = createScaler(AlbumBox.this, scaleFactor);
+      final Transition maxWidth = createMaxWidthTransition(AlbumBox.this, BOX_WIDTH + TRACKS_BOX_WIDTH, TRACKS_BOX_WIDTH, false);
+      final FadeTransition labelFader = createOutFader(albumInfoBox);
 
-        ParallelTransition pt = new ParallelTransition(scaler, maxWidth, labelFader);
-        pt.setOnFinished(new EventHandler<ActionEvent>() {
-          @Override
-          public void handle(ActionEvent actionEvent) {
-            albumLabelBox.getChildren().clear();
-            ComponentUtil.createLabel(getModel().getName(), "default-16", albumLabelBox);
-            ComponentUtil.createLabel(getModel().getArtist(), "default-16", albumLabelBox);
+      ParallelTransition pt = new ParallelTransition(scaler, maxWidth, labelFader);
+      pt.setOnFinished(actionEvent1 -> {
+        albumInfoBox.getChildren().clear();
+        ComponentUtil.createLabel(getModel().getName(), "default-16", albumInfoBox);
+        ComponentUtil.createLabel(getModel().getArtist(), "default-16", albumInfoBox);
 
-            selectionIndex = -1;
-            tracksBox.getChildren().clear();
-            AlbumBox.this.getChildren().remove(tracksBox);
+        selectionIndex = -1;
+        tracksBox.getChildren().clear();
+        AlbumBox.this.getChildren().remove(tracksBox);
 
-            createInFader(albumLabelBox).play();
-            ServiceController.getInstance().addControlListener(getParentControlPanel());
-          }
-        });
-        pt.play();
-      }
+        createInFader(albumInfoBox).play();
+        ServiceController.getInstance().addControlListener(getParentControlPanel());
+      });
+      pt.play();
     });
     outFader.play();
   }

@@ -9,6 +9,7 @@ import de.calette.mephisto3.util.ComponentUtil;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -41,8 +42,12 @@ public class SystemPanel extends ControllablePanel {
 
     final SystemService systemService = Callete.getSystemService();
 
+
+    Label titleLabel = ComponentUtil.createCustomLabel("System Information", "system-tab-title", this);
+    titleLabel.setPadding(new Insets(20, 30, 0, 20));
+
     BorderPane root = new BorderPane();
-    root.setPadding(new Insets(30, 20, 10, 20));
+    root.setPadding(new Insets(90, 20, 10, 20));
 
     HBox center = new HBox(30);
     center.setAlignment(Pos.TOP_CENTER);

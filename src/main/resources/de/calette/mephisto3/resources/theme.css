@@ -91,16 +91,34 @@
  -fx-background-color: #b5b5b5;
 }
 
+.track-row {
+  -fx-border-color: transparent transparent #d9d9d9 transparent;
+}
+
 
 .cover-box {
+ -fx-effect: dropshadow(three-pass-box, #b5b5b5, 5, 0, 3, 3);
+ -fx-background-color: white;
  -fx-border-width: 1px;
  -fx-border-color: #b5b5b5;
+}
+
+.album-info-text {
+  -fx-border-color: #b5b5b5 transparent transparent transparent;
 }
 
 
 /**
  * System Panel
  */
+.system-tab-title {
+ -fx-font-size: 40px;
+ -fx-font-family: "Tahoma";
+ -fx-text-fill: #333;
+ -fx-text-overrun: ellipsis;
+ -fx-font-smoothing-type: gray;
+}
+
 .system-title {
  -fx-font-size: 22px;
 }
@@ -111,13 +129,13 @@
 }
 
 .progressIndicator {
-    -fx-progress-color: #3C1F42;
-    -fx-color: #fff;
+    -fx-progress-color: #fb8521;
+    -fx-color: #b5b5b5;
     -fx-min-width: 150px;
     -fx-min-height: 150px;
 }
 .progressIndicator .percentage {
-    -fx-fill: white;
+    -fx-fill: #333;
     -fx-font-size: 16px;
 }
 
@@ -154,9 +172,10 @@
 }
 
 .player-name-label {
-   -fx-font-size: 16px;
+   -fx-font-size: 14px;
    -fx-font-family: "Tahoma";
    -fx-text-fill: #333333;
+   -fx-font-weight: bold;
    -fx-text-overrun: ellipsis;
    -fx-font-smoothing-type: gray;
 }
@@ -170,9 +189,17 @@
 }
 
 .player-albuminfo-label {
-   -fx-font-size: 14px;
+   -fx-font-size: 12px;
    -fx-font-family: "Tahoma";
    -fx-text-fill: #333333;
+   -fx-text-overrun: ellipsis;
+   -fx-font-smoothing-type: gray;
+}
+
+.player-info-label {
+   -fx-font-size: 12px;
+   -fx-font-family: "Tahoma";
+   -fx-text-fill: #666;
    -fx-text-overrun: ellipsis;
    -fx-font-smoothing-type: gray;
 }
@@ -203,6 +230,17 @@
 #scroller .increment-button,
 #scroller .decrement-button {
   -fx-padding:5px;
+}
+
+.progress-bar {
+    -fx-background-color: #b5b5b5;
+    -fx-background-radius: 0, 0, 0, 0;
+}
+
+.progress-bar .track{
+    -fx-background-color: white;
+    -fx-background-insets: 1;
+    -fx-background-radius: 0, 0, 0, 0;
 }
 
 .progress-bar .bar {
