@@ -5,6 +5,7 @@ import callete.api.services.system.SystemService;
 import callete.api.util.SystemUtils;
 import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.ui.ControllablePanel;
+import de.calette.mephisto3.util.ComponentUtil;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -52,9 +53,7 @@ public class SystemPanel extends ControllablePanel {
     diskSpaceBox.setAlignment(Pos.TOP_CENTER);
     center.getChildren().add(diskSpaceBox);
 
-    Text keyText = new Text("Datenspeicher");
-    keyText.getStyleClass().add("system-title");
-    diskSpaceBox.getChildren().add(keyText);
+    ComponentUtil.createText("Datenspeicher", "system-title", diskSpaceBox);
     diskSpace = new ProgressIndicator();
     diskSpace.getStyleClass().add("progressIndicator");
     diskSpaceBox.getChildren().add(diskSpace);
@@ -70,9 +69,7 @@ public class SystemPanel extends ControllablePanel {
     memoryBox.setAlignment(Pos.TOP_CENTER);
     center.getChildren().add(memoryBox);
 
-    Text heapTitleText = new Text("Heap-Speicher");
-    heapTitleText.getStyleClass().add("system-title");
-    memoryBox.getChildren().add(heapTitleText);
+    ComponentUtil.createText("Heap-Speicher", "system-title", memoryBox);
     heapSpace = new ProgressIndicator();
     heapSpace.getStyleClass().add("progressIndicator");
     memoryBox.getChildren().add(heapSpace);
@@ -88,9 +85,7 @@ public class SystemPanel extends ControllablePanel {
     systemBox.setAlignment(Pos.TOP_CENTER);
     center.getChildren().add(systemBox);
 
-    Text systemTitle = new Text("System");
-    systemTitle.getStyleClass().add("system-title");
-    systemBox.getChildren().add(systemTitle);
+    ComponentUtil.createText("System", "system-title", systemBox);
 
     VBox systemDetailsBox = new VBox(5);
     systemDetailsBox.setPadding(new Insets(10, 5, 5, 5));
@@ -147,14 +142,8 @@ public class SystemPanel extends ControllablePanel {
 
   private Text createInfo(Pane parent, String key, String value) {
     HBox infoBox = new HBox(10);
-    Text keyText = new Text(key);
-    keyText.getStyleClass().add("system-key");
-    infoBox.getChildren().add(keyText);
-
-    Text valueText = new Text(value);
-    valueText.getStyleClass().add("system-value");
-    infoBox.getChildren().add(valueText);
-
+    ComponentUtil.createText(key, "system-key", infoBox);
+    Text valueText = ComponentUtil.createText(value, "default-16", infoBox);
     parent.getChildren().add(infoBox);
     return valueText;
   }

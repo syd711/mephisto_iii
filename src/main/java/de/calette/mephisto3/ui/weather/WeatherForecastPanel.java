@@ -33,7 +33,7 @@ public class WeatherForecastPanel extends VBox {
 
     setPadding(new Insets(0, 10, 10, 10));
     String day = forecastDayFormat.format(forecast.getForecastDate());
-    titleLabel = ComponentUtil.createText(day, "forecast-title", this);
+    titleLabel = ComponentUtil.createText(day, "default-white-16", this);
     img = new ImageView(new Image(WeatherConditionMapper.getWeatherForecastIcon(forecast), 55, 55, false, true));
     getChildren().add(img);
 

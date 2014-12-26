@@ -54,7 +54,7 @@ public class StreamsPanel extends ControllablePanel implements PlaylistMetaDataC
 
   private PlaylistMetaData currentMetaData;
   private ServiceScroller serviceScroller = new ServiceScroller();
-  private PlayerStatusBox playerStatusBox = new PlayerStatusBox();
+  private StreamStatusBox playerStatusBox = new StreamStatusBox();
   private ArtistResources artistResources;
 
   public StreamsPanel() {

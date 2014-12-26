@@ -14,14 +14,14 @@ import javafx.scene.layout.VBox;
 /**
  * Displays the current status of the media player.
  */
-public class PlayerStatusBox extends BorderPane {
+public class StreamStatusBox extends BorderPane {
 
-  private Image defaultBackground = new Image(ResourceLoader.getResource("player-background.png"), 42, 42, false, true);
+  private Image defaultBackground = new Image(ResourceLoader.getResource("player-background.png"), 40, 40, false, true);
   private ImageView imageView;
   private Label nameLabel;
   private Label titleLabel;
 
-  public PlayerStatusBox() {
+  public StreamStatusBox() {
     setMinHeight(50);
     getStyleClass().add("player-status-panel");
 
@@ -42,14 +42,16 @@ public class PlayerStatusBox extends BorderPane {
   private Node createStatusBox() {
     VBox status = new VBox(3);
     status.setPadding(new Insets(3,3,3,8));
-    nameLabel = ComponentUtil.createLabel("", "player-name-label", status);
-    titleLabel = ComponentUtil.createLabel("", "player-title-label", status);
+    nameLabel = ComponentUtil.createCustomLabel("", "player-name-label", status);
+    nameLabel.getStyleClass().remove("label");
+    titleLabel = ComponentUtil.createCustomLabel("", "player-title-label", status);
+    titleLabel.getStyleClass().remove("label");
     return status;
   }
 
   private Node createImageBox() {
     HBox wrapper = new HBox(5);
-    wrapper.setPadding(new Insets(2, 2, 2, 4));
+    wrapper.setPadding(new Insets(3, 2, 2, 4));
     HBox imageBox = new HBox();
     imageBox.setMaxHeight(42);
     imageBox.getStyleClass().add("player-status-image");

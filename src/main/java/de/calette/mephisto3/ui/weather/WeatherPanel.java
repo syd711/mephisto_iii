@@ -124,7 +124,7 @@ public class WeatherPanel extends ControllablePanel {
     getChildren().add(slideshowPanel);
 
     VBox root = new VBox();
-    cityLabel = ComponentUtil.createLabel("", "weather-city", root);
+    cityLabel = ComponentUtil.createCustomLabel("", "weather-city", root);
     cityLabel.setPadding(new Insets(20, 30, 0, 30));
 
     VBox spacer = new VBox();

@@ -1,8 +1,8 @@
 package de.calette.mephisto3.util;
 
+import callete.api.services.music.AlbumCoverCache;
 import callete.api.services.music.model.Album;
 import callete.api.services.resources.ImageResource;
-import callete.api.util.ImageCache;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
@@ -37,20 +37,34 @@ public class ComponentUtil {
 
   public static Label createLabel(String label, String cssClass, Pane parent) {
     Label l = new Label(label);
+    l.getStyleClass().add("label-defaults");
     l.getStyleClass().add(cssClass);
     parent.getChildren().add(l);
+    return l;
+  }
+
+  public static Label createCustomLabel(String label, String cssClass, Pane parent) {
+    Label l = new Label(label);
+    l.getStyleClass().add(cssClass);
+    parent.getChildren().add(l);
+    return l;
+  }
+
+  public static Text createText(String label, String cssClass, Pane parent, Object userData) {
+    Text l = new Text(label);
+    l.getStyleClass().add("text-defaults");
+    l.getStyleClass().add(cssClass);
+    parent.getChildren().add(l);
+    l.setUserData(userData);
     return l;
   }
 
   public static Text createText(String label, String cssClass, Pane parent) {
-    Text l = new Text(label);
-    l.getStyleClass().add(cssClass);
-    parent.getChildren().add(l);
-    return l;
+    return createText(label, cssClass, parent, null);
   }
 
   public static ImageView loadAlbumCover(Album album, int width, int height) {
-    String url = ImageCache.loadCover(album);
+    String url = AlbumCoverCache.loadCover(album);
     return new ImageView(new Image(url, width, height, false, true));
   }
 

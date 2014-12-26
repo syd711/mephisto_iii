@@ -25,6 +25,7 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang.StringUtils;
@@ -61,22 +62,29 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
   public AlbumBox(ControllableSelectorPanel parentControl, Album album) {
     super(10, parentControl, album);
     this.getStyleClass().add("album-box");
-    this.getStyleClass().add("debug");
     setMinWidth(BOX_WIDTH);
     setMaxHeight(345);
+    setPadding(new Insets(0, 0, 0, 10));
 
     //box used for labels below the cover
     albumLabelBox.setPadding(new Insets(TOP_PADDING, 0, 0, 0));
 
     //box for compact view in slider mode
     VBox compactView = new VBox();
-    compactView.setPadding(new Insets(TOP_PADDING, 0, 0, 10));
+    compactView.getStyleClass().add("debug");
+    compactView.setPadding(new Insets(TOP_PADDING, 0, 0, 0));
 
     if (album != null) {
       if (!StringUtils.isEmpty(album.getArtUrl())) {
         ImageView cover = ComponentUtil.loadAlbumCover(album, COVER_WIDTH, COVER_HEIGHT);
-        cover.getStyleClass().add("cover-canvas");
-        compactView.getChildren().add(cover);
+
+        BorderPane p = new BorderPane();
+        p.setCenter(cover);
+        p.setMaxHeight(cover.getImage().getHeight()+1);
+        p.setMaxWidth(cover.getImage().getWidth()+1);
+
+        p.getStyleClass().add("cover-box");
+        compactView.getChildren().add(p);
       }
       else {
         LOG.warn("No cover found for " + album + ", using spacer instead.");
@@ -85,8 +93,8 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         compactView.getChildren().add(spacer);
       }
 
-      ComponentUtil.createLabel(getModel().getName(), "album", albumLabelBox);
-      ComponentUtil.createLabel(getModel().getArtist(), "album-artist", albumLabelBox);
+      ComponentUtil.createLabel(getModel().getName(), "default-16", albumLabelBox);
+      ComponentUtil.createLabel(getModel().getArtist(), "default-16", albumLabelBox);
 
       compactView.getChildren().add(albumLabelBox);
     }
@@ -127,10 +135,10 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         ComponentUtil.createLabel(getModel().getSize() + " Titel", "track", albumLabelBox);
         ComponentUtil.createLabel(getModel().getDuration(), "track", albumLabelBox);
         if (getModel().getYear() > 0) {
-          ComponentUtil.createLabel(String.valueOf(getModel().getYear()), "album", albumLabelBox);
+          ComponentUtil.createLabel(String.valueOf(getModel().getYear()), "default-16", albumLabelBox);
         }
         if (!StringUtils.isEmpty(getModel().getGenre())) {
-          ComponentUtil.createLabel(getModel().getGenre(), "album", albumLabelBox);
+          ComponentUtil.createLabel(getModel().getGenre(), "default-16", albumLabelBox);
         }
         createInFader(albumLabelBox).play();
 
@@ -245,7 +253,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         trackBox.setOpacity(0);
       }
 
-      String styleClass = "track";
+      String styleClass = "default-16";
 
       HBox posBox = new HBox();
       posBox.setAlignment(Pos.CENTER_RIGHT);
@@ -331,8 +339,8 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
           @Override
           public void handle(ActionEvent actionEvent) {
             albumLabelBox.getChildren().clear();
-            ComponentUtil.createLabel(getModel().getName(), "album", albumLabelBox);
-            ComponentUtil.createLabel(getModel().getArtist(), "album-artist", albumLabelBox);
+            ComponentUtil.createLabel(getModel().getName(), "default-16", albumLabelBox);
+            ComponentUtil.createLabel(getModel().getArtist(), "default-16", albumLabelBox);
 
             selectionIndex = -1;
             tracksBox.getChildren().clear();

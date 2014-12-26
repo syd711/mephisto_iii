@@ -5,6 +5,7 @@ import callete.api.services.music.model.Album;
 import callete.api.services.music.model.Song;
 import callete.api.services.music.player.PlaylistChangeEvent;
 import callete.api.services.music.player.PlaylistChangeListener;
+import callete.api.util.DateUtil;
 import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.util.ComponentUtil;
 import de.calette.mephisto3.util.TransitionUtil;
@@ -19,19 +20,28 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Displays the current status of the media player.
  */
 public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeListener {
   public static final int COVER_HEIGHT = 52;
+  public static final int COVER_WIDTH = 52;
 
-  private Image defaultBackground = new Image(ResourceLoader.getResource("player-background.png"), COVER_HEIGHT, COVER_HEIGHT, false, true);
+  private Image defaultBackground = new Image(ResourceLoader.getResource("player-background.png"), COVER_WIDTH, COVER_HEIGHT, false, true);
   private ImageView imageView;
   private Label nameLabel;
   private Label titleLabel;
+  private Label albumInfoLabel;
   private ProgressBar progress;
-  private Label durationLabel;
+  private Label totalDurationLabel;
+  private Label currentDurationLabel;
+  private Timer timer;
+  private int currentDuration;
 
   public GooglePlayerStatusBox() {
     VBox spacer = new VBox();
@@ -55,35 +65,41 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
   //---------- Helper -------------------------------------------------------
 
   private Node createStatusBox() {
-    VBox status = new VBox(3);
-    status.setMaxWidth(250);
-    status.setPadding(new Insets(3, 3, 3, 8));
-    nameLabel = ComponentUtil.createLabel("", "player-name-label", status);
-    titleLabel = ComponentUtil.createLabel("", "player-title-label", status);
+    VBox status = new VBox(2);
+    status.setMaxWidth(220);
+    status.setMinWidth(220);
+    status.setPadding(new Insets(3, 3, 0, 5));
+    nameLabel = ComponentUtil.createCustomLabel("", "player-name-label", status);
+    titleLabel = ComponentUtil.createCustomLabel("", "player-title-label", status);
+    albumInfoLabel = ComponentUtil.createCustomLabel("", "player-albuminfo-label", status);
 
     BorderPane statusBox = new BorderPane();
     statusBox.getStyleClass().add("player-status-panel");
     statusBox.setLeft(status);
 
+    HBox progressWrapper = new HBox(5);
+    progressWrapper.setPadding(new Insets(20, 10, 0, 0));
+    statusBox.setCenter(progressWrapper);
     progress = new ProgressBar();
     progress.setOpacity(0);
-    progress.setMinWidth(350);
-    statusBox.setCenter(progress);
+    progress.setProgress(0);
+    progress.setMinWidth(330);
+    progress.setMaxWidth(330);
 
-    VBox durationBox = new VBox();
-    durationBox.setAlignment(Pos.BASELINE_CENTER);
-    durationBox.setMinWidth(70);
-    durationBox.setMinHeight(COVER_HEIGHT);
-    durationLabel = new Label();
-    durationLabel.getStyleClass().add("");
-    statusBox.setRight(durationLabel);
+    currentDurationLabel = ComponentUtil.createLabel("", "", progressWrapper);
+    currentDurationLabel.setAlignment(Pos.CENTER);
+    currentDurationLabel.setMinWidth(30);
+    progressWrapper.getChildren().add(progress);
+    totalDurationLabel = ComponentUtil.createLabel("", "", progressWrapper);
+    totalDurationLabel.setAlignment(Pos.CENTER);
+    totalDurationLabel.setMinWidth(30);
     return statusBox;
   }
 
   private Node createImageBox() {
     HBox wrapper = new HBox(5);
     wrapper.getStyleClass().add("player-status-panel");
-    wrapper.setPadding(new Insets(3, 2, 2, 4));
+    wrapper.setPadding(new Insets(4, 2, 2, 4));
     HBox imageBox = new HBox();
     imageBox.setMaxHeight(42);
     imageBox.getStyleClass().add("player-status-image");
@@ -94,7 +110,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
   }
 
   public void setImage(Image image) {
-    if(image == null) {
+    if (image == null) {
       this.imageView.setImage(defaultBackground);
     }
     else {
@@ -107,15 +123,63 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
-        Song song = (Song) e.getActiveItem();
+        final Song song = (Song) e.getActiveItem();
         Album album = song.getAlbum();
+
+        //reset progress to zero
+        progress.setProgress(0);
 
         titleLabel.setText(song.getName());
         nameLabel.setText(song.getArtist());
-        progress.setOpacity(1);
-        durationLabel.setText(song.getDuration());
+        String info = "";
+        if (album.getYear() > 0) {
+          info = String.valueOf(album.getYear());
+        }
+        if (!StringUtils.isEmpty(album.getGenre())) {
+          if (info.length() > 0) {
+            info += ", ";
+          }
+          info += album.getGenre();
+        }
 
-        ImageView cover = ComponentUtil.loadAlbumCover(album, COVER_HEIGHT, COVER_HEIGHT);
+        albumInfoLabel.setText(info);
+        progress.setOpacity(1);
+        totalDurationLabel.setText(song.getDuration());
+
+        //reset timer
+        if (timer != null) {
+          timer.purge();
+          timer.cancel();
+          timer = null;
+        }
+
+        timer = new Timer();
+        currentDuration = 0;
+        timer.schedule(new TimerTask() {
+          @Override
+          public void run() {
+            Platform.runLater(new Runnable() {
+              @Override
+              public void run() {
+                currentDuration++;
+
+                String time = DateUtil.formatTime(currentDuration);
+                currentDurationLabel.setText(time);
+                long duration = song.getDurationMillis() / 1000;
+                double progressValue = 1.0 / duration;
+                progressValue = progress.getProgress() + progressValue;
+                progress.setProgress(progressValue);
+                if (progressValue > 1) {
+                  timer.purge();
+                  timer.cancel();
+                  progress.setProgress(1.0);
+                }
+              }
+            });
+          }
+        }, 0, 1000);
+
+        ImageView cover = ComponentUtil.loadAlbumCover(album, COVER_WIDTH, COVER_HEIGHT);
         setImage(cover.getImage());
       }
     });

@@ -1,6 +1,7 @@
 package de.calette.mephisto3.ui;
 
 import callete.api.services.Service;
+import de.calette.mephisto3.util.ComponentUtil;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,10 +27,7 @@ public class ServiceNameBox extends VBox {
     setAlignment(Pos.TOP_CENTER);
     setMinWidth(SERVICE_BOX_WIDTH);
 
-    text = new Text(label);
-    text.getStyleClass().add("service-name");
-
-    getChildren().add(text);
+    text = ComponentUtil.createText(label, "service-name", this);
   }
 
   public void deselect() {

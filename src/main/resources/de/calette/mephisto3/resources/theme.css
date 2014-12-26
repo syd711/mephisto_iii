@@ -1,19 +1,38 @@
+/**
+ * Global defaults
+ */
 .root {
-  -fx-background-image: url("radio_background.png");
+  /*-fx-background-image: url("radio_background.png");*/
+  -fx-background-color: #e5e5e5;
+}
+
+.label-defaults {
+ -fx-font-family: "Tahoma";
+ -fx-text-fill: #333;
+ -fx-text-overrun: ellipsis;
+ -fx-font-smoothing-type: gray;
+}
+
+.text-defaults {
+   -fx-font-family: "Tahoma";
+   -fx-fill: #333;
+   -fx-text-overrun: ellipsis;
+   -fx-font-smoothing-type: gray;
+}
+
+.default-16 {
+    -fx-font-size: 16px;
+}
+
+.default-white-16 {
+    -fx-fill: #fff;
+    -fx-font-size: 16px;
 }
 
 .controllable-panel {
 /*-fx-background-color:#333333;*/
 }
-/**
- * Header Styling
- */
-.header-text {
-   -fx-font-size: 22px;
-   -fx-font-family: "Tahoma";
-   -fx-fill: #fff;
-   -fx-font-smoothing-type: gray;
-}
+
 
 /**
  * Weather
@@ -27,135 +46,68 @@
 }
 
 .weather-degree {
-   -fx-font-size: 80px;
-   -fx-font-family: "Tahoma";
    -fx-fill: #fff;
-   -fx-font-smoothing-type: gray;
+   -fx-font-size: 80px;
 }
 
 .weather-city {
-   -fx-font-size: 40px;
-   -fx-font-family: "Tahoma";
-   -fx-text-fill: #fff;
-   -fx-text-overrun: ellipsis;
-   -fx-font-smoothing-type: gray;
+ -fx-font-family: "Tahoma";
+ -fx-text-fill: #fff;
+ -fx-text-overrun: ellipsis;
+ -fx-font-smoothing-type: gray;
+ -fx-font-size: 40px;
 }
-
-.weather-date {
-    -fx-font-size: 16px;
-    -fx-font-family: "Tahoma";
-    -fx-fill: #fff;
-    -fx-font-smoothing-type: gray;
- }
 
 .forecast-panel {
   -fx-border-width: 1px;
   -fx-border-color: transparent transparent transparent #ccc;
 }
 
-.forecast-title {
-   -fx-font-size: 16px;
-   -fx-font-family: "Tahoma";
-   -fx-fill: #fff;
-   -fx-text-overrun: ellipsis;
-   -fx-font-smoothing-type: gray;
-}
-
 .forecast-temp {
    -fx-font-size: 13px;
-   -fx-font-family: "Tahoma";
-   -fx-fill: #fff;
-   -fx-text-overrun: ellipsis;
-   -fx-font-smoothing-type: gray;
 }
 
 /**
  * Google Music Panel
  */
- .selector {
+.selector {
    -fx-font-size: 26px;
-   -fx-font-family: "Tahoma";
-   -fx-fill: #fff;
-   -fx-font-smoothing-type: gray;
 }
 
 .album-key {
  -fx-font-size: 28px;
- -fx-font-family: "Tahoma";
- -fx-fill: #fff;
- -fx-font-smoothing-type: gray;
 }
 
-.album {
- -fx-font-size: 16px;
- -fx-font-family: "Tahoma";
- -fx-text-fill: #fff;
- -fx-font-weight: bold;
- -fx-text-overrun: ellipsis;
-}
-
-.album-artist {
- -fx-font-size: 16px;
- -fx-font-family: "Tahoma";
- -fx-text-fill: #fff;
- -fx-text-overrun: ellipsis;
-}
 
 .album-box {
  /*-fx-background-color: rgba(60, 30, 60, 0.5);*/
 }
 
-.track {
- -fx-font-size: 16px;
- -fx-font-family: "Tahoma";
- -fx-text-fill: #fff;
- -fx-fill: #fff;
- -fx-text-overrun: ellipsis;
- -fx-font-smoothing-type: gray;
-}
-
 .track-selection {
- -fx-background-color: rgba(60, 30, 60, 0.9); -fx-background-radius: 0;
+ -fx-background-color: #b5b5b5;
 }
 
 .track-active {
- -fx-background-color: rgba(60, 30, 60, 0.9); -fx-background-radius: 0;
+ -fx-background-color: #b5b5b5;
 }
 
 
-.cover-canvas {
- -fx-border-width: 1;
- -fx-border-color: white;
+.cover-box {
+ -fx-border-width: 1px;
+ -fx-border-color: #b5b5b5;
 }
 
-.artist {
- -fx-font-size: 16px;
- -fx-font-family: "Tahoma";
- -fx-text-fill: #fff;
- -fx-text-overrun: ellipsis;
- -fx-font-smoothing-type: gray;
-}
 
 /**
  * System Panel
  */
 .system-title {
  -fx-font-size: 22px;
- -fx-font-family: "Tahoma";
- -fx-fill: #fff;
 }
 
 .system-key {
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-font-family: "Tahoma";
-    -fx-fill: #fff;
-}
-
-.system-value {
-     -fx-font-size: 16px;
-     -fx-font-family: "Tahoma";
-     -fx-fill: #fff;
 }
 
 .progressIndicator {
@@ -176,31 +128,15 @@
  */
 .stream-name {
    -fx-font-size: 40px;
-   -fx-font-family: "Tahoma";
-   -fx-text-fill: #fff;
-   -fx-text-overrun: ellipsis;
-   -fx-font-smoothing-type: gray;
 }
 .stream-title {
    -fx-font-size: 40px;
-   -fx-font-family: "Tahoma";
-   -fx-text-fill: #fff;
-   -fx-text-overrun: ellipsis;
-   -fx-font-smoothing-type: gray;
 }
 .stream-artist {
    -fx-font-size: 25px;
-   -fx-font-family: "Tahoma";
-   -fx-text-fill: #fff;
-   -fx-text-overrun: ellipsis;
-   -fx-font-smoothing-type: gray;
 }
 .stream-url {
    -fx-font-size: 14px;
-   -fx-font-family: "Tahoma";
-   -fx-text-fill: #fff;
-   -fx-text-overrun: ellipsis;
-   -fx-font-smoothing-type: gray;
 }
 
 /**
@@ -209,6 +145,7 @@
 .player-status-panel {
     /*-fx-background-color: linear-gradient(to bottom, derive(gray, 60%), white);*/
     -fx-background-color: white;
+    -fx-border-color: #ccc transparent transparent transparent;
 }
 
 .player-status-image {
@@ -232,6 +169,14 @@
    -fx-font-smoothing-type: gray;
 }
 
+.player-albuminfo-label {
+   -fx-font-size: 14px;
+   -fx-font-family: "Tahoma";
+   -fx-text-fill: #333333;
+   -fx-text-overrun: ellipsis;
+   -fx-font-smoothing-type: gray;
+}
+
 .debug {
  /*-fx-background-color: rgba(60, 30, 60, 0.5); -fx-background-radius: 10;*/
  -fx-border: 1px solid; -fx-border-color: gray;
@@ -245,7 +190,7 @@
 }
 
 #scroller .thumb {
-  -fx-background-color:#666666;
+  -fx-background-color:#fb8521;
   -fx-background-radius: 0em;
 }
 
@@ -260,6 +205,12 @@
   -fx-padding:5px;
 }
 
+.progress-bar .bar {
+    -fx-background-color: #fb8521;
+    -fx-background-insets: 3, 3, 3, 3;
+    -fx-background-radius: 0, 0, 0, 0;
+}
+
 /**
  * Service Chooser styling
  */
@@ -268,7 +219,5 @@
 
 .service-name {
    -fx-font-size: 32px;
-   -fx-font-family: "Tahoma";
-   -fx-fill: #fff;
-   -fx-font-smoothing-type: gray;
+   -fx-fill: #333;
 }

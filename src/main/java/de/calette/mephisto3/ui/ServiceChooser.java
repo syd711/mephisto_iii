@@ -10,6 +10,7 @@ import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.google.AlbumLetterSelector;
 import de.calette.mephisto3.ui.google.GooglePlayerStatusBox;
+import de.calette.mephisto3.util.ComponentUtil;
 import de.calette.mephisto3.util.TransitionQueue;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
@@ -57,7 +58,7 @@ public class ServiceChooser implements ControlListener {
   private Text playbackSelection;
   private StackPane albumSelectorCenterStack;
 
-  private GooglePlayerStatusBox googlePlayer = new GooglePlayerStatusBox();
+  private GooglePlayerStatusBox googlePlayer;
 
   public ServiceChooser(final Center center) {
     this.center = center;
@@ -67,7 +68,6 @@ public class ServiceChooser implements ControlListener {
     this.albumSelectorCenterStack = new StackPane();
     overlay.getChildren().add(albumSelectorCenterStack);
     center.stackPane.getChildren().add(overlay);
-    center.stackPane.getChildren().add(googlePlayer);
 
     overlay.setAlignment(Pos.TOP_CENTER);
     overlay.setId("chooser");
@@ -120,6 +120,10 @@ public class ServiceChooser implements ControlListener {
             AlbumLetterSelector selector = new AlbumLetterSelector(ServiceChooser.this, albumSelectorCenterStack, (List<AlbumCollection>) playbackSelection.getUserData());
             selector.showPanel();
 
+            if(googlePlayer == null) {
+              googlePlayer = new GooglePlayerStatusBox();
+              center.stackPane.getChildren().add(googlePlayer);
+            }
             googlePlayer.showPlayer();
 
           }
@@ -131,6 +135,9 @@ public class ServiceChooser implements ControlListener {
           showMusicOptions(searchSelectionBox);
         }
         else {
+          if(googlePlayer != null) {
+            googlePlayer.hidePlayer();
+          }
           hideServiceChooser();
         }
       }
@@ -234,15 +241,8 @@ public class ServiceChooser implements ControlListener {
       musicSelector = new VBox(20);
       musicSelector.setOpacity(0);
 
-      byArtist = new Text("Albums by Artist");
-      byArtist.setUserData(Callete.getGoogleMusicService().getAlbumsByArtistLetter());
-      byArtist.getStyleClass().add("selector");
-      byName = new Text("Albums by Name");
-      byName.setUserData(Callete.getGoogleMusicService().getAlbumByNameLetter());
-      byName.getStyleClass().add("selector");
-
-      musicSelector.getChildren().add(byArtist);
-      musicSelector.getChildren().add(byName);
+      byArtist = ComponentUtil.createText("Albums by Artist", "selector", musicSelector, Callete.getGoogleMusicService().getAlbumsByArtistLetter());
+      byName = ComponentUtil.createText("Albums by Name", "selector", musicSelector, Callete.getGoogleMusicService().getAlbumByNameLetter());
     }
     searchSelectionBox.getChildren().add(musicSelector);
 
