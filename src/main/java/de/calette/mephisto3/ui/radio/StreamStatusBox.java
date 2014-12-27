@@ -29,12 +29,23 @@ public class StreamStatusBox extends BorderPane {
     setCenter(createStatusBox());
   }
 
-  public void setTitle(String title) {
-    titleLabel.setText(title);
+  public void updateStatus(String title) {
+    if(title != null) {
+      titleLabel.setText(title);
+    }
   }
 
-  public void setName(String name) {
-    nameLabel.setText(name);
+  public void updateStatus(String name, String title, Image image) {
+    if(name != null) {
+      nameLabel.setText(name);
+    }
+    updateStatus(title);
+    if(image == null) {
+      this.imageView.setImage(defaultBackground);
+    }
+    else {
+      this.imageView.setImage(image);
+    }
   }
 
   //---------- Helper -------------------------------------------------------
@@ -59,14 +70,5 @@ public class StreamStatusBox extends BorderPane {
     imageBox.getChildren().add(imageView);
     wrapper.getChildren().add(imageBox);
     return wrapper;
-  }
-
-  public void setImage(Image image) {
-    if(image == null) {
-      this.imageView.setImage(defaultBackground);
-    }
-    else {
-      this.imageView.setImage(image);
-    }
   }
 }

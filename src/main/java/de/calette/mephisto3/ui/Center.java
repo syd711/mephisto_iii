@@ -8,7 +8,7 @@ import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.google.GoogleMusicPanel;
-import de.calette.mephisto3.ui.radio.StreamsPanel;
+import de.calette.mephisto3.ui.radio.StreamsController;
 import de.calette.mephisto3.ui.system.SystemPanel;
 import de.calette.mephisto3.ui.weather.WeatherPanel;
 import de.calette.mephisto3.util.Executor;
@@ -98,8 +98,8 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
 
   private ControllablePanel getServicePanel(ServiceState state) {
     if(servicePanels.isEmpty()) {
-      StreamsPanel streamsPanel = new StreamsPanel();
-      servicePanels.put(Callete.getStreamingService(), streamsPanel);
+      StreamsController streamsController = new StreamsController();
+      servicePanels.put(Callete.getStreamingService(), streamsController);
       serviceChooser.addService(ServiceController.SERVICE_NAME_RADIO, Callete.getStreamingService());
     }
 

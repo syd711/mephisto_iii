@@ -145,16 +145,51 @@
  * Streaming Panels formatting
  */
 .stream-name {
-   -fx-font-size: 40px;
+    -fx-font-size: 40px;
+    -fx-font-family: "Tahoma";
+    -fx-text-fill: #333;
+    -fx-text-overrun: ellipsis;
+    -fx-font-smoothing-type: gray;
 }
+
+.stream-name-active {
+    -fx-font-size: 40px;
+    -fx-font-family: "Tahoma";
+    -fx-text-fill: #fff;
+    -fx-text-overrun: ellipsis;
+    -fx-font-smoothing-type: gray;
+}
+
 .stream-title {
-   -fx-font-size: 40px;
+    -fx-font-size: 40px;
+    -fx-font-family: "Tahoma";
+    -fx-text-fill: #333;
+    -fx-text-overrun: ellipsis;
+    -fx-font-smoothing-type: gray;
 }
+
+.stream-title-active {
+    -fx-font-size: 40px;
+    -fx-font-family: "Tahoma";
+    -fx-text-fill: #fff;
+    -fx-text-overrun: ellipsis;
+    -fx-font-smoothing-type: gray;
+}
+
 .stream-artist {
-   -fx-font-size: 25px;
+    -fx-font-size: 25px;
+    -fx-font-family: "Tahoma";
+    -fx-text-fill: #333;
+    -fx-text-overrun: ellipsis;
+    -fx-font-smoothing-type: gray;
 }
-.stream-url {
-   -fx-font-size: 14px;
+
+.stream-artist-active {
+    -fx-font-size: 25px;
+    -fx-font-family: "Tahoma";
+    -fx-text-fill: #fff;
+    -fx-text-overrun: ellipsis;
+    -fx-font-smoothing-type: gray;
 }
 
 /**
@@ -247,6 +282,10 @@
     -fx-background-color: #fb8521;
     -fx-background-insets: 3, 3, 3, 3;
     -fx-background-radius: 0, 0, 0, 0;
+}
+
+.progress-indicator  {
+  -fx-progress-color: #fb8521;
 }
 
 /**
