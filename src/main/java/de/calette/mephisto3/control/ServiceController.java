@@ -201,6 +201,10 @@ public class ServiceController {
   }
 
   public void fireControlEvent(KeyCode code) {
+    if(code == KeyCode.ESCAPE) {
+      System.exit(0);
+    }
+
     if (code == KeyCode.RIGHT) {
       Platform.runLater(new Runnable() {
         @Override

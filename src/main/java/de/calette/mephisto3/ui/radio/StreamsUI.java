@@ -102,7 +102,7 @@ public class StreamsUI extends VBox {
         artistLabel.setText(applyArtist(currentMetaData));
         titleLabel.setText(applyTitle(currentMetaData));
 
-        if(!StringUtils.isEmpty(currentMetaData.getArtist()) && !StringUtils.isEmpty(currentMetaData.getTitle())) {
+        if(currentMetaData != null && !StringUtils.isEmpty(currentMetaData.getArtist()) && !StringUtils.isEmpty(currentMetaData.getTitle())) {
           playerStatusBox.updateStatus(currentMetaData.getArtist() + " - " + currentMetaData.getTitle());
         }
       }
@@ -269,7 +269,7 @@ public class StreamsUI extends VBox {
     titleLabel = ComponentUtil.createLabel("", "stream-title", labelBox);
 
     HBox spacer = new HBox();
-    spacer.setMinHeight(80);
+    spacer.setMinHeight(70);
     labelBox.getChildren().add(spacer);
 
     imageLoader = new HBox();
