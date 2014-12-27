@@ -2,6 +2,7 @@ package de.calette.mephisto3.ui.google;
 
 import callete.api.Callete;
 import callete.api.services.music.model.Album;
+import callete.api.services.music.model.PlaylistItem;
 import callete.api.services.music.model.Song;
 import callete.api.services.music.player.PlaybackChangeEvent;
 import callete.api.services.music.player.PlaybackChangeListener;
@@ -31,10 +32,9 @@ import java.util.TimerTask;
  * Displays the current status of the media player.
  */
 public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeListener, PlaybackChangeListener {
-  public static final int COVER_HEIGHT = 52;
-  public static final int COVER_WIDTH = 52;
+  public static final int COVER_SIZE = 52;
 
-  private Image defaultBackground = new Image(ResourceLoader.getResource("player-background.png"), COVER_WIDTH, COVER_HEIGHT, false, true);
+  private Image defaultBackground = new Image(ResourceLoader.getResource("player-background.png"), COVER_SIZE, COVER_SIZE, false, true);
   private ImageView imageView;
   private Label nameLabel;
   private Label titleLabel;
@@ -125,6 +125,12 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
   @Override
   public void playlistChanged(final PlaylistChangeEvent e) {
     Platform.runLater(() -> {
+      PlaylistItem activeItem = e.getActiveItem();
+      if(!(activeItem instanceof Song)) {
+        cancelProgress();
+        return;
+      }
+
       final Song song = (Song) e.getActiveItem();
       Album album = song.getAlbum();
 
@@ -161,6 +167,12 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
 
   @Override
   public void playbackChanged(PlaybackChangeEvent event) {
+    PlaylistItem activeItem = event.getActiveItem();
+    if(!(activeItem instanceof Song)) {
+      cancelProgress();
+      return;
+    }
+
     final Song song = (Song) event.getActiveItem();
     final Album album = song.getAlbum();
     //reset timer
@@ -181,7 +193,9 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
             currentDuration++;
 
             String time = DateUtil.formatTime(currentDuration);
-            currentDurationLabel.setText(time);
+            if(currentDuration*1000 <= song.getDurationMillis()) {
+              currentDurationLabel.setText(time);
+            }
             long duration = song.getDurationMillis() / 1000;
             double progressValue = 1.0 / duration;
             progressValue = progress.getProgress() + progressValue;
@@ -189,6 +203,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
             if (progressValue > 1) {
               timer.purge();
               timer.cancel();
+              timer = null;
               progress.setProgress(1.0);
             }
           }
@@ -199,8 +214,33 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
-        ImageView cover = ComponentUtil.loadAlbumCover(album, COVER_WIDTH, COVER_HEIGHT);
+        ImageView cover = ComponentUtil.loadAlbumCover(album, COVER_SIZE, COVER_SIZE);
         setImage(cover.getImage());
+      }
+    });
+  }
+
+  public boolean isPlaying() {
+    return timer != null;
+  }
+
+  private void cancelProgress() {
+    if(timer != null) {
+      timer.purge();
+      timer.cancel();
+      timer = null;
+    }
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        setImage(null);
+        nameLabel.setText("");
+        titleLabel.setText("");
+        albumInfoLabel.setText("");
+        progress.setProgress(0);
+        currentDurationLabel.setText("");
+        totalDurationLabel.setText("");
+        progress.setOpacity(0);
       }
     });
   }

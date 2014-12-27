@@ -21,10 +21,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -53,7 +51,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
   public static final int SHADOW_WIDTH = 3;
 
   private double scaleFactor = 1.05;
-  private VBox albumInfoBox = new VBox(3);
+  private VBox albumInfoBox = new VBox(4);
   private VBox tracksBox;
   private int selectionIndex = -1;
 
@@ -142,12 +140,8 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     final PlaylistItem activeItem = event.getActiveItem();
     Platform.runLater(() -> {
       for (Node node : tracksBox.getChildren()) {
-        if (activeItem != null && node.getUserData().equals(activeItem)) {
-          node.getStyleClass().add("track-active");
-        }
-        else {
-          node.getStyleClass().remove("track-active");
-        }
+        TrackBox track = (TrackBox) node;
+        track.setActive(activeItem != null && track.getUserData().equals(activeItem));
       }
     });
   }
@@ -209,32 +203,8 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     PlaylistItem item = Callete.getMusicPlayer().getPlaylist().getActiveItem();
 
     for (Song song : songs) {
-      HBox trackBox = new HBox();
-      trackBox.setUserData(song);
-      trackBox.setPadding(new Insets(4, 8, 4, 4));
-//      trackBox.getStyleClass().add("track-row");
-
-      if (item != null && song.equals(item)) {
-        trackBox.getStyleClass().add("track-active");
-      }
-
-      if (song.getTrack() > MAX_DISPLAY_TRACKS) {
-        trackBox.setOpacity(0);
-      }
-
-      String styleClass = "default-16";
-
-      HBox posBox = new HBox();
-      posBox.setAlignment(Pos.CENTER_RIGHT);
-      posBox.setMinWidth(25);
-      trackBox.getChildren().add(posBox);
-      ComponentUtil.createLabel(String.valueOf(song.getTrack()), styleClass, posBox);
-      final Label title = ComponentUtil.createLabel(song.getName(), styleClass, trackBox);
-      title.setPadding(new Insets(0, 0, 0, 10));
-      title.setMaxWidth(TRACKS_WIDTH);
-      title.setMinWidth(TRACKS_WIDTH);
-      ComponentUtil.createText(song.getDuration(), styleClass, trackBox);
-      tracksBox.getChildren().add(trackBox);
+      boolean active = item != null && item instanceof Song && item.equals(song);
+      tracksBox.getChildren().add(new TrackBox(song, active));
     }
   }
 
@@ -326,7 +296,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
       pt.setOnFinished(actionEvent1 -> {
         albumInfoBox.getChildren().clear();
         ComponentUtil.createLabel(getModel().getName(), "default-16", albumInfoBox);
-        ComponentUtil.createLabel(getModel().getArtist(), "default-16", albumInfoBox);
+        ComponentUtil.createLabel(getModel().getArtist(), "player-info-label", albumInfoBox);
 
         selectionIndex = -1;
         tracksBox.getChildren().clear();

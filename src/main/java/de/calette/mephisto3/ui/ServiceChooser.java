@@ -193,6 +193,9 @@ public class ServiceChooser implements ControlListener {
     ServiceController.getInstance().removeControlListener(center);
     final ServiceNameBox serviceNameBox = serviceBoxes.get(index);
     serviceNameBox.select();
+    if(googlePlayer != null && googlePlayer.isPlaying()) {
+      googlePlayer.showPlayer();
+    }
   }
 
   /**

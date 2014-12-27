@@ -144,6 +144,11 @@ public class StreamsUI extends VBox {
           setBackgroundImage(artistBackgroundImage);
           imageLoader.setOpacity(0);
         }
+
+        //hide the image loader if no images are available
+        if(artistResources != null && artistResources.isEmpty()) {
+          imageLoader.setOpacity(0);
+        }
       }
     });
   }
@@ -269,7 +274,7 @@ public class StreamsUI extends VBox {
 
     imageLoader = new HBox();
     imageLoader.setOpacity(0);
-    imageLoader.setMaxHeight(30);
+    imageLoader.setMinHeight(20);
     imageLoader.setMaxWidth(Mephisto3.WIDTH);
     imageLoader.setAlignment(Pos.CENTER_RIGHT);
     labelBox.getChildren().add(imageLoader);

@@ -85,6 +85,7 @@ public class StreamsController extends ControllablePanel implements PlaylistMeta
     Callete.getMusicPlayer().getPlaylist().addMetaDataChangeListener(this);
     streamsUI.showControl();
     super.showPanel();
+    startStreaming();
   }
 
   @Override
