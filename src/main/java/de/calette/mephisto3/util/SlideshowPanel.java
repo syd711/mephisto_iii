@@ -1,5 +1,6 @@
 package de.calette.mephisto3.util;
 
+import callete.api.services.resources.ImageResource;
 import callete.api.services.resources.SlideShow;
 import javafx.application.Platform;
 import javafx.scene.effect.ColorAdjust;
@@ -69,7 +70,14 @@ public class SlideshowPanel extends StackPane {
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
-        Image image = ComponentUtil.toFXImage(slideShow.nextImage());
+        ImageResource imageResource = slideShow.nextImage();
+        if(imageResource == null) {
+          TransitionUtil.createOutFader(imageViewOld, TRANSITION_MILLIS).play();
+          TransitionUtil.createOutFader(imageViewNew, TRANSITION_MILLIS).play();
+          return;
+        }
+
+        Image image = ComponentUtil.toFXImage(imageResource);
 
         ImageView showView = imageViewOld;
         ImageView hideView = imageViewNew;

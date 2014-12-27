@@ -62,7 +62,7 @@ public class StreamStatusBox extends BorderPane {
 
   private Node createImageBox() {
     HBox wrapper = new HBox(5);
-    wrapper.setPadding(new Insets(3, 2, 2, 4));
+    wrapper.setPadding(new Insets(3, 2, 2, 3));
     HBox imageBox = new HBox();
     imageBox.setMaxHeight(42);
     imageBox.getStyleClass().add("player-status-image");

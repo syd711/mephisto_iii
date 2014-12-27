@@ -4,6 +4,8 @@ import callete.api.Callete;
 import callete.api.services.system.SystemService;
 import callete.api.util.SystemUtils;
 import de.calette.mephisto3.Mephisto3;
+import de.calette.mephisto3.control.ServiceController;
+import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.ControllablePanel;
 import de.calette.mephisto3.util.ComponentUtil;
 import javafx.application.Platform;
@@ -11,6 +13,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -103,6 +106,11 @@ public class SystemPanel extends ControllablePanel {
     systemBox.getChildren().add(systemDetailsBox);
 
     getChildren().add(root);
+  }
+
+  @Override
+  public void pushed(ServiceState serviceState) {
+    ServiceController.getInstance().fireControlEvent(KeyCode.UP);
   }
 
   @Override

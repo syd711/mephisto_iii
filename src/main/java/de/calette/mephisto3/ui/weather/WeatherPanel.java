@@ -19,24 +19,20 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 /**
  */
 public class WeatherPanel extends ControllablePanel {
-  public static final String DATE_FORMAT = "EEEE, dd. MMMM";
-
-  private SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.GERMAN);
   private SlideshowPanel slideshowPanel = new SlideshowPanel();
   private ServiceScroller scroller = new ServiceScroller();
   private List<WeatherForecastPanel> forecastPanels = new ArrayList<>();
@@ -50,8 +46,12 @@ public class WeatherPanel extends ControllablePanel {
 
   public WeatherPanel() {
     super(Callete.getWeatherService().getWeather());
-    getStyleClass().add("weather-panel");
     buildUI();
+  }
+
+  @Override
+  public void pushed(ServiceState serviceState) {
+    ServiceController.getInstance().fireControlEvent(KeyCode.UP);
   }
 
   @Override
@@ -60,7 +60,7 @@ public class WeatherPanel extends ControllablePanel {
     scroller.showScroller();
     activeWeather = (Weather) ServiceController.getInstance().getServiceState().getSelection();
 
-    SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + activeWeather.getCity().toLowerCase() + "/"));
+    SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + activeWeather.getCity().toLowerCase() + "/"), true);
     slideshowPanel.setSlideShow(slideShow);
     slideshowPanel.startSlideShow();
 
@@ -79,7 +79,7 @@ public class WeatherPanel extends ControllablePanel {
     this.activeWeather = (Weather) serviceState.getSelection();
     final Image image = new Image(WeatherConditionMapper.getWeatherForecastIcon(activeWeather), 55, 55, false, true);
 
-    SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + activeWeather.getCity().toLowerCase() + "/"));
+    SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + activeWeather.getCity().toLowerCase() + "/"), true);
     slideshowPanel.setSlideShow(slideShow);
     slideshowPanel.startSlideShow();
 

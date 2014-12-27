@@ -37,10 +37,6 @@
 /**
  * Weather
  */
-.weather-panel {
- -fx-background-color:#000;
-}
-
 .weather-status-panel {
  -fx-background-color: rgba(50, 50, 60, 0.7);
 }
@@ -65,6 +61,7 @@
 
 .forecast-temp {
    -fx-font-size: 13px;
+   -fx-fill: #fff;
 }
 
 /**
