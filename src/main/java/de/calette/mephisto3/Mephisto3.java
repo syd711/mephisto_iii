@@ -7,6 +7,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -16,10 +17,11 @@ import javafx.stage.WindowEvent;
 /**
  * In the beginning, there was main...
  */
-public class Mephisto3 extends Application {
+public class Mephisto3 extends Application implements EventHandler<KeyEvent> {
   public static final int WIDTH = 700;
   public static final int HEIGHT = 395;
   private boolean debug = Callete.getConfiguration().getBoolean("debug", false);
+  private StackPane rootStack;
 
   public static void main(String[] args) {
     launch(args);
@@ -33,7 +35,7 @@ public class Mephisto3 extends Application {
     System.setProperty("prism.lcdtext", "false");
 
     //create root component with background
-    StackPane rootStack = new StackPane();
+    rootStack = new StackPane();
     rootStack.getChildren().add(new Center());
 
     Scene scene = new Scene(rootStack, (double) WIDTH, (double) HEIGHT);
@@ -42,6 +44,7 @@ public class Mephisto3 extends Application {
     primaryStage.getScene().setRoot(rootStack);
 
     primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, new Mephisto3KeyEventFilter());
+    primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, this);
     addDisposeListener(primaryStage);
 
     //apply debugging options on windows
@@ -67,5 +70,13 @@ public class Mephisto3 extends Application {
         System.exit(0);
       }
     });
+  }
+
+  @Override
+  public void handle(KeyEvent event) {
+    KeyCode code = event.getCode();
+    if(code == KeyCode.Q || code == KeyCode.ESCAPE) {
+      System.exit(0);
+    }
   }
 }
