@@ -120,6 +120,9 @@ public class WeatherPanel extends ControllablePanel {
 
   private void buildUI() {
     Weather weather = Callete.getWeatherService().getWeatherAt(1);
+    if(weather == null) {
+      return;
+    }
 
     getChildren().add(slideshowPanel);
 

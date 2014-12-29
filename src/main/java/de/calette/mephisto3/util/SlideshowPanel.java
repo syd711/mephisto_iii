@@ -67,18 +67,12 @@ public class SlideshowPanel extends StackPane {
    * Applies the next image from the slide show.
    */
   private void nextImage() {
+    ImageResource imageResource = slideShow.nextImage();
+    final Image image = ComponentUtil.toFXImage(imageResource);
+
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
-        ImageResource imageResource = slideShow.nextImage();
-        if(imageResource == null) {
-          TransitionUtil.createOutFader(imageViewOld, TRANSITION_MILLIS).play();
-          TransitionUtil.createOutFader(imageViewNew, TRANSITION_MILLIS).play();
-          return;
-        }
-
-        Image image = ComponentUtil.toFXImage(imageResource);
-
         ImageView showView = imageViewOld;
         ImageView hideView = imageViewNew;
         if(hideView.getOpacity() == 0) {

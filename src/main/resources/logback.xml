@@ -24,6 +24,9 @@
     <logger name="org.bff">
         <level value="WARN"/>
     </logger>
+    <logger name="ch.qos">
+        <level value="WARN"/>
+    </logger>
 
     <root level="TRACE">
         <appender-ref ref="rollingFile" />
