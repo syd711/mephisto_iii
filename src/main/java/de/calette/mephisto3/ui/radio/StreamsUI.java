@@ -50,6 +50,7 @@ public class StreamsUI extends VBox {
   private ArtistResources artistResources;
 
   private StreamStatusBox playerStatusBox;
+  private boolean imageLoaderActive = false;
 
   public StreamsUI(ControllablePanel parent, Stream stream) {
     createUI(parent, stream);
@@ -119,22 +120,15 @@ public class StreamsUI extends VBox {
           return;
         }
 
+        //the artist loader is already loading
+        if(imageLoaderActive) {
+          return;
+        }
+
         //first check if an image has already been requested
         if (artistResources == null || !artistResources.getArtist().equals(currentMetaData.getArtist())) {
           imageLoader.setOpacity(1);
-
-          Executor.run(new Runnable() {
-            @Override
-            public void run() {
-              artistResources = Callete.getResourcesService().getImageResourcesFor(currentMetaData.getArtist());
-              if (!artistResources.isEmpty()) {
-                ImageResource randomPlayerImage = artistResources.getRandomImage(PLAYER_IMAGE_SIZE, PLAYER_IMAGE_SIZE, PLAYER_MINIMUM_IMAGE_SIZE);
-                ImageResource img = artistResources.getRandomImage(Mephisto3.WIDTH, IMAGE_HEIGHT, MINIMUM_IMAGE_SIZE);
-                artistBackgroundImage = ComponentUtil.toFXImage(img);
-                artistStatusImage = ComponentUtil.toFXImage(randomPlayerImage);
-              }
-            }
-          });
+          loadArtistResource(currentMetaData);
         }
 
         //apply image if already available
@@ -154,6 +148,27 @@ public class StreamsUI extends VBox {
   }
 
   // -------------------- Helper -------------------------------------------
+
+  /**
+   * Asynchronously loading of image resources.
+   * @param currentMetaData the meta data used to retrieve the image data
+   */
+  private void loadArtistResource(final PlaylistMetaData currentMetaData) {
+    imageLoaderActive = true;
+    Executor.run(new Runnable() {
+      @Override
+      public void run() {
+        artistResources = Callete.getResourcesService().getImageResourcesFor(currentMetaData.getArtist());
+        if (!artistResources.isEmpty()) {
+          ImageResource randomPlayerImage = artistResources.getRandomImage(PLAYER_IMAGE_SIZE, PLAYER_IMAGE_SIZE, PLAYER_MINIMUM_IMAGE_SIZE);
+          ImageResource img = artistResources.getRandomImage(Mephisto3.WIDTH, IMAGE_HEIGHT, MINIMUM_IMAGE_SIZE);
+          artistBackgroundImage = ComponentUtil.toFXImage(img);
+          artistStatusImage = ComponentUtil.toFXImage(randomPlayerImage);
+          imageLoaderActive = false;
+        }
+      }
+    });
+  }
 
   private void addImageClasses() {
     nameLabel.getStyleClass().remove("stream-name");

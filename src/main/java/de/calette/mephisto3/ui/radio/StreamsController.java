@@ -30,9 +30,6 @@ public class StreamsController extends ControllablePanel implements PlaylistMeta
     activeStream = (Stream) ServiceController.getInstance().getServiceState().getSelection();
     selectedStream = activeStream;
 
-    //start streaming immediately
-    startStreaming();
-
     //create the basic UI panel
     streamsUI = new StreamsUI(this, activeStream);
     getChildren().add(streamsUI);
@@ -82,10 +79,10 @@ public class StreamsController extends ControllablePanel implements PlaylistMeta
 
   @Override
   public void showPanel() {
+    startStreaming();
     Callete.getMusicPlayer().getPlaylist().addMetaDataChangeListener(this);
     streamsUI.showControl();
     super.showPanel();
-    startStreaming();
   }
 
   @Override
