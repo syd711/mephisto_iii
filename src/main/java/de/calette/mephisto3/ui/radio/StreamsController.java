@@ -8,6 +8,7 @@ import callete.api.services.music.player.PlaylistMetaDataChangeListener;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.ControllablePanel;
+import de.calette.mephisto3.util.Executor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,10 +112,15 @@ public class StreamsController extends ControllablePanel implements PlaylistMeta
    * No matter if the UI is build yet, start playing the stream.
    */
   private void startStreaming() {
-    final MusicPlayerPlaylist playlist = Callete.getMusicPlayer().getPlaylist();
-    playlist.setActiveItem(activeStream);
-    Callete.getMusicPlayer().play();
-    LOG.info("Starting playback of last stream selection: " + activeStream);
+    Executor.run(new Runnable() {
+      @Override
+      public void run() {
+        final MusicPlayerPlaylist playlist = Callete.getMusicPlayer().getPlaylist();
+        playlist.setActiveItem(activeStream);
+        Callete.getMusicPlayer().play();
+        LOG.info("Starting playback of last stream selection: " + activeStream);
+      }
+    });
   }
 
 }

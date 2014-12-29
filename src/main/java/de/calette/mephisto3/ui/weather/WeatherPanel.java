@@ -9,9 +9,11 @@ import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.ControllablePanel;
 import de.calette.mephisto3.ui.ServiceScroller;
 import de.calette.mephisto3.util.ComponentUtil;
+import de.calette.mephisto3.util.Executor;
 import de.calette.mephisto3.util.SlideshowPanel;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.ParallelTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -26,9 +28,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  */
@@ -38,6 +38,7 @@ public class WeatherPanel extends ControllablePanel {
   private List<WeatherForecastPanel> forecastPanels = new ArrayList<>();
 
   private Weather activeWeather;
+  private Map<String, SlideShow> cachedSlideShows = new HashMap<>();
 
   private ImageView weatherIconView;
   private Label cityLabel;
@@ -59,11 +60,7 @@ public class WeatherPanel extends ControllablePanel {
     super.showPanel();
     scroller.showScroller();
     activeWeather = (Weather) ServiceController.getInstance().getServiceState().getSelection();
-
-    SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + activeWeather.getCity().toLowerCase() + "/"), true);
-    slideshowPanel.setSlideShow(slideShow);
-    slideshowPanel.startSlideShow();
-
+    loadSlideShow(activeWeather.getCity());
     cityLabel.setText(activeWeather.getCity());
   }
 
@@ -79,15 +76,13 @@ public class WeatherPanel extends ControllablePanel {
     this.activeWeather = (Weather) serviceState.getSelection();
     final Image image = new Image(WeatherConditionMapper.getWeatherForecastIcon(activeWeather), 55, 55, false, true);
 
-    SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + activeWeather.getCity().toLowerCase() + "/"), true);
-    slideshowPanel.setSlideShow(slideShow);
-    slideshowPanel.startSlideShow();
+    loadSlideShow(activeWeather.getCity());
 
     ParallelTransition transition = new ParallelTransition(
-            TransitionUtil.createOutFader(weatherIconView),
-            TransitionUtil.createOutFader(cityLabel),
-            TransitionUtil.createOutFader(degreeLabel),
-            TransitionUtil.createOutFader(tempLabel)
+        TransitionUtil.createOutFader(weatherIconView),
+        TransitionUtil.createOutFader(cityLabel),
+        TransitionUtil.createOutFader(degreeLabel),
+        TransitionUtil.createOutFader(tempLabel)
     );
     transition.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
@@ -95,13 +90,13 @@ public class WeatherPanel extends ControllablePanel {
         weatherIconView.setImage(image);
         cityLabel.setText(activeWeather.getCity());
         degreeLabel.setText(activeWeather.getTemp() + "°C");
-        tempLabel.setText(activeWeather.getHighTemp() + "/" + activeWeather.getLowTemp()+  " °C");
+        tempLabel.setText(activeWeather.getHighTemp() + "/" + activeWeather.getLowTemp() + " °C");
 
         ParallelTransition pt = new ParallelTransition(
-          TransitionUtil.createInFader(weatherIconView),
-          TransitionUtil.createInFader(cityLabel),
-          TransitionUtil.createInFader(degreeLabel),
-          TransitionUtil.createInFader(tempLabel)
+            TransitionUtil.createInFader(weatherIconView),
+            TransitionUtil.createInFader(cityLabel),
+            TransitionUtil.createInFader(degreeLabel),
+            TransitionUtil.createInFader(tempLabel)
         );
         pt.play();
       }
@@ -111,18 +106,51 @@ public class WeatherPanel extends ControllablePanel {
     Iterator<Weather> iterator = activeWeather.getForecast().iterator();
     iterator.next();
     Iterator<WeatherForecastPanel> panelIterator = forecastPanels.iterator();
-    while(iterator.hasNext()) {
+    while (iterator.hasNext()) {
       panelIterator.next().setForecast(iterator.next());
     }
   }
 
   // ------------------- Helper ----------------
 
+  private void loadSlideShow(final String city) {
+    Executor.run(new Runnable() {
+      @Override
+      public void run() {
+        if (!cachedSlideShows.containsKey(city)) {
+          SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + city.toLowerCase() + "/"), true);
+          cachedSlideShows.put(city, slideShow);
+        }
+
+        SlideShow slideShow = cachedSlideShows.get(city);
+        Platform.runLater(new Runnable() {
+          @Override
+          public void run() {
+            slideshowPanel.setSlideShow(slideShow);
+            slideshowPanel.startSlideShow();
+          }
+        });
+      }
+    });
+  }
+
   private void buildUI() {
     Weather weather = Callete.getWeatherService().getWeatherAt(1);
-    if(weather == null) {
+    if (weather == null) {
       return;
     }
+
+    Executor.run(new Runnable() {
+      @Override
+      public void run() {
+        List<Weather> weathers = Callete.getWeatherService().getWeather();
+        for(Weather w : weathers) {
+          String city = w.getCity();
+          SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + city.toLowerCase() + "/"), true);
+          cachedSlideShows.put(city, slideShow);
+        }
+      }
+    });
 
     getChildren().add(slideshowPanel);
 
@@ -156,7 +184,7 @@ public class WeatherPanel extends ControllablePanel {
     degreeLabel = ComponentUtil.createText(weather.getTemp() + "°C", "weather-degree", row1);
     VBox imgWrapper = new VBox();
     imgWrapper.setAlignment(Pos.TOP_CENTER);
-    imgWrapper.setPadding(new Insets(14,0,0,0));
+    imgWrapper.setPadding(new Insets(14, 0, 0, 0));
     weatherIconView = new ImageView(new Image(WeatherConditionMapper.getWeatherForecastIcon(weather), 55, 55, false, true));
     imgWrapper.getChildren().add(weatherIconView);
     tempLabel = ComponentUtil.createText(weather.getHighTemp() + "/" + weather.getLowTemp() + " °C", "forecast-temp", imgWrapper);
@@ -164,7 +192,7 @@ public class WeatherPanel extends ControllablePanel {
 
     Iterator<Weather> iterator = weather.getForecast().iterator();
     iterator.next();
-    while(iterator.hasNext()) {
+    while (iterator.hasNext()) {
       WeatherForecastPanel forecastPanel = new WeatherForecastPanel(iterator.next());
       forecastPanel.setMinWidth(100);
       weatherStatus.getChildren().add(forecastPanel);

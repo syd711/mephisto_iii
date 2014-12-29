@@ -2,6 +2,7 @@ package de.calette.mephisto3.util;
 
 import javafx.animation.SequentialTransition;
 import javafx.animation.Transition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -36,17 +37,23 @@ public class TransitionQueue {
       return;
     }
     running = true;
-    sequentialTransition.getChildren().clear();
-    sequentialTransition.getChildren().addAll(transitionQueue.remove(0));
-    sequentialTransition.setAutoReverse(false);
-    sequentialTransition.play();
-    sequentialTransition.setOnFinished(new EventHandler<ActionEvent>() {
+
+    Platform.runLater(new Runnable() {
       @Override
-      public void handle(ActionEvent actionEvent) {
-        running = false;
-        if(!transitionQueue.isEmpty()) {
-          play();
-        }
+      public void run() {
+        sequentialTransition.getChildren().clear();
+        sequentialTransition.getChildren().addAll(transitionQueue.remove(0));
+        sequentialTransition.setAutoReverse(false);
+        sequentialTransition.play();
+        sequentialTransition.setOnFinished(new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(ActionEvent actionEvent) {
+            running = false;
+            if(!transitionQueue.isEmpty()) {
+              play();
+            }
+          }
+        });
       }
     });
   }

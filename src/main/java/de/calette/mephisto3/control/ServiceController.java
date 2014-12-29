@@ -9,7 +9,7 @@ import callete.api.services.impl.simulator.SimulatorPushButton;
 import callete.api.services.impl.simulator.SimulatorRotaryEncoder;
 import callete.api.services.music.model.Stream;
 import de.calette.mephisto3.ui.ServiceChangeListener;
-import javafx.application.Platform;
+import de.calette.mephisto3.util.Executor;
 import javafx.scene.input.KeyCode;
 
 import java.util.ArrayList;
@@ -63,24 +63,29 @@ public class ServiceController {
    * @param service the service to activate.
    */
   public void switchService(Service service) {
-    if (service.equals(Callete.getWeatherService())) {
-      serviceState.setService(Callete.getWeatherService());
-      serviceState.setModels(Callete.getWeatherService().getWeather());
-    }
-    else if (service.equals(Callete.getStreamingService())) {
-      serviceState.setService(Callete.getStreamingService());
-      serviceState.setModels(Callete.getStreamingService().getStreams());
-    }
-    else if (service.equals(Callete.getGoogleMusicService())) {
-      serviceState.setService(Callete.getGoogleMusicService());
-      serviceState.setModels(Callete.getGoogleMusicService().getAlbums());
-    }
-    else if (service.equals(Callete.getSystemService())) {
-      serviceState.setService(Callete.getSystemService());
-      serviceState.setModels(Collections.<ServiceModel>emptyList());
-    }
+    Executor.run(new Runnable() {
+      @Override
+      public void run() {
+        if (service.equals(Callete.getWeatherService())) {
+          serviceState.setService(Callete.getWeatherService());
+          serviceState.setModels(Callete.getWeatherService().getWeather());
+        }
+        else if (service.equals(Callete.getStreamingService())) {
+          serviceState.setService(Callete.getStreamingService());
+          serviceState.setModels(Callete.getStreamingService().getStreams());
+        }
+        else if (service.equals(Callete.getGoogleMusicService())) {
+          serviceState.setService(Callete.getGoogleMusicService());
+          serviceState.setModels(Callete.getGoogleMusicService().getAlbums());
+        }
+        else if (service.equals(Callete.getSystemService())) {
+          serviceState.setService(Callete.getSystemService());
+          serviceState.setModels(Collections.<ServiceModel>emptyList());
+        }
 
-    serviceChanged();
+        serviceChanged();
+      }
+    });
   }
 
   public void setControlEnabled(boolean b) {
@@ -93,14 +98,9 @@ public class ServiceController {
 
   // ------------------- Helper -----------------------------------
   public void serviceChanged() {
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        for (ServiceChangeListener listener : serviceChangeListeners) {
-          listener.serviceChanged(serviceState);
-        }
-      }
-    });
+    for (ServiceChangeListener listener : serviceChangeListeners) {
+      listener.serviceChanged(serviceState);
+    }
   }
 
   /**
@@ -117,7 +117,6 @@ public class ServiceController {
       index = 0;
     }
     serviceState.setServiceIndex(index);
-    serviceChanged();
   }
 
   private void initGPIO() {
@@ -131,8 +130,7 @@ public class ServiceController {
         if(!controlEnabled) {
           return;
         }
-
-        Platform.runLater(new Runnable() {
+        Executor.run(new Runnable() {
           @Override
           public void run() {
             ServiceControlEvent.EVENT_TYPE push = ServiceControlEvent.EVENT_TYPE.PUSH;
@@ -145,7 +143,6 @@ public class ServiceController {
             }
           }
         });
-
       }
 
       @Override
@@ -168,75 +165,48 @@ public class ServiceController {
         if(!controlEnabled) {
           return;
         }
-        Platform.runLater(new Runnable() {
-          @Override
-          public void run() {
-            ServiceControlEvent.EVENT_TYPE eventType;
-            if (event.rotatedLeft()) {
-              eventType = ServiceControlEvent.EVENT_TYPE.PREVIOUS;
-            }
-            else {
-              eventType = ServiceControlEvent.EVENT_TYPE.NEXT;
-            }
+        ServiceControlEvent.EVENT_TYPE eventType;
+        if (event.rotatedLeft()) {
+          eventType = ServiceControlEvent.EVENT_TYPE.PREVIOUS;
+        }
+        else {
+          eventType = ServiceControlEvent.EVENT_TYPE.NEXT;
+        }
 
-            //skip this in service chooser mode
-            if(serviceState.getModels() != null) {
-              if (eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
-                serviceState.decrementIndex();
-              }
-              else if (eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
-                serviceState.incrementIndex();
-              }
-            }
-
-
-            final ServiceControlEvent serviceControlEvent = new ServiceControlEvent(eventType, serviceState);
-            for (ControlListener listener : controlListeners) {
-              listener.controlEvent(serviceControlEvent);
-            }
+        //skip this in service chooser mode
+        if(serviceState.getModels() != null) {
+          if (eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
+            serviceState.decrementIndex();
           }
-        });
+          else if (eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
+            serviceState.incrementIndex();
+          }
+        }
+
+
+        final ServiceControlEvent serviceControlEvent = new ServiceControlEvent(eventType, serviceState);
+        for (ControlListener listener : controlListeners) {
+          listener.controlEvent(serviceControlEvent);
+        }
       }
     });
   }
 
   public void fireControlEvent(KeyCode code) {
-    if (code == KeyCode.RIGHT) {
-      Platform.runLater(new Runnable() {
-        @Override
-        public void run() {
-          SimulatorRotaryEncoder encoder = (SimulatorRotaryEncoder) Simulator.getInstance().getGpioComponent(ROTARY_ENCODER_NAME);
-          encoder.right();
-        }
-      });
+    SimulatorRotaryEncoder encoder = (SimulatorRotaryEncoder) Simulator.getInstance().getGpioComponent(ROTARY_ENCODER_NAME);
+    SimulatorPushButton pushButton = (SimulatorPushButton) Simulator.getInstance().getGpioComponent(ROTARY_ENCODER_PUSH_BUTTON_NAME);
 
+    if (code == KeyCode.RIGHT) {
+      encoder.right();
     }
-    if (code == KeyCode.DOWN) {
-      Platform.runLater(new Runnable() {
-        @Override
-        public void run() {
-          SimulatorPushButton encoder = (SimulatorPushButton) Simulator.getInstance().getGpioComponent(ROTARY_ENCODER_PUSH_BUTTON_NAME);
-          encoder.push(false);
-        }
-      });
+    else if (code == KeyCode.LEFT) {
+      encoder.left();
     }
-    if (code == KeyCode.UP) {
-      Platform.runLater(new Runnable() {
-        @Override
-        public void run() {
-          SimulatorPushButton encoder = (SimulatorPushButton) Simulator.getInstance().getGpioComponent(ROTARY_ENCODER_PUSH_BUTTON_NAME);
-          encoder.push(true);
-        }
-      });
+    else if (code == KeyCode.DOWN) {
+      pushButton.push(false);
     }
-    if (code == KeyCode.LEFT) {
-      Platform.runLater(new Runnable() {
-        @Override
-        public void run() {
-          SimulatorRotaryEncoder encoder = (SimulatorRotaryEncoder) Simulator.getInstance().getGpioComponent(ROTARY_ENCODER_NAME);
-          encoder.left();
-        }
-      });
+    else if (code == KeyCode.UP) {
+      pushButton.push(true);
     }
   }
 }

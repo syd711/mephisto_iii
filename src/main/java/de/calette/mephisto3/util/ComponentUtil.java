@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -74,7 +73,7 @@ public class ComponentUtil {
       ImageIO.write(image.getImage(), image.getImageFormat(), os);
       InputStream is = new ByteArrayInputStream(os.toByteArray());
       return new Image(is, image.getImage().getWidth(), image.getImage().getHeight(), false, true);
-    } catch (IOException e) {
+    } catch (Exception e) {
       LOG.error("Error converting buffered image to FX image: " + e.getMessage(), e);
     }
     return null;

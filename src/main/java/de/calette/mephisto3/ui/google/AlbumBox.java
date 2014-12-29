@@ -158,15 +158,21 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         switchToSliderMode();
       }
       else {
-        final Node node = tracksBox.getChildren().get(selectionIndex);
-        FadeTransition blink = TransitionUtil.createBlink(node);
-        blink.setOnFinished(actionEvent -> Executor.run(() -> {
-          Song song = (Song) node.getUserData();
-          Callete.getMusicPlayer().getPlaylist().setPlaylist(getModel());
-          Callete.getMusicPlayer().getPlaylist().setActiveItem(song);
-          Callete.getMusicPlayer().play();
-        }));
-        blink.play();
+        Platform.runLater(new Runnable() {
+          @Override
+          public void run() {
+            final Node node = tracksBox.getChildren().get(selectionIndex);
+            FadeTransition blink = TransitionUtil.createBlink(node);
+            blink.setOnFinished(actionEvent -> Executor.run(() -> {
+              Song song = (Song) node.getUserData();
+              Callete.getMusicPlayer().getPlaylist().setPlaylist(getModel());
+              Callete.getMusicPlayer().getPlaylist().setActiveItem(song);
+              Callete.getMusicPlayer().play();
+            }));
+
+            blink.play();
+          }
+        });
       }
     }
     else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {

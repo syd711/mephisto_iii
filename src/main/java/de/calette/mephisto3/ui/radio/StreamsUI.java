@@ -162,8 +162,18 @@ public class StreamsUI extends VBox {
         if (!artistResources.isEmpty()) {
           ImageResource randomPlayerImage = artistResources.getRandomImage(PLAYER_IMAGE_SIZE, PLAYER_IMAGE_SIZE, PLAYER_MINIMUM_IMAGE_SIZE);
           ImageResource img = artistResources.getRandomImage(Mephisto3.WIDTH, IMAGE_HEIGHT, MINIMUM_IMAGE_SIZE);
-          artistBackgroundImage = ComponentUtil.toFXImage(img);
-          artistStatusImage = ComponentUtil.toFXImage(randomPlayerImage);
+          if(img != null) {
+            artistBackgroundImage = ComponentUtil.toFXImage(img);
+          }
+          else {
+            artistBackgroundImage = null;
+          }
+          if(randomPlayerImage != null) {
+            artistStatusImage = ComponentUtil.toFXImage(randomPlayerImage);
+          }
+          else {
+            artistStatusImage = null;
+          }
           imageLoaderActive = false;
         }
       }

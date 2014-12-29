@@ -49,6 +49,7 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     ServiceController.getInstance().addControlListener(this);
     ServiceController.getInstance().addServiceChangeListener(this);
     loadServices();
+    ServiceController.getInstance().serviceChanged();
   }
 
   @Override
@@ -56,15 +57,16 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
       serviceChooser.showServiceChooser();
     }
+    else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
+      activeControlPanel.pushed(event.getServiceState());
+    }
     else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
       activeControlPanel.rotatedRight(event.getServiceState());
     }
     else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
       activeControlPanel.rotatedLeft(event.getServiceState());
     }
-    else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
-      activeControlPanel.pushed(event.getServiceState());
-    }
+
   }
 
 

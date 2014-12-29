@@ -15,7 +15,7 @@ import java.util.TimerTask;
  */
 public class SlideshowPanel extends StackPane {
   public static final int PERIOD = 5000;
-  public static final int TRANSITION_MILLIS = 800;
+  public static final int TRANSITION_MILLIS = 400;
 
   private ImageView imageViewOld = new ImageView();
   private ImageView imageViewNew = new ImageView();
@@ -69,7 +69,6 @@ public class SlideshowPanel extends StackPane {
   private void nextImage() {
     ImageResource imageResource = slideShow.nextImage();
     final Image image = ComponentUtil.toFXImage(imageResource);
-
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
@@ -79,7 +78,6 @@ public class SlideshowPanel extends StackPane {
           showView = imageViewNew;
           hideView = imageViewOld;
         }
-
         showView.setImage(image);
         TransitionUtil.createInFader(showView, TRANSITION_MILLIS).play();
 
@@ -88,5 +86,6 @@ public class SlideshowPanel extends StackPane {
         }
       }
     });
+
   }
 }

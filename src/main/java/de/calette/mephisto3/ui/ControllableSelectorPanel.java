@@ -75,7 +75,12 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
   @Override
   public void controlEvent(ServiceControlEvent event) {
     if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
-      hidePanel();
+      Platform.runLater(new Runnable() {
+        @Override
+        public void run() {
+          hidePanel();
+        }
+      });
     }
     else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
       scroll(-scrollWidth);

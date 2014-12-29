@@ -103,7 +103,7 @@ public class ServiceChooser implements ControlListener {
 
   @Override
   public void controlEvent(ServiceControlEvent event) {
-    Service service = (Service) serviceBoxes.get(index).getUserData();
+    final Service service = (Service) serviceBoxes.get(index).getUserData();
     final Pane searchSelectionBox = serviceBoxesByService.get(service);
 
     if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
@@ -131,15 +131,20 @@ public class ServiceChooser implements ControlListener {
         blink.play();
       }
       else {
-        if (service.equals(Callete.getGoogleMusicService())) {
-          showMusicOptions(searchSelectionBox);
-        }
-        else {
-          if(googlePlayer != null) {
-            googlePlayer.hidePlayer();
+        Platform.runLater(new Runnable() {
+          @Override
+          public void run() {
+            if (service.equals(Callete.getGoogleMusicService())) {
+              showMusicOptions(searchSelectionBox);
+            }
+            else {
+              if(googlePlayer != null) {
+                googlePlayer.hidePlayer();
+              }
+              hideServiceChooser();
+            }
           }
-          hideServiceChooser();
-        }
+        });
       }
     }
     else {
@@ -160,7 +165,6 @@ public class ServiceChooser implements ControlListener {
         }
       }
 
-      service = (Service) serviceBoxes.get(index).getUserData();
       if (!service.equals(Callete.getGoogleMusicService())) {
         hideMusicOptions(searchSelectionBox);
       }
@@ -186,16 +190,22 @@ public class ServiceChooser implements ControlListener {
    * Display method of the whole chooser, updates the control.
    */
   public void showServiceChooser() {
-    overlay.getChildren().add(scroller);
-    showFader.play();
-    center.activeControlPanel.hidePanel();
     ServiceController.getInstance().addControlListener(this);
     ServiceController.getInstance().removeControlListener(center);
     final ServiceNameBox serviceNameBox = serviceBoxes.get(index);
-    serviceNameBox.select();
-    if(googlePlayer != null && googlePlayer.isPlaying()) {
-      googlePlayer.showPlayer();
-    }
+
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        overlay.getChildren().add(scroller);
+        showFader.play();
+        center.activeControlPanel.hidePanel();
+        serviceNameBox.select();
+        if(googlePlayer != null && googlePlayer.isPlaying()) {
+          googlePlayer.showPlayer();
+        }
+      }
+    });
   }
 
   /**
@@ -276,18 +286,9 @@ public class ServiceChooser implements ControlListener {
     if (index == 0 && width > 0) {
       return;
     }
-
-    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                          scrollTransition.setByX(width);
-                          transitionQueue.addTransition(scrollTransition);
-                          transitionQueue.play();
-                        }
-                      }
-    );
-
-
+    scrollTransition.setByX(width);
+    transitionQueue.addTransition(scrollTransition);
+    transitionQueue.play();
     ServiceNameBox oldSelection = serviceBoxes.get(index);
     oldSelection.deselect();
     if (width > 0) {
