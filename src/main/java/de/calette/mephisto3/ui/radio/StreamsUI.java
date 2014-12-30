@@ -24,11 +24,15 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * All UI components of the stream panel
  */
 public class StreamsUI extends VBox {
+  private final static Logger LOG = LoggerFactory.getLogger(StreamsUI.class);
+
   public final static String NO_DATA_TITLE = " - keine Informationen verfügbar -";
   public final static String LOADING_DATA_TITLE = "Warte auf Metadaten...";
 
@@ -115,6 +119,7 @@ public class StreamsUI extends VBox {
       public void run() {
         //only apply additional data if metadata is available.
         if (currentMetaData == null || StringUtils.isEmpty(currentMetaData.getArtist())) {
+          LOG.debug("No meta data availalbe or no artist found, resetting UI.");
           removeImageClasses();
           setBackgroundImage(null);
           return;
@@ -122,6 +127,7 @@ public class StreamsUI extends VBox {
 
         //the artist loader is already loading
         if(imageLoaderActive) {
+          LOG.debug("Image loader already active, skipping resource request.");
           return;
         }
 
@@ -133,6 +139,7 @@ public class StreamsUI extends VBox {
 
         //apply image if already available
         if (artistResources != null && artistResources.getArtist().equals(currentMetaData.getArtist()) && artistBackgroundImage != null) {
+          LOG.debug("Artist resources available, updating UI...");
           addImageClasses();
           playerStatusBox.updateStatus(null, null, artistStatusImage);
           setBackgroundImage(artistBackgroundImage);
@@ -141,6 +148,7 @@ public class StreamsUI extends VBox {
 
         //hide the image loader if no images are available
         if(artistResources != null && artistResources.isEmpty()) {
+          LOG.debug("No resources found, hiding image loader.");
           imageLoader.setOpacity(0);
         }
       }
@@ -158,8 +166,10 @@ public class StreamsUI extends VBox {
     Executor.run(new Runnable() {
       @Override
       public void run() {
+        LOG.debug("Requesting resources for " + currentMetaData.getArtist());
         artistResources = Callete.getResourcesService().getImageResourcesFor(currentMetaData.getArtist());
         if (!artistResources.isEmpty()) {
+          LOG.debug("Creating images for " + currentMetaData.getArtist());
           ImageResource randomPlayerImage = artistResources.getRandomImage(PLAYER_IMAGE_SIZE, PLAYER_IMAGE_SIZE, PLAYER_MINIMUM_IMAGE_SIZE);
           ImageResource img = artistResources.getRandomImage(Mephisto3.WIDTH, IMAGE_HEIGHT, MINIMUM_IMAGE_SIZE);
           if(img != null) {
@@ -174,6 +184,7 @@ public class StreamsUI extends VBox {
           else {
             artistStatusImage = null;
           }
+
           imageLoaderActive = false;
         }
       }

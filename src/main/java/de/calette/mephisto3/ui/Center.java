@@ -18,6 +18,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,8 @@ import java.util.Map;
  * The center region is replaced with ControllablePanel instances.
  */
 public class Center extends BorderPane implements ControlListener, ServiceChangeListener {
+  private final static Logger LOG = LoggerFactory.getLogger(Center.class);
+
   protected StackPane stackPane;
   protected ControllablePanel activeControlPanel;
   private ControllablePanel newControlPanel;
@@ -112,14 +116,17 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     Executor.run(new Runnable() {
       @Override
       public void run() {
+        LOG.debug("Added service chooser for Weather");
         WeatherPanel weatherPanel = new WeatherPanel();
         servicePanels.put(Callete.getWeatherService(), weatherPanel);
         serviceChooser.addService(ServiceController.SERVICE_NAME_WEATHER, Callete.getWeatherService());
 
+        LOG.debug("Added service chooser for System");
         SystemPanel systemPanel = new SystemPanel();
         servicePanels.put(Callete.getSystemService(), systemPanel);
         serviceChooser.addService(ServiceController.SERVICE_NAME_SETTINGS, Callete.getSystemService());
 
+        LOG.debug("Added service chooser for Google");
         GoogleMusicPanel googleMusicPanel = new GoogleMusicPanel();
         servicePanels.put(Callete.getGoogleMusicService(), googleMusicPanel);
         serviceChooser.addService(ServiceController.SERVICE_NAME_MUSIC, Callete.getGoogleMusicService());

@@ -112,11 +112,12 @@ public class StreamsController extends ControllablePanel implements PlaylistMeta
    * No matter if the UI is build yet, start playing the stream.
    */
   private void startStreaming() {
+    final MusicPlayerPlaylist playlist = Callete.getMusicPlayer().getPlaylist();
+    playlist.setActiveItem(activeStream);
+
     Executor.run(new Runnable() {
       @Override
       public void run() {
-        final MusicPlayerPlaylist playlist = Callete.getMusicPlayer().getPlaylist();
-        playlist.setActiveItem(activeStream);
         Callete.getMusicPlayer().play();
         LOG.info("Starting playback of last stream selection: " + activeStream);
       }

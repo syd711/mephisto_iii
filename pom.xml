@@ -26,23 +26,21 @@
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>2.9</version>
                         <executions>
                             <execution>
-                                <id>create-executable-jar</id>
-                                <phase>deploy</phase>
+                                <id>copy-dependencies</id>
+                                <phase>package</phase>
                                 <goals>
-                                    <goal>single</goal>
+                                    <goal>copy-dependencies</goal>
                                 </goals>
                                 <configuration>
-                                    <descriptorRefs>
-                                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                                    </descriptorRefs>
-                                    <archive>
-                                        <manifest>
-                                            <mainClass>de.calette.mephisto3.Mephisto3</mainClass>
-                                        </manifest>
-                                    </archive>
+                                    <outputDirectory>${project.build.directory}/release</outputDirectory>
+                                    <overWriteReleases>true</overWriteReleases>
+                                    <overWriteSnapshots>true</overWriteSnapshots>
+                                    <overWriteIfNewer>true</overWriteIfNewer>
                                 </configuration>
                             </execution>
                         </executions>

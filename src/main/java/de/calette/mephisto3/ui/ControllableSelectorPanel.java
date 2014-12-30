@@ -95,6 +95,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
    */
   public void showPanel() {
     //so lets create all children
+    LOG.debug("ControllableSelectorPanel creates " + models.size() + " child components");
     for (T model : models) {
       ControllableItemPanel item = createControllableItemPanelFor(controlItemBoxClass, model);
       this.getChildren().add((Node)item);

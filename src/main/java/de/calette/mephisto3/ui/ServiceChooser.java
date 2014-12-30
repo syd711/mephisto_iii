@@ -26,6 +26,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +38,8 @@ import java.util.Map;
  * The chooser that selects the active function of the radio.
  */
 public class ServiceChooser implements ControlListener {
+  private final static Logger LOG = LoggerFactory.getLogger(ServiceChooser.class);
+
   public static final int SCROLL_DURATION = 200;
   public static final int DISPLAY_DELAY = 500;
 
@@ -97,6 +101,7 @@ public class ServiceChooser implements ControlListener {
         serviceBoxes.add(serviceBox);
         serviceBoxesByService.put(service, serviceBox);
         TransitionUtil.createInFader(serviceBox).play();
+        LOG.debug("Added service chooser for " + label);
       }
     });
   }
