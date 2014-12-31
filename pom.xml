@@ -26,7 +26,7 @@
 
     <profiles>
         <profile>
-            <id>release</id>
+            <id>deploy</id>
             <build>
                 <plugins>
                     <plugin>
@@ -73,51 +73,21 @@
                             </execution>
                         </executions>
                     </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>execute</id>
-            <build>
-                <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
                         <version>${exec.plugin.version}</version>
                         <executions>
                             <execution>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                                <configuration>
-                                    <mainClass>de.calette.mephisto3.Mephisto3</mainClass>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>deploy</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>${exec.plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
+                                <phase>install</phase>
                                 <goals>
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
                                     <mainClass>callete.deployment.client.DeploymentClient</mainClass>
                                     <arguments>
-                                        <!-- Comma separated ignore files/directories for deployment copy/cleanup-->
-                                        <argument>image_cache,target,.zip</argument>
+                                        <argument>${artifactId}</argument>
+                                        <argument>${version}</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
