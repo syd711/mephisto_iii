@@ -119,7 +119,7 @@ public class StreamsUI extends VBox {
       public void run() {
         //only apply additional data if metadata is available.
         if (currentMetaData == null || StringUtils.isEmpty(currentMetaData.getArtist())) {
-          LOG.debug("No meta data availalbe or no artist found, resetting UI.");
+          LOG.debug("No meta data available or no artist found, resetting UI.");
           removeImageClasses();
           setBackgroundImage(null);
           return;
@@ -134,16 +134,18 @@ public class StreamsUI extends VBox {
         //first check if an image has already been requested
         if (artistResources == null || !artistResources.getArtist().equals(currentMetaData.getArtist())) {
           imageLoader.setOpacity(1);
+          setBackgroundImage(null);
           loadArtistResource(currentMetaData);
         }
 
         //apply image if already available
         if (artistResources != null && artistResources.getArtist().equals(currentMetaData.getArtist()) && artistBackgroundImage != null) {
-          LOG.debug("Artist resources available, updating UI...");
-          addImageClasses();
           playerStatusBox.updateStatus(null, null, artistStatusImage);
           setBackgroundImage(artistBackgroundImage);
-          imageLoader.setOpacity(0);
+          addImageClasses();
+          if(imageLoader.getOpacity() != 0) {
+            imageLoader.setOpacity(0);
+          }
         }
 
         //hide the image loader if no images are available

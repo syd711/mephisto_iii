@@ -14,7 +14,6 @@ import de.calette.mephisto3.util.ComponentUtil;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -23,6 +22,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Timer;
@@ -40,8 +40,8 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
   private Label titleLabel;
   private Label albumInfoLabel;
   private ProgressBar progress;
-  private Label totalDurationLabel;
-  private Label currentDurationLabel;
+  private Text totalDurationLabel;
+  private Text currentDurationLabel;
   private Timer timer;
   private int currentDuration;
 
@@ -86,17 +86,14 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
     statusBox.setCenter(progressWrapper);
     progress = new ProgressBar();
     progress.setOpacity(0);
+    progress.setPadding(new Insets(0, 5, 0, 5));
     progress.setProgress(0);
     progress.setMinWidth(330);
     progress.setMaxWidth(330);
 
-    currentDurationLabel = ComponentUtil.createLabel("", "", progressWrapper);
-    currentDurationLabel.setAlignment(Pos.CENTER);
-    currentDurationLabel.setMinWidth(30);
+    currentDurationLabel = ComponentUtil.createText("     ", "", progressWrapper);
     progressWrapper.getChildren().add(progress);
-    totalDurationLabel = ComponentUtil.createLabel("", "", progressWrapper);
-    totalDurationLabel.setAlignment(Pos.CENTER);
-    totalDurationLabel.setMinWidth(30);
+    totalDurationLabel = ComponentUtil.createText("     ", "", progressWrapper);
     return statusBox;
   }
 
@@ -116,8 +113,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
   public void setImage(Image image) {
     if (image == null) {
       this.imageView.setImage(defaultBackground);
-    }
-    else {
+    } else {
       this.imageView.setImage(image);
     }
   }
@@ -126,7 +122,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
   public void playlistChanged(final PlaylistChangeEvent e) {
     Platform.runLater(() -> {
       PlaylistItem activeItem = e.getActiveItem();
-      if(!(activeItem instanceof Song)) {
+      if (!(activeItem instanceof Song)) {
         cancelProgress();
         return;
       }
@@ -168,7 +164,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
   @Override
   public void playbackChanged(PlaybackChangeEvent event) {
     PlaylistItem activeItem = event.getActiveItem();
-    if(!(activeItem instanceof Song)) {
+    if (!(activeItem instanceof Song)) {
       cancelProgress();
       return;
     }
@@ -193,7 +189,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
             currentDuration++;
 
             String time = DateUtil.formatTime(currentDuration);
-            if(currentDuration*1000 <= song.getDurationMillis()) {
+            if (currentDuration * 1000 <= song.getDurationMillis()) {
               currentDurationLabel.setText(time);
             }
             long duration = song.getDurationMillis() / 1000;
@@ -225,7 +221,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
   }
 
   private void cancelProgress() {
-    if(timer != null) {
+    if (timer != null) {
       timer.purge();
       timer.cancel();
       timer = null;

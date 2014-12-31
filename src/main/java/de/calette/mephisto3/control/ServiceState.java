@@ -81,7 +81,7 @@ public class ServiceState {
   }
 
   public void saveState() {
-    Callete.saveSetting(SETTING_SERVICE_NAME, service.toString());
+    //Callete.saveSetting(SETTING_SERVICE_NAME, service.toString());
     Callete.saveSetting(SETTING_SERVICE_SELECTION, getServiceIndex());
   }
 }

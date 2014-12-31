@@ -1,6 +1,6 @@
 package de.calette.mephisto3.util;
 
-import callete.api.services.music.AlbumCoverCache;
+import callete.api.services.impl.music.google.AlbumCoverCache;
 import callete.api.services.music.model.Album;
 import callete.api.services.resources.ImageResource;
 import javafx.scene.canvas.Canvas;

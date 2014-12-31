@@ -26,7 +26,15 @@ public class AlbumSlider extends ControllableSelectorPanel<Album> {
   }
 
   @Override
+  protected void onLongPush() {
+    super.onLongPush();
+    setSelectionIndex(0);
+    hidePanel();
+  }
+
+  @Override
   public void hidePanel() {
+    //check if the back button was selected
     if(getSelectedPanel().getUserData() == null) {
       super.hidePanel();
     }

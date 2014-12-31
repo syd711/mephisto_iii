@@ -1,6 +1,8 @@
 package de.calette.mephisto3;
 
 import callete.api.Callete;
+import callete.api.services.impl.music.google.AlbumCoverCache;
+import callete.api.util.SystemUtils;
 import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.ui.Center;
 import javafx.application.Application;
@@ -13,6 +15,8 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
+
+import java.io.File;
 
 /**
  * In the beginning, there was main...
@@ -33,6 +37,11 @@ public class Mephisto3 extends Application implements EventHandler<KeyEvent> {
 
     //force rendering of small fonts
     System.setProperty("prism.lcdtext", "false");
+
+    //apply new image cache dir
+    if(!SystemUtils.isWindows()) {
+      AlbumCoverCache.setCacheDir(new File("../image_cache/"));
+    }
 
     //create root component with background
     rootStack = new StackPane();

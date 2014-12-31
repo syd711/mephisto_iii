@@ -175,6 +175,10 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         });
       }
     }
+    else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
+      selectionIndex = -1;
+      switchToSliderMode();
+    }
     else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
       if (selectionIndex < getModel().getSize() - 1) {
         int oldIndex = selectionIndex;

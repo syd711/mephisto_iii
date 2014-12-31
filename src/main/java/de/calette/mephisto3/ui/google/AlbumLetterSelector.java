@@ -38,6 +38,13 @@ public class AlbumLetterSelector extends ControllableSelectorPanel<AlbumCollecti
   }
 
   @Override
+  protected void onLongPush() {
+    super.onLongPush();
+    setSelectionIndex(0);
+    hidePanel();
+  }
+
+  @Override
   protected int getTopPadding() {
     return 140;
   }

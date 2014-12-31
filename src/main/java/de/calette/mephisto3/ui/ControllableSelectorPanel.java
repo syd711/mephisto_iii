@@ -57,6 +57,10 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     this.selection = selection;
   }
 
+  public void setSelectionIndex(int index) {
+    this.index = index;
+  }
+
   public Pane getParentPane() {
     return parent;
   }
@@ -87,6 +91,14 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     }
     else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
       scroll(scrollWidth);
+    }
+    else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
+      Platform.runLater(new Runnable() {
+        @Override
+        public void run() {
+          onLongPush();
+        }
+      });
     }
   }
 
@@ -219,6 +231,10 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
    */
   protected abstract void onHide(T userData);
 
+  /**
+   * Optional action to be executed when a long push is executed.
+   */
+  protected void onLongPush() {}
 
   /**
    * Checks if a selection model was passed.

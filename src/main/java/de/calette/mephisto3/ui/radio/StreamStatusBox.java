@@ -41,10 +41,14 @@ public class StreamStatusBox extends BorderPane {
     }
     updateStatus(title);
     if(image == null) {
-      this.imageView.setImage(defaultBackground);
+      if(!imageView.getImage().equals(defaultBackground)) {
+        this.imageView.setImage(defaultBackground);
+      }
     }
     else {
-      this.imageView.setImage(image);
+      if(!imageView.getImage().equals(image)) {
+        this.imageView.setImage(image);
+      }
     }
   }
 
