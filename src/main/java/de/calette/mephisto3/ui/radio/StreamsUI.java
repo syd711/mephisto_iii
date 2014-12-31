@@ -64,6 +64,12 @@ public class StreamsUI extends VBox {
 
   // ------------------------- UI State Updates ----------------------------------------
 
+  public void reset() {
+    Stream stream = (Stream) ServiceController.getInstance().getServiceState().getSelection();
+    activateStream(stream);
+    playerStatusBox.updateStatus(stream.getName(), "", null);
+  }
+
   /**
    * Called when another stream has been selected but not confirmed for playback yet.
    */
@@ -89,6 +95,7 @@ public class StreamsUI extends VBox {
     artistBackgroundImage = null;
 
     Platform.runLater(() -> {
+      removeImageClasses();
       nameLabel.setText(applyName(stream, null));
       artistLabel.setText(applyArtist(null));
       titleLabel.setText(applyTitle(null));

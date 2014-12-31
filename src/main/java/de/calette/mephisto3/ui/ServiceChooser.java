@@ -170,7 +170,8 @@ public class ServiceChooser implements ControlListener {
         }
       }
 
-      if (!service.equals(Callete.getGoogleMusicService())) {
+      Service selection = (Service) serviceBoxes.get(index).getUserData();
+      if (!selection.equals(Callete.getGoogleMusicService())) {
         hideMusicOptions(searchSelectionBox);
       }
     }
