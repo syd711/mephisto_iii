@@ -9,6 +9,7 @@ import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.ControllablePanel;
 import de.calette.mephisto3.util.Executor;
+import javafx.scene.input.KeyCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,15 @@ public class StreamsController extends ControllablePanel implements PlaylistMeta
     currentMetaData = null;
 
     //save last selected state first
-    activeStream = (Stream) serviceState.getSelection();
+    Stream selection = (Stream) serviceState.getSelection();
+
+    //check if the push button was pressed for the current selection, select next station then
+    if(selection.equals(activeStream)) {
+      ServiceController.getInstance().fireControlEvent(KeyCode.RIGHT);
+      pushed(serviceState);
+      return;
+    }
+    activeStream = selection;
     serviceState.saveState();
 
     //well, play the selected stream

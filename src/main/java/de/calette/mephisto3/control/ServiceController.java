@@ -134,10 +134,13 @@ public class ServiceController {
           @Override
           public void run() {
             ServiceControlEvent.EVENT_TYPE push = ServiceControlEvent.EVENT_TYPE.PUSH;
+
             if (pushEvent.isLongPush()) {
               serviceState.setModels(null);
               push = ServiceControlEvent.EVENT_TYPE.LONG_PUSH;
             }
+
+            //update listeners
             for (ControlListener listener : new ArrayList<>(controlListeners)) {
               listener.controlEvent(new ServiceControlEvent(push, serviceState));
             }

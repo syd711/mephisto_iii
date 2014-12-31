@@ -5,6 +5,7 @@ import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollBar;
@@ -42,11 +43,17 @@ public class ServiceScroller extends BorderPane implements ControlListener {
   }
 
   @Override
-  public void controlEvent(ServiceControlEvent event) {
+  public void controlEvent(final ServiceControlEvent event) {
     ServiceControlEvent.EVENT_TYPE eventType = event.getEventType();
     if(eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT) || eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
-      final int serviceIndex = event.getServiceState().getServiceIndex();
-      sc.setValue(serviceIndex);
+      Platform.runLater(new Runnable() {
+        @Override
+        public void run() {
+          final int serviceIndex = event.getServiceState().getServiceIndex();
+          sc.setValue(serviceIndex);
+        }
+      });
+
     }
   }
 }

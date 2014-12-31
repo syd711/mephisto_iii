@@ -14,6 +14,8 @@ import de.calette.mephisto3.util.Executor;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -141,8 +143,8 @@ public class StreamsUI extends VBox {
         //apply image if already available
         if (artistResources != null && artistResources.getArtist().equals(currentMetaData.getArtist()) && artistBackgroundImage != null) {
           playerStatusBox.updateStatus(null, null, artistStatusImage);
-          setBackgroundImage(artistBackgroundImage);
           addImageClasses();
+          setBackgroundImage(artistBackgroundImage);
           if(imageLoader.getOpacity() != 0) {
             imageLoader.setOpacity(0);
           }
@@ -150,8 +152,10 @@ public class StreamsUI extends VBox {
 
         //hide the image loader if no images are available
         if(artistResources != null && artistResources.isEmpty()) {
-          LOG.debug("No resources found, hiding image loader.");
-          imageLoader.setOpacity(0);
+          if(imageLoader.getOpacity() != 0) {
+            LOG.debug("No resources found, hiding image loader.");
+            imageLoader.setOpacity(0);
+          }
         }
       }
     });
@@ -186,9 +190,8 @@ public class StreamsUI extends VBox {
           else {
             artistStatusImage = null;
           }
-
-          imageLoaderActive = false;
         }
+        imageLoaderActive = false;
       }
     });
   }
@@ -260,6 +263,9 @@ public class StreamsUI extends VBox {
       outFader.setOnFinished(actionEvent -> {
         if (image != null) {
           artistBackgroundImageView.setImage(image);
+          if(image != null) {
+            addImageClasses();
+          }
           TransitionUtil.createInFader(artistBackgroundImageView, 100).play();
         }
       });
@@ -267,7 +273,16 @@ public class StreamsUI extends VBox {
     }
     else {
       artistBackgroundImageView.setImage(image);
-      TransitionUtil.createInFader(artistBackgroundImageView, 100).play();
+      FadeTransition inFader = TransitionUtil.createInFader(artistBackgroundImageView, 100);
+      inFader.setOnFinished(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          if(image != null) {
+            addImageClasses();
+          }
+        }
+      });
+      inFader.play();
     }
   }
 
