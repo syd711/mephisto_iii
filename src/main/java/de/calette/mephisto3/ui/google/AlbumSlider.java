@@ -23,6 +23,8 @@ public class AlbumSlider extends ControllableSelectorPanel<Album> {
     this.albumCollection = albumCollection;
     this.collections = collections;
     this.serviceChooser = serviceChooser;
+
+    LazyAlbumCoverCache.load(albumCollection.getAlbums());
   }
 
   @Override

@@ -21,7 +21,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang.StringUtils;
@@ -38,7 +37,7 @@ import static de.calette.mephisto3.util.TransitionUtil.*;
 public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements ControlListener, PlaybackChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(AlbumBox.class);
 
-  private static final int COVER_WIDTH = 200;
+  public static final int COVER_WIDTH = 200;
   public static final int BOX_WIDTH = 220;
   public static final int COVER_HEIGHT = 200;
   public static final int TRACKS_WIDTH = 390;
@@ -274,8 +273,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     p.getStyleClass().add("cover-box");
 
     if (!StringUtils.isEmpty(album.getArtUrl())) {
-      ImageView cover = ComponentUtil.loadAlbumCover(album, COVER_WIDTH, COVER_HEIGHT);
-      p.setCenter(cover);
+      LazyAlbumCoverCache.loadImageViewFor(p, album);
     }
     else {
       LOG.warn("No cover found for " + album + ", using spacer instead.");

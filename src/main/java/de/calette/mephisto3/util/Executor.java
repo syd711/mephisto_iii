@@ -5,8 +5,9 @@ package de.calette.mephisto3.util;
  */
 public class Executor {
 
-  public static void run(final Runnable r) {
+  public static Thread run(final Runnable r) {
     Thread t = new Thread(r);
     t.start();
+    return t;
   }
 }
