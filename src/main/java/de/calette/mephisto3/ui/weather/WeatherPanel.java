@@ -62,6 +62,21 @@ public class WeatherPanel extends ControllablePanel {
     activeWeather = (Weather) ServiceController.getInstance().getServiceState().getSelection();
     loadSlideShow(activeWeather.getCity());
     cityLabel.setText(activeWeather.getCity());
+
+    //lazy loading after first show
+    Executor.run(new Runnable() {
+      @Override
+      public void run() {
+        List<Weather> weathers = Callete.getWeatherService().getWeather();
+        for(Weather w : weathers) {
+          String city = w.getCity();
+          if(cachedSlideShows.containsKey(city)) {
+            SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + city.toLowerCase() + "/"), true);
+            cachedSlideShows.put(city, slideShow);
+          }
+        }
+      }
+    });
   }
 
   @Override
@@ -140,17 +155,9 @@ public class WeatherPanel extends ControllablePanel {
       return;
     }
 
-    Executor.run(new Runnable() {
-      @Override
-      public void run() {
-        List<Weather> weathers = Callete.getWeatherService().getWeather();
-        for(Weather w : weathers) {
-          String city = w.getCity();
-          SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + city.toLowerCase() + "/"), true);
-          cachedSlideShows.put(city, slideShow);
-        }
-      }
-    });
+    String city = weather.getCity();
+    SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + city.toLowerCase() + "/"), true);
+    cachedSlideShows.put(city, slideShow);
 
     getChildren().add(slideshowPanel);
 

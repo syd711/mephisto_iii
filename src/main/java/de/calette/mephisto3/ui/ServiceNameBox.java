@@ -23,11 +23,19 @@ public class ServiceNameBox extends VBox {
     setUserData(service);
     setPadding(new Insets(80, 0, 0, 0));
     setMinHeight(200);
-    setOpacity(0);
     setAlignment(Pos.TOP_CENTER);
     setMinWidth(SERVICE_BOX_WIDTH);
 
     text = ComponentUtil.createText(label, "service-name", this);
+  }
+
+  public void setLoaded() {
+    text.getStyleClass().remove("service-name");
+    text.getStyleClass().add("service-loaded");
+  }
+
+  public boolean isLoaded() {
+    return text.getStyleClass().contains("service-loaded");
   }
 
   public void deselect() {

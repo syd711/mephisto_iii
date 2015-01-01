@@ -293,5 +293,10 @@
 
 .service-name {
    -fx-font-size: 32px;
+   -fx-fill: #fff;
+}
+
+.service-loaded {
+   -fx-font-size: 32px;
    -fx-fill: #333;
 }

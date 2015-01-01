@@ -87,21 +87,23 @@ public class ServiceChooser implements ControlListener {
 
     showFader = TransitionUtil.createInFader(overlay, DISPLAY_DELAY);
     hideFader = TransitionUtil.createOutFader(overlay, DISPLAY_DELAY);
+
+    createServiceNameBox(ServiceController.SERVICE_NAME_RADIO, Callete.getStreamingService());
+    createServiceNameBox(ServiceController.SERVICE_NAME_WEATHER, Callete.getWeatherService());
+    createServiceNameBox(ServiceController.SERVICE_NAME_SETTINGS, Callete.getSystemService());
+    createServiceNameBox(ServiceController.SERVICE_NAME_MUSIC, Callete.getGoogleMusicService());
   }
 
   /**
    * Adds a new entry to the chooser
    */
-  public void addService(final String label, final Service service) {
+  public void addService(final Service service) {
     Platform.runLater(new Runnable() {
       @Override
       public void run() {
-        final ServiceNameBox serviceBox = new ServiceNameBox(label, service);
-        scroller.getChildren().add(serviceBox);
-        serviceBoxes.add(serviceBox);
-        serviceBoxesByService.put(service, serviceBox);
-        TransitionUtil.createInFader(serviceBox).play();
-        LOG.debug("Added service chooser for " + label);
+        ServiceNameBox serviceBox = (ServiceNameBox) serviceBoxesByService.get(service);
+        serviceBox.setLoaded();
+        LOG.debug("Activated service chooser for " + service);
       }
     });
   }
@@ -109,12 +111,16 @@ public class ServiceChooser implements ControlListener {
   @Override
   public void controlEvent(ServiceControlEvent event) {
     final Service service = (Service) serviceBoxes.get(index).getUserData();
-    final Pane searchSelectionBox = serviceBoxesByService.get(service);
+    final ServiceNameBox searchSelectionBox = (ServiceNameBox) serviceBoxesByService.get(service);
 
     if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
       //not assigned
     }
     else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
+      if(!searchSelectionBox.isLoaded()) {
+        return;
+      }
+
       if(musicSelector != null) {
         final FadeTransition blink = TransitionUtil.createBlink(playbackSelection);
         blink.setOnFinished(new EventHandler<ActionEvent>() {
@@ -305,5 +311,12 @@ public class ServiceChooser implements ControlListener {
     }
     ServiceNameBox newSelection = serviceBoxes.get(index);
     newSelection.select();
+  }
+
+  private void createServiceNameBox(String label, Service service) {
+    ServiceNameBox serviceBox = new ServiceNameBox(label, service);
+    scroller.getChildren().add(serviceBox);
+    serviceBoxes.add(serviceBox);
+    serviceBoxesByService.put(service, serviceBox);
   }
 }

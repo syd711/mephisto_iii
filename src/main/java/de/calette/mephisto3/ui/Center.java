@@ -106,7 +106,7 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     if(servicePanels.isEmpty()) {
       StreamsController streamsController = new StreamsController();
       servicePanels.put(Callete.getStreamingService(), streamsController);
-      serviceChooser.addService(ServiceController.SERVICE_NAME_RADIO, Callete.getStreamingService());
+      serviceChooser.addService(Callete.getStreamingService());
     }
 
     return servicePanels.get(state.getService());
@@ -119,17 +119,17 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
         LOG.debug("Added service chooser for Weather");
         WeatherPanel weatherPanel = new WeatherPanel();
         servicePanels.put(Callete.getWeatherService(), weatherPanel);
-        serviceChooser.addService(ServiceController.SERVICE_NAME_WEATHER, Callete.getWeatherService());
+        serviceChooser.addService(Callete.getWeatherService());
 
         LOG.debug("Added service chooser for System");
         SystemPanel systemPanel = new SystemPanel();
         servicePanels.put(Callete.getSystemService(), systemPanel);
-        serviceChooser.addService(ServiceController.SERVICE_NAME_SETTINGS, Callete.getSystemService());
+        serviceChooser.addService(Callete.getSystemService());
 
         LOG.debug("Added service chooser for Google");
         GoogleMusicPanel googleMusicPanel = new GoogleMusicPanel();
         servicePanels.put(Callete.getGoogleMusicService(), googleMusicPanel);
-        serviceChooser.addService(ServiceController.SERVICE_NAME_MUSIC, Callete.getGoogleMusicService());
+        serviceChooser.addService(Callete.getGoogleMusicService());
       }
     });
   }
