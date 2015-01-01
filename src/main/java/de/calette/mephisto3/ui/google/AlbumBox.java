@@ -54,8 +54,11 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
   private VBox tracksBox;
   private int selectionIndex = -1;
 
-
   public AlbumBox(ControllableSelectorPanel parentControl, Album album) {
+    this(parentControl, album, true);
+  }
+
+  public AlbumBox(ControllableSelectorPanel parentControl, Album album, boolean backButton) {
     super(10, parentControl, album);
     this.getStyleClass().add("album-box");
     setMinWidth(BOX_WIDTH);
@@ -74,9 +77,14 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     }
     else {
       setAlignment(Pos.BASELINE_RIGHT);
+      String resource = "1.png";
+      if(backButton) {
+        resource = "back.png";
+      }
+
       setPadding(new Insets(80, 0, 0, 0));
       scaleFactor = 1.2;
-      Canvas back = ComponentUtil.createImageCanvas(MenuResourceLoader.getResource("back.png"), 100, 100);
+      Canvas back = ComponentUtil.createImageCanvas(MenuResourceLoader.getResource(resource), 100, 100);
       compactView.getChildren().add(back);
     }
 

@@ -31,13 +31,13 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
   private int scrollWidth;
   private TransitionQueue transitionQueue;
   private int index;
-  private int itemCount;
   private Class controlItemBoxClass;
+
   private List<T> models;
+
   private int backTopPadding = -1;
   private T selection;
   private double margin;
-
   public ControllableSelectorPanel(double margin, Pane parent, int scrollWidth, List<T> models, Class controlItemBoxClass) {
     super(margin);
     this.margin = margin;
@@ -49,8 +49,11 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     this.scrollWidth = scrollWidth;
     this.parent = parent;
 
-    this.itemCount = models.size();
     transitionQueue = new TransitionQueue(this);
+  }
+
+  public List<T> getModels() {
+    return models;
   }
 
   public void setSelection(T selection) {
@@ -61,6 +64,10 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     this.index = index;
   }
 
+  public int getSelectionIndex() {
+    return index;
+  }
+
   public Pane getParentPane() {
     return parent;
   }
@@ -69,7 +76,6 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     BackButtonBox backButton = new BackButtonBox(scrollWidth, backTopPadding);
     getChildren().add(backButton);
     index = 1;
-    itemCount++;
   }
 
   protected int getTopPadding() {
@@ -87,10 +93,10 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
       });
     }
     else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
-      scroll(-scrollWidth);
+      scroll(false, -getScrollWidth());
     }
     else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
-      scroll(scrollWidth);
+      scroll(true, getScrollWidth());
     }
     else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
       Platform.runLater(new Runnable() {
@@ -114,6 +120,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     }
 
     //set the initial left padding to focus the first item
+    int itemCount = models.size()+1; //+1 for the back button
     double leftPadding = itemCount*scrollWidth-scrollWidth-scrollWidth-scrollWidth-this.margin;
     if(backTopPadding != -1) {
       leftPadding = itemCount*scrollWidth-scrollWidth;
@@ -155,6 +162,10 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     outFader.play();
   }
 
+  protected int getScrollWidth() {
+    return scrollWidth;
+  }
+
   /**
    * Returns the selected ControllableItemPanel instance.
    */
@@ -162,17 +173,17 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     return (ControllableItemPanel) this.getChildren().get(index);
   }
 
-  protected void scroll(int width) {
-    if (index == itemCount - 1 && width < 0) {
+  protected void scroll(boolean toLeft, int width) {
+    if (index == getItemCount() - 2 && !toLeft) {
       return;
     }
-    if (index == 0 && width > 0) {
+    if (index == 0 && toLeft) {
       return;
     }
 
     //ignore scrolling when back button is available and selected
-    if(backTopPadding == -1 && index == 1 && width > 0) {
-      updateSelection(width > 0);
+    if(backTopPadding == -1 && index == 1 && toLeft) {
+      updateSelection(toLeft);
       return;
     }
 
@@ -188,7 +199,14 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
                         });
     }
 
-    updateSelection(width > 0);
+    updateSelection(toLeft);
+  }
+
+  /**
+   * Returns the amount of items this panel should scroll.
+   */
+  protected int getItemCount() {
+    return models.size();
   }
 
   /**
@@ -196,15 +214,32 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
    * @param toLeft true if the scrolling goes to the left.
    */
   protected void updateSelection(boolean toLeft) {
-    ControllableItemPanel oldSelection = (ControllableItemPanel) getChildren().get(index);
-    oldSelection.deselect();
+    deselect(toLeft, index);
     if (toLeft) {
       index--;
     }
     else {
       index++;
     }
-    ControllableItemPanel newSelection = (ControllableItemPanel) getChildren().get(index);
+    select(toLeft, index);
+  }
+
+  /**
+   * Deselects the current selection
+   * @param oldIndex the old index before the new index is updated.
+   */
+  protected void deselect(boolean toLeft, int oldIndex) {
+    ControllableItemPanel oldSelection = (ControllableItemPanel) getChildren().get(oldIndex);
+    oldSelection.deselect();
+  }
+
+  /**
+   * Selects the current selection
+   * @param toLeft
+   * @param newIndex the new index after deselection has been executed
+   */
+  protected void select(boolean toLeft, int newIndex) {
+    ControllableItemPanel newSelection = (ControllableItemPanel) getChildren().get(newIndex);
     newSelection.select();
   }
 
