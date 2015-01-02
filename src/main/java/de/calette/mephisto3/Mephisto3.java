@@ -25,7 +25,6 @@ import java.io.File;
 public class Mephisto3 extends Application implements EventHandler<KeyEvent> {
   public static final int WIDTH = 700;
   public static final int HEIGHT = 395;
-  private boolean debug = Callete.getConfiguration().getBoolean("debug", false);
   private StackPane rootStack;
 
   public static void main(String[] args) {
@@ -34,7 +33,7 @@ public class Mephisto3 extends Application implements EventHandler<KeyEvent> {
 
   @Override
   public void start(final Stage primaryStage) {
-    Callete.getGPIOService().setSimulationMode(debug);
+    Callete.getGPIOService().setSimulationMode(SystemUtils.isWindows());
 
     //force rendering of small fonts
     System.setProperty("prism.lcdtext", "false");
@@ -57,11 +56,7 @@ public class Mephisto3 extends Application implements EventHandler<KeyEvent> {
     primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, this);
     addDisposeListener(primaryStage);
 
-    //apply debugging options on windows
-    if (debug) {
-//      NodeDebugger.dump(rootStack);
-    }
-    else {
+    if(!SystemUtils.isWindows()) {
       primaryStage.initStyle(StageStyle.UNDECORATED);
     }
 

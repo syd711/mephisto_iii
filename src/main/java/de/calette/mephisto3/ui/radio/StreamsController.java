@@ -75,7 +75,7 @@ public class StreamsController extends ControllablePanel implements PlaylistMeta
 
   @Override
   public void updateMetaData(final PlaylistMetaData metaData) {
-    if (!metaData.getItem().equals(activeStream)) {
+    if(!metaData.getItem().equals(activeStream)) {
       return;
     }
     //store data for re-selection
@@ -109,7 +109,7 @@ public class StreamsController extends ControllablePanel implements PlaylistMeta
     if(stream != null) {
       streamsUI.activateStream(stream);
     }
-    else if (selectedStream == activeStream) {
+    else if(selectedStream == activeStream) {
       streamsUI.selectActiveStream(activeStream, currentMetaData);
     }
     else {

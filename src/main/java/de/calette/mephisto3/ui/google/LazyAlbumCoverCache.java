@@ -24,12 +24,12 @@ public class LazyAlbumCoverCache {
   private static int width = AlbumBox.COVER_WIDTH;
   private static int height = AlbumBox.COVER_HEIGHT;
 
-  private static Map<Album,ImageView> cache = new HashMap<>();
+  private static Map<Album, ImageView> cache = new HashMap<>();
 
   public static void loadImageViewFor(BorderPane pane, Album album) {
     if(loader != null && loader.running) {
       try {
-        synchronized (loader) {
+        synchronized(loader) {
           LOG.info("Waiting on album loader thread...");
           loader.wait(); //TODO
           LOG.info("Continuing to build UI after cover has been loaded.");
@@ -44,7 +44,7 @@ public class LazyAlbumCoverCache {
 
   public static void load(Collection<Album> albumCollection) {
     cache.clear();
-    if (loader != null && loader.isAlive()) {
+    if(loader != null && loader.isAlive()) {
       loader.setRunning(false);
     }
     loader = new AlbumLoader(albumCollection);
@@ -67,7 +67,7 @@ public class LazyAlbumCoverCache {
     public void run() {
       Thread.currentThread().setName("AlbumLoader/" + Thread.currentThread().getName());
       LOG.info("Starting new album cover loading thread for " + albums.size() + " images");
-      for (Album album : albums) {
+      for(Album album : albums) {
         String url = AlbumCoverCache.loadCover(album);
         ImageView cover = new ImageView(new Image(url, width, height, false, true));
         cache.put(album, cover);
@@ -77,7 +77,7 @@ public class LazyAlbumCoverCache {
       }
       LOG.info("Finished loading album covers, notifying waiting threads.");
       this.running = false;
-      synchronized (this) {
+      synchronized(this) {
         notifyAll();
       }
     }

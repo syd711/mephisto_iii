@@ -127,7 +127,7 @@ public class StreamsUI extends VBox {
       @Override
       public void run() {
         //only apply additional data if metadata is available.
-        if (currentMetaData == null || StringUtils.isEmpty(currentMetaData.getArtist())) {
+        if(currentMetaData == null || StringUtils.isEmpty(currentMetaData.getArtist())) {
           LOG.debug("No meta data available or no artist found, resetting UI.");
           removeImageClasses();
           setBackgroundImage(null);
@@ -141,14 +141,14 @@ public class StreamsUI extends VBox {
         }
 
         //first check if an image has already been requested
-        if (artistResources == null || !artistResources.getArtist().equals(currentMetaData.getArtist())) {
+        if(artistResources == null || !artistResources.getArtist().equals(currentMetaData.getArtist())) {
           imageLoader.setOpacity(1);
           setBackgroundImage(null);
           loadArtistResource(currentMetaData);
         }
 
         //apply image if already available
-        if (artistResources != null && artistResources.getArtist().equals(currentMetaData.getArtist()) && artistBackgroundImage != null) {
+        if(artistResources != null && artistResources.getArtist().equals(currentMetaData.getArtist()) && artistBackgroundImage != null) {
           playerStatusBox.updateStatus(null, null, artistStatusImage);
           addImageClasses();
           setBackgroundImage(artistBackgroundImage);
@@ -172,6 +172,7 @@ public class StreamsUI extends VBox {
 
   /**
    * Asynchronously loading of image resources.
+   *
    * @param currentMetaData the meta data used to retrieve the image data
    */
   private void loadArtistResource(final PlaylistMetaData currentMetaData) {
@@ -182,7 +183,7 @@ public class StreamsUI extends VBox {
       public void run() {
         LOG.debug("Requesting resources for " + currentMetaData.getArtist());
         artistResources = Callete.getResourcesService().getImageResourcesFor(currentMetaData.getArtist());
-        if (!artistResources.isEmpty()) {
+        if(!artistResources.isEmpty()) {
           LOG.debug("Creating images for " + currentMetaData.getArtist());
           ImageResource randomPlayerImage = artistResources.getRandomImage(PLAYER_IMAGE_SIZE, PLAYER_IMAGE_SIZE, PLAYER_MINIMUM_IMAGE_SIZE);
           ImageResource img = artistResources.getRandomImage(Mephisto3.WIDTH, IMAGE_HEIGHT, MINIMUM_IMAGE_SIZE);
@@ -224,29 +225,29 @@ public class StreamsUI extends VBox {
   }
 
   private String applyArtist(PlaylistMetaData metaData) {
-    if (metaData == null) {
+    if(metaData == null) {
       metaDataBusyIndicator.setOpacity(1);
       return LOADING_DATA_TITLE;
     }
     metaDataBusyIndicator.setOpacity(0);
-    if (StringUtils.isEmpty(metaData.getArtist()) || String.valueOf(metaData.getArtist()).equals(metaData.getTitle())) {
+    if(StringUtils.isEmpty(metaData.getArtist()) || String.valueOf(metaData.getArtist()).equals(metaData.getTitle())) {
       return NO_DATA_TITLE;
     }
     return metaData.getArtist();
   }
 
   private String applyTitle(PlaylistMetaData metaData) {
-    if (metaData == null) {
+    if(metaData == null) {
       return "";
     }
-    if (StringUtils.isEmpty(metaData.getTitle()) || String.valueOf(metaData.getArtist()).equals(String.valueOf(metaData.getTitle()))) {
+    if(StringUtils.isEmpty(metaData.getTitle()) || String.valueOf(metaData.getArtist()).equals(String.valueOf(metaData.getTitle()))) {
       return "";
     }
     return metaData.getTitle();
   }
 
   private String applyName(Stream stream, PlaylistMetaData metaData) {
-    if (metaData != null && StringUtils.isEmpty(metaData.getName()) && metaData.getName().equals(stream.getName())) {
+    if(metaData != null && StringUtils.isEmpty(metaData.getName()) && metaData.getName().equals(stream.getName())) {
       return metaData.getName();
     }
     return stream.getName();
@@ -254,7 +255,7 @@ public class StreamsUI extends VBox {
 
   private void setBackgroundImage(Image image) {
     //method is called for an image that is already applied
-    if (image != null && artistBackgroundImageView.getImage() != null && artistBackgroundImageView.getImage().equals(image)) {
+    if(image != null && artistBackgroundImageView.getImage() != null && artistBackgroundImageView.getImage().equals(image)) {
       //only check if the image is visible
       if(artistBackgroundImageView.getOpacity() == 0) {
         TransitionUtil.createInFader(artistBackgroundImageView, 100).play();
@@ -270,7 +271,7 @@ public class StreamsUI extends VBox {
     if(artistBackgroundImageView.getImage() != null && artistBackgroundImageView.getOpacity() == 1) {
       FadeTransition outFader = TransitionUtil.createOutFader(artistBackgroundImageView, 100);
       outFader.setOnFinished(actionEvent -> {
-        if (image != null) {
+        if(image != null) {
           artistBackgroundImageView.setImage(image);
           if(image != null) {
             addImageClasses();

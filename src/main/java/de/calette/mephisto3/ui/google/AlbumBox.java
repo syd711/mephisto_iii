@@ -72,7 +72,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     //box used for labels below the cover
     albumInfoBox.setPadding(new Insets(5, 5, 5, 5));
     albumInfoBox.getStyleClass().add("album-info-text");
-    if (album != null) {
+    if(album != null) {
       createAlbumInfoBox(album, compactView);
     }
     else {
@@ -118,11 +118,11 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
       ComponentUtil.createCustomLabel(getModel().getSize() + " Titel, " + getModel().getDuration(), "player-info-label", albumInfoBox);
 
       String pos4 = "";
-      if (getModel().getYear() > 0) {
+      if(getModel().getYear() > 0) {
         pos4 = String.valueOf(getModel().getYear());
       }
-      if (pos4.length() > 0 && !StringUtils.isEmpty(getModel().getGenre())) {
-        pos4+= ", " + getModel().getGenre();
+      if(pos4.length() > 0 && !StringUtils.isEmpty(getModel().getGenre())) {
+        pos4 += ", " + getModel().getGenre();
       }
       ComponentUtil.createCustomLabel(pos4, "player-info-label", albumInfoBox);
       createInFader(albumInfoBox).play();
@@ -138,7 +138,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
 
   @Override
   public void playbackChanged(PlaybackChangeEvent event) {
-    if (tracksBox == null || tracksBox.getChildren().isEmpty()) {
+    if(tracksBox == null || tracksBox.getChildren().isEmpty()) {
       return;
     }
 
@@ -146,7 +146,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
 
     final PlaylistItem activeItem = event.getActiveItem();
     Platform.runLater(() -> {
-      for (Node node : tracksBox.getChildren()) {
+      for(Node node : tracksBox.getChildren()) {
         TrackBox track = (TrackBox) node;
         track.setActive(activeItem != null && track.getUserData().equals(activeItem));
       }
@@ -160,8 +160,8 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
 
   @Override
   public void controlEvent(ServiceControlEvent event) {
-    if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
-      if (selectionIndex == -1) {
+    if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
+      if(selectionIndex == -1) {
         switchToSliderMode();
       }
       else {
@@ -182,19 +182,19 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
         });
       }
     }
-    else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
+    else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
       selectionIndex = -1;
       switchToSliderMode();
     }
-    else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
-      if (selectionIndex < getModel().getSize() - 1) {
+    else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
+      if(selectionIndex < getModel().getSize() - 1) {
         int oldIndex = selectionIndex;
         selectionIndex++;
         updateSelection(oldIndex, selectionIndex);
       }
     }
-    else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
-      if (selectionIndex >= 0) {
+    else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
+      if(selectionIndex >= 0) {
         int oldIndex = selectionIndex;
         selectionIndex--;
         updateSelection(oldIndex, selectionIndex);
@@ -219,7 +219,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
 
     PlaylistItem item = Callete.getMusicPlayer().getPlaylist().getActiveItem();
 
-    for (Song song : songs) {
+    for(Song song : songs) {
       boolean active = item != null && item instanceof Song && item.equals(song);
       tracksBox.getChildren().add(new TrackBox(song, active));
     }
@@ -233,22 +233,22 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
    * @param newIndex the index to add the background to
    */
   private void updateSelection(int oldIndex, int newIndex) {
-    if (oldIndex >= 0) {
+    if(oldIndex >= 0) {
       Node node = tracksBox.getChildren().get(oldIndex);
       node.getStyleClass().remove("track-selection");
     }
 
-    if (newIndex >= 0 && newIndex <= tracksBox.getChildren().size() - 1) {
+    if(newIndex >= 0 && newIndex <= tracksBox.getChildren().size() - 1) {
       Node node = tracksBox.getChildren().get(newIndex);
       node.getStyleClass().add("track-selection");
     }
 
     //scroll down
-    if (getModel().getSize() > MAX_DISPLAY_TRACKS && (newIndex >= SCROLL_INDEX || oldIndex >= SCROLL_INDEX)) {
-      if (oldIndex < newIndex) {
+    if(getModel().getSize() > MAX_DISPLAY_TRACKS && (newIndex >= SCROLL_INDEX || oldIndex >= SCROLL_INDEX)) {
+      if(oldIndex < newIndex) {
         //scroll down
         boolean doScroll = getModel().getSize() - newIndex >= 5;
-        if (doScroll) {
+        if(doScroll) {
           scroll(newIndex + 4, newIndex - SCROLL_INDEX, -TRACK_ITEM_HEIGHT);
         }
 
@@ -256,7 +256,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
       else {
         //scroll up
         boolean doScroll = getModel().getSize() - newIndex > 5;
-        if (doScroll) {
+        if(doScroll) {
           scroll(oldIndex - SCROLL_INDEX, oldIndex + 4, TRACK_ITEM_HEIGHT);
         }
       }
@@ -280,7 +280,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     p.setMaxWidth(COVER_HEIGHT + SHADOW_WIDTH);
     p.getStyleClass().add("cover-box");
 
-    if (!StringUtils.isEmpty(album.getArtUrl())) {
+    if(!StringUtils.isEmpty(album.getArtUrl())) {
       LazyAlbumCoverCache.loadImageViewFor(p, album);
     }
     else {

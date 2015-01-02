@@ -101,7 +101,7 @@ public class SystemPanel extends ControllablePanel {
     createInfo(systemDetailsBox, "IP Adresse:", systemService.getHostAddress());
     createInfo(systemDetailsBox, "User:", System.getProperty("user.name"));
     createInfo(systemDetailsBox, "OS Name:", System.getProperty("os.name"));
-    createInfo(systemDetailsBox, "Processors:", Runtime.getRuntime().availableProcessors()+"");
+    createInfo(systemDetailsBox, "Processors:", Runtime.getRuntime().availableProcessors() + "");
     createInfo(systemDetailsBox, "JDK:", System.getProperty("java.version"));
     systemBox.getChildren().add(systemDetailsBox);
 

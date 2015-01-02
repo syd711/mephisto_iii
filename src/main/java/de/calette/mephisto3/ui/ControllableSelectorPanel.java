@@ -86,7 +86,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
 
   @Override
   public void controlEvent(ServiceControlEvent event) {
-    if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
+    if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
       Platform.runLater(new Runnable() {
         @Override
         public void run() {
@@ -94,13 +94,13 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
         }
       });
     }
-    else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
+    else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
       scroll(false, -getScrollWidth());
     }
-    else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
+    else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
       scroll(true, getScrollWidth());
     }
-    else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
+    else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
       Platform.runLater(new Runnable() {
         @Override
         public void run() {
@@ -119,7 +119,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     //so lets create all children
     LOG.debug("ControllableSelectorPanel creates " + models.size() + " child components");
     List<Node> items = new ArrayList<>();
-    for (T model : models) {
+    for(T model : models) {
       ControllableItemPanel item = createControllableItemPanelFor(controlItemBoxClass, model);
       items.add((Node) item);
     }
@@ -127,13 +127,12 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     getChildren().addAll(items);
 
     //set the initial left padding to focus the first item
-    int itemCount = models.size()+1; //+1 for the back button
-    double leftPadding = itemCount*scrollWidth-scrollWidth-scrollWidth-scrollWidth-margin;
+    int itemCount = models.size() + 1; //+1 for the back button
+    double leftPadding = itemCount * scrollWidth - scrollWidth - scrollWidth - scrollWidth - margin;
     if(backTopPadding != -1) {
-      leftPadding = itemCount*scrollWidth-scrollWidth;
+      leftPadding = itemCount * scrollWidth - scrollWidth;
     }
     setPadding(new Insets(getTopPadding(), 0, 0, leftPadding));
-
 
 
     //update panel view to the selected model
@@ -181,13 +180,13 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
   }
 
   protected void scroll(boolean toLeft, int width) {
-    if (index == getItemCount() && !toLeft) {
+    if(index == getItemCount() && !toLeft) {
       return;
     }
-    if(index == 1 && getItemCount() == 1 &&!toLeft) {
+    if(index == 1 && getItemCount() == 1 && !toLeft) {
       return;
     }
-    if (index == 0 && toLeft) {
+    if(index == 0 && toLeft) {
       return;
     }
 
@@ -202,11 +201,11 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
       transitionQueue.addTransition(translateTransition);
 
       Platform.runLater(new Runnable() {
-                          @Override
-                          public void run() {
-                            transitionQueue.play();
-                          }
-                        });
+        @Override
+        public void run() {
+          transitionQueue.play();
+        }
+      });
     }
 
     updateSelection(toLeft);
@@ -221,11 +220,12 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
 
   /**
    * Updates the selection index and play the selection animation of the newly selected panel.
+   *
    * @param toLeft true if the scrolling goes to the left.
    */
   protected void updateSelection(boolean toLeft) {
     deselect(toLeft, index);
-    if (toLeft) {
+    if(toLeft) {
       index--;
     }
     else {
@@ -236,6 +236,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
 
   /**
    * Deselects the current selection
+   *
    * @param oldIndex the old index before the new index is updated.
    */
   protected void deselect(boolean toLeft, int oldIndex) {
@@ -245,6 +246,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
 
   /**
    * Selects the current selection
+   *
    * @param toLeft
    * @param newIndex the new index after deselection has been executed
    */
@@ -255,8 +257,9 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
 
   /**
    * Factory method to be implemented by subclasses to determine the concrete panel.
+   *
    * @param controlItemBoxClass name of the class to create for the item
-   * @param model the user data model used for the ControllableItemPanel
+   * @param model               the user data model used for the ControllableItemPanel
    */
   protected ControllableItemPanel createControllableItemPanelFor(Class controlItemBoxClass, T model) {
     try {
@@ -272,6 +275,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
   /**
    * Invoked then the hide transition is finished.
    * The user data the current selection was build with is passed here.
+   *
    * @param userData the user data of the selected panel.
    */
   protected abstract void onHide(T userData);
@@ -279,7 +283,8 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
   /**
    * Optional action to be executed when a long push is executed.
    */
-  protected void onLongPush() {}
+  protected void onLongPush() {
+  }
 
   /**
    * Checks if a selection model was passed.

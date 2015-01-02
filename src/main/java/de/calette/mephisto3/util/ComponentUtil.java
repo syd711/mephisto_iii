@@ -22,6 +22,7 @@ import java.io.InputStream;
  */
 public class ComponentUtil {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentUtil.class);
+
   /**
    * Creates an image canvas with the given width and height.
    */

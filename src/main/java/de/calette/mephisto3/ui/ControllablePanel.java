@@ -55,6 +55,7 @@ public abstract class ControllablePanel extends StackPane {
 
   /**
    * Maybe implemented by subclasses if push event is used.
+   *
    * @param serviceState the current selection state.
    */
   public void pushed(ServiceState serviceState) {

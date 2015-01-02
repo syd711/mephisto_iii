@@ -13,12 +13,12 @@ public class NodeDebugger {
   }
 
   private static void dump(Node n, int depth) {
-    for (int i = 0; i < depth; i++) {
+    for(int i = 0; i < depth; i++) {
       System.out.print("  ");
     }
     log(n);
-    if (n instanceof Parent)
-      for (Node c : ((Parent) n).getChildrenUnmodifiable())
+    if(n instanceof Parent)
+      for(Node c : ((Parent) n).getChildrenUnmodifiable())
         dump(c, depth + 1);
   }
 

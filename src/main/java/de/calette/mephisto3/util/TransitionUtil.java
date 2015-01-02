@@ -82,7 +82,7 @@ public class TransitionUtil {
         double percent = v * 100;
         double newWidthOffset = offset * percent / 100;
 
-        if (increase) {
+        if(increase) {
           node.setMinWidth(originalWidth + newWidthOffset);
         }
         else {
@@ -127,7 +127,7 @@ public class TransitionUtil {
     transition.setInterpolator(Interpolator.EASE_BOTH);
 
     //apply speed as default cache strategy.
-    if (!node.getCacheHint().equals(CacheHint.SPEED)) {
+    if(!node.getCacheHint().equals(CacheHint.SPEED)) {
       node.setCache(true);
       node.setCacheHint(CacheHint.SPEED);
     }

@@ -22,7 +22,7 @@ public class BackButtonBox extends ControllableVBoxItemPanelBase {
     setAlignment(Pos.BASELINE_RIGHT);
     scaleFactor = 1.2;
     //well, the image is not larger than 100px
-    if (width > 100) {
+    if(width > 100) {
       width = 100;
     }
     backButton = ComponentUtil.createImageCanvas(MenuResourceLoader.getResource("back.png"), width, width);

@@ -24,6 +24,7 @@ public interface ControllableItemPanel<T> {
 
   /**
    * Delegation used for the node's user data.
+   *
    * @return
    */
   T getUserData();

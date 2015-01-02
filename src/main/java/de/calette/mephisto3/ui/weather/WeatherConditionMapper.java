@@ -8,19 +8,19 @@ import de.calette.mephisto3.resources.weather.forecast.WeatherForecastResourceLo
 public class WeatherConditionMapper {
 
   public static String getWeatherQuickInfoIcon(Weather weather) {
-    String name = weather.getWeatherState().toString().toLowerCase() +  ".png";
+    String name = weather.getWeatherState().toString().toLowerCase() + ".png";
     name = name.replaceAll("_", "-");
     return WeatherQuickInfoResourceLoader.getResource(name);
   }
 
   public static String getWeatherForecastIcon(Weather weather) {
-    String name = weather.getWeatherState().toString().toLowerCase() +  ".png";
+    String name = weather.getWeatherState().toString().toLowerCase() + ".png";
     name = name.replaceAll("_", "-");
     return WeatherForecastResourceLoader.getResource(name);
   }
 
   public static String getWeatherConditionText(WeatherState state) {
-    switch (state) {
+    switch(state) {
       case CLOUDY: {
         return "wolkig";
       }

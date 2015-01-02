@@ -37,7 +37,7 @@ public class ServiceController {
   private boolean controlEnabled = false;
 
   public static ServiceController getInstance() {
-    if (instance == null) {
+    if(instance == null) {
       instance = new ServiceController();
       instance.initGPIO();
       instance.initServiceState();
@@ -66,19 +66,19 @@ public class ServiceController {
     Executor.run(new Runnable() {
       @Override
       public void run() {
-        if (service.equals(Callete.getWeatherService())) {
+        if(service.equals(Callete.getWeatherService())) {
           serviceState.setService(Callete.getWeatherService());
           serviceState.setModels(Callete.getWeatherService().getWeather());
         }
-        else if (service.equals(Callete.getStreamingService())) {
+        else if(service.equals(Callete.getStreamingService())) {
           serviceState.setService(Callete.getStreamingService());
           serviceState.setModels(Callete.getStreamingService().getStreams());
         }
-        else if (service.equals(Callete.getGoogleMusicService())) {
+        else if(service.equals(Callete.getGoogleMusicService())) {
           serviceState.setService(Callete.getGoogleMusicService());
           serviceState.setModels(Callete.getGoogleMusicService().getAlbums());
         }
-        else if (service.equals(Callete.getSystemService())) {
+        else if(service.equals(Callete.getSystemService())) {
           serviceState.setService(Callete.getSystemService());
           serviceState.setModels(Collections.<ServiceModel>emptyList());
         }
@@ -98,7 +98,7 @@ public class ServiceController {
 
   // ------------------- Helper -----------------------------------
   public void serviceChanged() {
-    for (ServiceChangeListener listener : serviceChangeListeners) {
+    for(ServiceChangeListener listener : serviceChangeListeners) {
       listener.serviceChanged(serviceState);
     }
   }
@@ -113,7 +113,7 @@ public class ServiceController {
 
     //update index with last save state
     int index = Callete.getSettings().getInt(ServiceState.SETTING_SERVICE_SELECTION, 0);
-    if(index>=streams.size()) {
+    if(index >= streams.size()) {
       index = 0;
     }
     serviceState.setServiceIndex(index);
@@ -135,13 +135,13 @@ public class ServiceController {
           public void run() {
             ServiceControlEvent.EVENT_TYPE push = ServiceControlEvent.EVENT_TYPE.PUSH;
 
-            if (pushEvent.isLongPush()) {
+            if(pushEvent.isLongPush()) {
               serviceState.setModels(null);
               push = ServiceControlEvent.EVENT_TYPE.LONG_PUSH;
             }
 
             //update listeners
-            for (ControlListener listener : new ArrayList<>(controlListeners)) {
+            for(ControlListener listener : new ArrayList<>(controlListeners)) {
               listener.controlEvent(new ServiceControlEvent(push, serviceState));
             }
           }
@@ -169,7 +169,7 @@ public class ServiceController {
           return;
         }
         ServiceControlEvent.EVENT_TYPE eventType;
-        if (event.rotatedLeft()) {
+        if(event.rotatedLeft()) {
           eventType = ServiceControlEvent.EVENT_TYPE.PREVIOUS;
         }
         else {
@@ -178,17 +178,17 @@ public class ServiceController {
 
         //skip this in service chooser mode
         if(serviceState.getModels() != null) {
-          if (eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
+          if(eventType.equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
             serviceState.decrementIndex();
           }
-          else if (eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
+          else if(eventType.equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
             serviceState.incrementIndex();
           }
         }
 
 
         final ServiceControlEvent serviceControlEvent = new ServiceControlEvent(eventType, serviceState);
-        for (ControlListener listener : controlListeners) {
+        for(ControlListener listener : controlListeners) {
           listener.controlEvent(serviceControlEvent);
         }
       }
@@ -199,16 +199,16 @@ public class ServiceController {
     SimulatorRotaryEncoder encoder = (SimulatorRotaryEncoder) Simulator.getInstance().getGpioComponent(ROTARY_ENCODER_NAME);
     SimulatorPushButton pushButton = (SimulatorPushButton) Simulator.getInstance().getGpioComponent(ROTARY_ENCODER_PUSH_BUTTON_NAME);
 
-    if (code == KeyCode.RIGHT) {
+    if(code == KeyCode.RIGHT) {
       encoder.right();
     }
-    else if (code == KeyCode.LEFT) {
+    else if(code == KeyCode.LEFT) {
       encoder.left();
     }
-    else if (code == KeyCode.DOWN) {
+    else if(code == KeyCode.DOWN) {
       pushButton.push(false);
     }
-    else if (code == KeyCode.UP) {
+    else if(code == KeyCode.UP) {
       pushButton.push(true);
     }
   }

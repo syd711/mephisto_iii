@@ -30,6 +30,7 @@
             <build>
                 <plugins>
                     <plugin>
+                        <!-- Generates the executable jar -->
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
                         <configuration>
@@ -41,6 +42,7 @@
                         </configuration>
                     </plugin>
                     <plugin>
+                        <!-- Plugin to retrieve all jars and copy them to the libs folder for archiving -->
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
                         <version>${dependency.plugin.version}</version>
@@ -87,6 +89,8 @@
                                         <argument>slideshows,conf,LICENSE,README.md</argument>
                                         <!-- Java Executable -->
                                         <argument>/opt/jdk1.8.0_06/bin/java</argument>
+                                        <!-- Enable JMX remote debuggin on port 1100 -->
+                                        <argument>false</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

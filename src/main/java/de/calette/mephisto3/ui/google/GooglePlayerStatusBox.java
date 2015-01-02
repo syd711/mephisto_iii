@@ -119,9 +119,10 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
   }
 
   public void setImage(Image image) {
-    if (image == null) {
+    if(image == null) {
       this.imageView.setImage(defaultBackground);
-    } else {
+    }
+    else {
       this.imageView.setImage(image);
     }
   }
@@ -130,7 +131,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
   public void playlistChanged(final PlaylistChangeEvent e) {
     Platform.runLater(() -> {
       PlaylistItem activeItem = e.getActiveItem();
-      if (!(activeItem instanceof Song)) {
+      if(!(activeItem instanceof Song)) {
         cancelProgress();
         return;
       }
@@ -141,11 +142,11 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
       nameLabel.setText(song.getName());
       titleLabel.setText(song.getArtist());
       String info = "";
-      if (album.getYear() > 0) {
+      if(album.getYear() > 0) {
         info = String.valueOf(album.getYear());
       }
-      if (!StringUtils.isEmpty(album.getGenre())) {
-        if (info.length() > 0) {
+      if(!StringUtils.isEmpty(album.getGenre())) {
+        if(info.length() > 0) {
           info += ", ";
         }
         info += album.getGenre();
@@ -160,7 +161,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
       totalDurationLabel.setText(song.getDuration());
 
       //reset timer
-      if (timer != null) {
+      if(timer != null) {
         timer.purge();
         timer.cancel();
         timer = null;
@@ -172,7 +173,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
   @Override
   public void playbackChanged(PlaybackChangeEvent event) {
     PlaylistItem activeItem = event.getActiveItem();
-    if (!(activeItem instanceof Song)) {
+    if(!(activeItem instanceof Song)) {
       cancelProgress();
       return;
     }
@@ -180,7 +181,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
     final Song song = (Song) event.getActiveItem();
     final Album album = song.getAlbum();
     //reset timer
-    if (timer != null) {
+    if(timer != null) {
       timer.purge();
       timer.cancel();
       timer = null;
@@ -197,14 +198,14 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
             currentDuration++;
 
             String time = DateUtil.formatTime(currentDuration);
-            if (currentDuration * 1000 <= song.getDurationMillis()) {
+            if(currentDuration * 1000 <= song.getDurationMillis()) {
               currentDurationLabel.setText(time);
             }
             long duration = song.getDurationMillis() / 1000;
             double progressValue = 1.0 / duration;
             progressValue = progress.getProgress() + progressValue;
             progress.setProgress(progressValue);
-            if (progressValue > 1) {
+            if(progressValue > 1) {
               timer.purge();
               timer.cancel();
               timer = null;
@@ -229,7 +230,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
   }
 
   private void cancelProgress() {
-    if (timer != null) {
+    if(timer != null) {
       timer.purge();
       timer.cancel();
       timer = null;

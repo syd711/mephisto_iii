@@ -26,7 +26,7 @@ public class AlbumSlider extends ControllableSelectorPanel<Album> {
   private AlbumCollection albumCollection;
 
   public AlbumSlider(ServiceChooser serviceChooser, Pane parent, List<AlbumCollection> collections, AlbumCollection albumCollection, List<Album> albums, int visibleItemCount) {
-    super(10, parent, AlbumBox.BOX_WIDTH+10, albums, AlbumBox.class);
+    super(10, parent, AlbumBox.BOX_WIDTH + 10, albums, AlbumBox.class);
     this.visibleItemCount = visibleItemCount;
     setBackButton(70);
     this.albumCollection = albumCollection;
@@ -39,12 +39,12 @@ public class AlbumSlider extends ControllableSelectorPanel<Album> {
   public void controlEvent(ServiceControlEvent event) {
     super.controlEvent(event);
 
-    if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
+    if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
       if(appendAlbumOnRight()) {
         removeAlbumFromLeft();
       }
     }
-    else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
+    else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
       if(appendAlbumOnLeft()) {
         removeAlbumFromRight();
       }
@@ -125,7 +125,7 @@ public class AlbumSlider extends ControllableSelectorPanel<Album> {
   public ControllableItemPanel getSelectedPanel() {
     int visibleSelection = 1;
     int index = getSelectionIndex();
-    int addIndex = (visibleItemCount-1)+index;
+    int addIndex = (visibleItemCount - 1) + index;
     if(addIndex == albumCollection.getAlbums().size()) {
       visibleSelection = 1;
     }
@@ -168,7 +168,7 @@ public class AlbumSlider extends ControllableSelectorPanel<Album> {
       Album album = albumCollection.getAlbums().get(addIndex);
       LOG.info("Adding AlbumBox for " + album + " on position " + addIndex);
       ControllableItemPanel item = createControllableItemPanelFor(AlbumBox.class, album);
-      this.getChildren().add((Node)item);
+      this.getChildren().add((Node) item);
     }
     return true;
   }
@@ -197,11 +197,11 @@ public class AlbumSlider extends ControllableSelectorPanel<Album> {
       this.getChildren().add(0, item);
     }
     else {
-      int addIndex = index-(visibleItemCount-1);
+      int addIndex = index - (visibleItemCount - 1);
       Album album = albumCollection.getAlbums().get(addIndex);
       LOG.info("Adding AlbumBox for " + album + " on position " + addIndex);
       ControllableItemPanel item = createControllableItemPanelFor(AlbumBox.class, album);
-      this.getChildren().add(0, (Node)item);
+      this.getChildren().add(0, (Node) item);
     }
     return true;
   }

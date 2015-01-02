@@ -24,7 +24,7 @@ public class TrackBox extends HBox {
     setUserData(song);
     this.song = song;
     setPadding(new Insets(4, 8, 4, 4));
-    if (song.getTrack() > AlbumBox.MAX_DISPLAY_TRACKS) {
+    if(song.getTrack() > AlbumBox.MAX_DISPLAY_TRACKS) {
       setOpacity(0);
     }
 

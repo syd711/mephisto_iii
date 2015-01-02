@@ -29,7 +29,7 @@
     </logger>
 
     <root level="TRACE">
-        <appender-ref ref="rollingFile" />
-        <appender-ref ref="out" />
+        <appender-ref ref="rollingFile"/>
+        <appender-ref ref="out"/>
     </root>
 </configuration>

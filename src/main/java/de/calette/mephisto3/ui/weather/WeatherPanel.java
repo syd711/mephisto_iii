@@ -136,7 +136,7 @@ public class WeatherPanel extends ControllablePanel {
     Iterator<Weather> iterator = activeWeather.getForecast().iterator();
     iterator.next();
     Iterator<WeatherForecastPanel> panelIterator = forecastPanels.iterator();
-    while (iterator.hasNext()) {
+    while(iterator.hasNext()) {
       panelIterator.next().setForecast(iterator.next());
     }
   }
@@ -145,8 +145,12 @@ public class WeatherPanel extends ControllablePanel {
 
   private void buildUI() {
     Weather weather = Callete.getWeatherService().getWeatherAt(1);
-    if (weather == null) {
+    if(weather == null) {
       return;
+    }
+
+    for(Weather w : Callete.getWeatherService().getWeather()) {
+      getSlideShow(w.getCity());
     }
 
     busyIndicator = new HBox();
@@ -199,7 +203,7 @@ public class WeatherPanel extends ControllablePanel {
 
     Iterator<Weather> iterator = weather.getForecast().iterator();
     iterator.next();
-    while (iterator.hasNext()) {
+    while(iterator.hasNext()) {
       WeatherForecastPanel forecastPanel = new WeatherForecastPanel(iterator.next());
       forecastPanel.setMinWidth(100);
       weatherStatus.getChildren().add(forecastPanel);

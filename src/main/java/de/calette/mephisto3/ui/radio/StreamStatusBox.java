@@ -56,7 +56,7 @@ public class StreamStatusBox extends BorderPane {
 
   private Node createStatusBox() {
     VBox status = new VBox(3);
-    status.setPadding(new Insets(3,3,3,8));
+    status.setPadding(new Insets(3, 3, 3, 8));
     nameLabel = ComponentUtil.createCustomLabel("", "player-name-label", status);
     nameLabel.getStyleClass().remove("label");
     titleLabel = ComponentUtil.createCustomLabel("", "player-title-label", status);

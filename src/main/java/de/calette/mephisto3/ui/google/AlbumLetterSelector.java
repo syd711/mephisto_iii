@@ -52,10 +52,10 @@ public class AlbumLetterSelector extends ControllableSelectorPanel<AlbumCollecti
   @Override
   protected void onHide(AlbumCollection albumCollection) {
     //album selected
-    if (albumCollection != null) {
+    if(albumCollection != null) {
       AlbumSlider albumSlider;
       if(albumCollection.getAlbums().size() >= 2) {
-        albumSlider = new AlbumSlider(serviceChooser, getParentPane(), collections, albumCollection, albumCollection.getAlbums().subList(0,2), 3);
+        albumSlider = new AlbumSlider(serviceChooser, getParentPane(), collections, albumCollection, albumCollection.getAlbums().subList(0, 2), 3);
       }
       else {
         albumSlider = new AlbumSlider(serviceChooser, getParentPane(), collections, albumCollection, albumCollection.getAlbums(), 3);

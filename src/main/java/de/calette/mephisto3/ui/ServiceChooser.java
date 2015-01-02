@@ -113,10 +113,10 @@ public class ServiceChooser implements ControlListener {
     final Service service = (Service) serviceBoxes.get(index).getUserData();
     final ServiceNameBox searchSelectionBox = (ServiceNameBox) serviceBoxesByService.get(service);
 
-    if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
+    if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.LONG_PUSH)) {
       //not assigned
     }
-    else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
+    else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PUSH)) {
       if(!searchSelectionBox.isLoaded()) {
         return;
       }
@@ -145,7 +145,7 @@ public class ServiceChooser implements ControlListener {
         Platform.runLater(new Runnable() {
           @Override
           public void run() {
-            if (service.equals(Callete.getGoogleMusicService())) {
+            if(service.equals(Callete.getGoogleMusicService())) {
               showMusicOptions(searchSelectionBox);
             }
             else {
@@ -159,16 +159,16 @@ public class ServiceChooser implements ControlListener {
       }
     }
     else {
-      if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
-        if (musicSelector != null) {
+      if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.NEXT)) {
+        if(musicSelector != null) {
           togglePlaybackSelection();
         }
         else {
           scroll(-ServiceNameBox.SERVICE_BOX_WIDTH);
         }
       }
-      else if (event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
-        if (playbackSelection == null || playbackSelection == byArtist) {
+      else if(event.getEventType().equals(ServiceControlEvent.EVENT_TYPE.PREVIOUS)) {
+        if(playbackSelection == null || playbackSelection == byArtist) {
           scroll(ServiceNameBox.SERVICE_BOX_WIDTH);
         }
         else {
@@ -177,7 +177,7 @@ public class ServiceChooser implements ControlListener {
       }
 
       Service selection = (Service) serviceBoxes.get(index).getUserData();
-      if (!selection.equals(Callete.getGoogleMusicService())) {
+      if(!selection.equals(Callete.getGoogleMusicService())) {
         hideMusicOptions(searchSelectionBox);
       }
     }
@@ -238,7 +238,7 @@ public class ServiceChooser implements ControlListener {
 
     final Service service = (Service) serviceBoxes.get(index).getUserData();
     final ServiceState serviceState = ServiceController.getInstance().getServiceState();
-    if (!serviceState.getService().equals(service)) {
+    if(!serviceState.getService().equals(service)) {
       blink.play();
     }
     else {
@@ -262,7 +262,7 @@ public class ServiceChooser implements ControlListener {
   }
 
   private void showMusicOptions(Pane searchSelectionBox) {
-    if (musicSelector == null) {
+    if(musicSelector == null) {
       musicSelector = new VBox(20);
       musicSelector.setOpacity(0);
 
@@ -275,7 +275,7 @@ public class ServiceChooser implements ControlListener {
   }
 
   private void hideMusicOptions(final Pane searchSelectionBox) {
-    if (musicSelector == null) {
+    if(musicSelector == null) {
       return;
     }
     final FadeTransition inFader = TransitionUtil.createOutFader(musicSelector);
@@ -292,10 +292,10 @@ public class ServiceChooser implements ControlListener {
 
 
   private void scroll(final int width) {
-    if (index == serviceBoxes.size() - 1 && width < 0) {
+    if(index == serviceBoxes.size() - 1 && width < 0) {
       return;
     }
-    if (index == 0 && width > 0) {
+    if(index == 0 && width > 0) {
       return;
     }
     scrollTransition.setByX(width);
@@ -303,7 +303,7 @@ public class ServiceChooser implements ControlListener {
     transitionQueue.play();
     ServiceNameBox oldSelection = serviceBoxes.get(index);
     oldSelection.deselect();
-    if (width > 0) {
+    if(width > 0) {
       index--;
     }
     else {

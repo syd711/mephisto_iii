@@ -14,6 +14,7 @@ import de.calette.mephisto3.ui.weather.WeatherPanel;
 import de.calette.mephisto3.util.Executor;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.layout.BorderPane;
@@ -27,7 +28,7 @@ import java.util.Map;
 /**
  * The center panel which is a stackpane so that
  * the control overlay can be displayed.
- *
+ * <p/>
  * The center region is replaced with ControllablePanel instances.
  */
 public class Center extends BorderPane implements ControlListener, ServiceChangeListener {
@@ -78,25 +79,30 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
   public void serviceChanged(ServiceState serviceState) {
     newControlPanel = getServicePanel(serviceState);
 
-    if(!activeControlPanel.equals(newControlPanel)) {
-      activeControlPanel.hidePanel();
-      stackPane.setOpacity(0);
-      final FadeTransition outFader = TransitionUtil.createOutFader(activeControlPanel);
-      outFader.setOnFinished(new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent actionEvent) {
-          stackPane.getChildren().removeAll(activeControlPanel);
-          activeControlPanel = newControlPanel;
-          stackPane.getChildren().add(activeControlPanel);
-          activeControlPanel.showPanel();
-          TransitionUtil.createInFader(stackPane).play();
+    Platform.runLater(new Runnable() {
+      @Override
+      public void run() {
+        if(!activeControlPanel.equals(newControlPanel)) {
+          activeControlPanel.hidePanel();
+          stackPane.setOpacity(0);
+          final FadeTransition outFader = TransitionUtil.createOutFader(activeControlPanel);
+          outFader.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+              stackPane.getChildren().removeAll(activeControlPanel);
+              activeControlPanel = newControlPanel;
+              stackPane.getChildren().add(activeControlPanel);
+              activeControlPanel.showPanel();
+              TransitionUtil.createInFader(stackPane).play();
+            }
+          });
+          outFader.play();
         }
-      });
-      outFader.play();
-    }
-    else {
-      activeControlPanel.showPanel();
-    }
+        else {
+          activeControlPanel.showPanel();
+        }
+      }
+    });
   }
 
 

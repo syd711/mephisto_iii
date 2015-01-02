@@ -12,8 +12,7 @@ public class WeatherForecastResourceLoader {
   public static String getResource(String s) {
     try {
       return WeatherForecastResourceLoader.class.getResource(s).toString();
-    }
-    catch (NullPointerException e) {
+    } catch (NullPointerException e) {
       LOG.error("WeatherForecastResourceLoader.class failed to load image icon " + s);
     }
     return null;

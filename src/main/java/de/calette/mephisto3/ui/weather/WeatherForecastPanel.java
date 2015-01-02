@@ -44,9 +44,9 @@ public class WeatherForecastPanel extends VBox {
     final Image image = new Image(WeatherConditionMapper.getWeatherForecastIcon(forecast));
 
     ParallelTransition pt = new ParallelTransition(
-            TransitionUtil.createOutFader(tempLabel),
-            TransitionUtil.createOutFader(titleLabel),
-            TransitionUtil.createOutFader(img)
+        TransitionUtil.createOutFader(tempLabel),
+        TransitionUtil.createOutFader(titleLabel),
+        TransitionUtil.createOutFader(img)
     );
     pt.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
@@ -57,9 +57,9 @@ public class WeatherForecastPanel extends VBox {
         tempLabel.setText(forecast.getHighTemp() + "/" + forecast.getLowTemp() + " °C");
 
         ParallelTransition inFader = new ParallelTransition(
-                TransitionUtil.createInFader(tempLabel),
-                TransitionUtil.createInFader(titleLabel),
-                TransitionUtil.createInFader(img)
+            TransitionUtil.createInFader(tempLabel),
+            TransitionUtil.createInFader(titleLabel),
+            TransitionUtil.createInFader(img)
         );
         inFader.play();
       }
