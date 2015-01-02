@@ -40,7 +40,7 @@ public class AlbumLetterSelector extends ControllableSelectorPanel<AlbumCollecti
   @Override
   protected void onLongPush() {
     super.onLongPush();
-    setSelectionIndex(1);
+    setSelectionIndex(0);
     hidePanel();
   }
 
@@ -53,7 +53,14 @@ public class AlbumLetterSelector extends ControllableSelectorPanel<AlbumCollecti
   protected void onHide(AlbumCollection albumCollection) {
     //album selected
     if (albumCollection != null) {
-      final AlbumSlider albumSlider = new AlbumSlider(serviceChooser, getParentPane(), collections, albumCollection);
+      AlbumSlider albumSlider;
+      if(albumCollection.getAlbums().size() >= 2) {
+        albumSlider = new AlbumSlider(serviceChooser, getParentPane(), collections, albumCollection, albumCollection.getAlbums().subList(0,2), 3);
+      }
+      else {
+        albumSlider = new AlbumSlider(serviceChooser, getParentPane(), collections, albumCollection, albumCollection.getAlbums(), 3);
+      }
+
       albumSlider.showPanel();
     }
     //back button selected

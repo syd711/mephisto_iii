@@ -176,6 +176,7 @@ public class StreamsUI extends VBox {
    */
   private void loadArtistResource(final PlaylistMetaData currentMetaData) {
     imageLoaderActive = true;
+    Callete.getMusicPlayer().enableMonitoring(false);
     Executor.run(new Runnable() {
       @Override
       public void run() {
@@ -199,6 +200,7 @@ public class StreamsUI extends VBox {
           }
         }
         imageLoaderActive = false;
+        Callete.getMusicPlayer().enableMonitoring(true);
       }
     });
   }

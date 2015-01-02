@@ -9,7 +9,6 @@ import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.ControllablePanel;
 import de.calette.mephisto3.ui.ServiceScroller;
 import de.calette.mephisto3.util.ComponentUtil;
-import de.calette.mephisto3.util.Executor;
 import de.calette.mephisto3.util.SlideshowPanel;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.ParallelTransition;
@@ -26,6 +25,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
@@ -33,6 +34,8 @@ import java.util.*;
 /**
  */
 public class WeatherPanel extends ControllablePanel {
+  private final static Logger LOG = LoggerFactory.getLogger(WeatherPanel.class);
+
   private SlideshowPanel slideshowPanel = new SlideshowPanel();
   private ServiceScroller scroller = new ServiceScroller();
   private List<WeatherForecastPanel> forecastPanels = new ArrayList<>();
@@ -62,21 +65,6 @@ public class WeatherPanel extends ControllablePanel {
     activeWeather = (Weather) ServiceController.getInstance().getServiceState().getSelection();
     loadSlideShow(activeWeather.getCity());
     cityLabel.setText(activeWeather.getCity());
-
-    //lazy loading after first show
-    Executor.run(new Runnable() {
-      @Override
-      public void run() {
-        List<Weather> weathers = Callete.getWeatherService().getWeather();
-        for(Weather w : weathers) {
-          String city = w.getCity();
-          if(cachedSlideShows.containsKey(city)) {
-            SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + city.toLowerCase() + "/"), true);
-            cachedSlideShows.put(city, slideShow);
-          }
-        }
-      }
-    });
   }
 
   @Override
@@ -129,22 +117,12 @@ public class WeatherPanel extends ControllablePanel {
   // ------------------- Helper ----------------
 
   private void loadSlideShow(final String city) {
-    Executor.run(new Runnable() {
+    SlideShow slideShow = cachedSlideShows.get(city);
+    Platform.runLater(new Runnable() {
       @Override
       public void run() {
-        if (!cachedSlideShows.containsKey(city)) {
-          SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + city.toLowerCase() + "/"), true);
-          cachedSlideShows.put(city, slideShow);
-        }
-
-        SlideShow slideShow = cachedSlideShows.get(city);
-        Platform.runLater(new Runnable() {
-          @Override
-          public void run() {
-            slideshowPanel.setSlideShow(slideShow);
-            slideshowPanel.startSlideShow();
-          }
-        });
+        slideshowPanel.setSlideShow(slideShow);
+        slideshowPanel.startSlideShow();
       }
     });
   }
@@ -155,10 +133,16 @@ public class WeatherPanel extends ControllablePanel {
       return;
     }
 
-    String city = weather.getCity();
-    SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + city.toLowerCase() + "/"), true);
-    cachedSlideShows.put(city, slideShow);
+    List<Weather> weathers = Callete.getWeatherService().getWeather();
+    for (Weather w : weathers) {
+      String city = w.getCity();
+      LOG.info("Loading slideshow images for " + city);
+      SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + city.toLowerCase() + "/"), true);
+      cachedSlideShows.put(city, slideShow);
+    }
 
+    SlideShow slideShow = cachedSlideShows.get(weather.getCity());
+    slideshowPanel.setSlideShow(slideShow);
     getChildren().add(slideshowPanel);
 
     VBox root = new VBox();

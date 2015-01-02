@@ -177,6 +177,9 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
     if (index == getItemCount() - 2 && !toLeft) {
       return;
     }
+    if(index == 1 && getItemCount() == 1 &&!toLeft) {
+      return;
+    }
     if (index == 0 && toLeft) {
       return;
     }

@@ -70,8 +70,8 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
 
   private Node createStatusBox() {
     VBox status = new VBox(2);
-    status.setMaxWidth(220);
-    status.setMinWidth(220);
+    status.setMaxWidth(240);
+    status.setMinWidth(240);
     status.setPadding(new Insets(3, 3, 0, 5));
     nameLabel = ComponentUtil.createCustomLabel("", "player-name-label", status);
     titleLabel = ComponentUtil.createCustomLabel("", "player-title-label", status);
@@ -86,14 +86,22 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
     statusBox.setCenter(progressWrapper);
     progress = new ProgressBar();
     progress.setOpacity(0);
-    progress.setPadding(new Insets(0, 5, 0, 5));
     progress.setProgress(0);
-    progress.setMinWidth(330);
-    progress.setMaxWidth(330);
+    progress.setMinWidth(300);
+    progress.setMaxWidth(300);
 
-    currentDurationLabel = ComponentUtil.createText("     ", "", progressWrapper);
+    HBox durationWrapper = new HBox();
+    durationWrapper.setMinWidth(30);
+    currentDurationLabel = ComponentUtil.createText("", "", durationWrapper);
+
+    HBox totalDurationWrapper = new HBox();
+    totalDurationWrapper.setMinWidth(30);
+    totalDurationLabel = ComponentUtil.createText("", "", totalDurationWrapper);
+
+    progressWrapper.getChildren().add(durationWrapper);
     progressWrapper.getChildren().add(progress);
-    totalDurationLabel = ComponentUtil.createText("     ", "", progressWrapper);
+    progressWrapper.getChildren().add(totalDurationWrapper);
+
     return statusBox;
   }
 

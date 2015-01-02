@@ -31,6 +31,17 @@
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>de.calette.mephisto3.Mephisto3</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
                         <version>${dependency.plugin.version}</version>
                         <executions>
@@ -60,34 +71,22 @@
                                     <goal>java</goal>
                                 </goals>
                                 <configuration>
-                                    <mainClass>callete.deployment.util.DeploymentArchiver</mainClass>
-                                    <arguments>
-                                        <argument>${deployment.archive.directory}</argument>
-                                        <argument>${artifactId}</argument>
-                                        <argument>${version}</argument>
-                                        <argument>de.calette.mephisto3.Mephisto3</argument>
-                                        <argument>linux</argument>
-                                        <argument>slideshows,conf,LICENSE,README.md</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>${exec.plugin.version}</version>
-                        <executions>
-                            <execution>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>java</goal>
-                                </goals>
-                                <configuration>
                                     <mainClass>callete.deployment.client.DeploymentClient</mainClass>
                                     <arguments>
                                         <argument>${artifactId}</argument>
                                         <argument>${version}</argument>
+                                        <!-- Quick deployment, set to true if only the main archive should be copied -->
+                                        <argument>false</argument>
+                                        <!-- The target directory the archive is created from -->
+                                        <argument>${deployment.archive.directory}</argument>
+                                        <!-- The main class to execute from the resolved main archive -->
+                                        <argument>de.calette.mephisto3.Mephisto3</argument>
+                                        <!-- The target OS, use windows or linux here-->
+                                        <argument>linux</argument>
+                                        <!-- Resource folders of the root project path to include in the deployment -->
+                                        <argument>slideshows,conf,LICENSE,README.md</argument>
+                                        <!-- Java Executable -->
+                                        <argument>/opt/jdk1.8.0_06/bin/java</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
