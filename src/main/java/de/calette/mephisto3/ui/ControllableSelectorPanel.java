@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,6 +39,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
   private int backTopPadding = -1;
   private T selection;
   private double margin;
+
   public ControllableSelectorPanel(double margin, Pane parent, int scrollWidth, List<T> models, Class controlItemBoxClass) {
     super(margin);
     this.margin = margin;
@@ -112,30 +114,35 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
    * Shows the panel, plays the onShow transitions, adds the control event listener.
    */
   public void showPanel() {
+    parent.getChildren().add(this);
+
     //so lets create all children
     LOG.debug("ControllableSelectorPanel creates " + models.size() + " child components");
+    List<Node> items = new ArrayList<>();
     for (T model : models) {
       ControllableItemPanel item = createControllableItemPanelFor(controlItemBoxClass, model);
-      this.getChildren().add((Node)item);
+      items.add((Node) item);
     }
+
+    getChildren().addAll(items);
 
     //set the initial left padding to focus the first item
     int itemCount = models.size()+1; //+1 for the back button
-    double leftPadding = itemCount*scrollWidth-scrollWidth-scrollWidth-scrollWidth-this.margin;
+    double leftPadding = itemCount*scrollWidth-scrollWidth-scrollWidth-scrollWidth-margin;
     if(backTopPadding != -1) {
       leftPadding = itemCount*scrollWidth-scrollWidth;
     }
     setPadding(new Insets(getTopPadding(), 0, 0, leftPadding));
 
-    parent.getChildren().add(this);
+
 
     //update panel view to the selected model
     applyLastSelection();
 
-    final ControllableItemPanel newSelection = (ControllableItemPanel) this.getChildren().get(index);
+    final ControllableItemPanel newSelection = (ControllableItemPanel) getChildren().get(index);
     newSelection.select();
 
-    final FadeTransition inFader = TransitionUtil.createInFader(this);
+    final FadeTransition inFader = TransitionUtil.createInFader(ControllableSelectorPanel.this);
     inFader.setOnFinished(new EventHandler<ActionEvent>() {
       @Override
       public void handle(ActionEvent actionEvent) {
@@ -174,7 +181,7 @@ public abstract class ControllableSelectorPanel<T> extends HBox implements Contr
   }
 
   protected void scroll(boolean toLeft, int width) {
-    if (index == getItemCount() - 2 && !toLeft) {
+    if (index == getItemCount() && !toLeft) {
       return;
     }
     if(index == 1 && getItemCount() == 1 &&!toLeft) {

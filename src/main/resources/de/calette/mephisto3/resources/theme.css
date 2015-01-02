@@ -46,12 +46,28 @@
    -fx-font-size: 80px;
 }
 
-.weather-city {
+.weather-city-active {
  -fx-font-family: "Tahoma";
  -fx-text-fill: #fff;
  -fx-text-overrun: ellipsis;
  -fx-font-smoothing-type: gray;
  -fx-font-size: 40px;
+}
+
+.weather-city {
+ -fx-font-family: "Tahoma";
+ -fx-text-fill: #333;
+ -fx-text-overrun: ellipsis;
+ -fx-font-smoothing-type: gray;
+ -fx-font-size: 40px;
+}
+
+.weather-busy-indicator {
+ -fx-font-family: "Tahoma";
+ -fx-text-fill: #333;
+ -fx-text-overrun: ellipsis;
+ -fx-font-smoothing-type: gray;
+ -fx-font-size: 20px;
 }
 
 .forecast-panel {

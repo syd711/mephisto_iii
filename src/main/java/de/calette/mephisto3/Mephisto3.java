@@ -5,6 +5,7 @@ import callete.api.services.impl.music.google.AlbumCoverCache;
 import callete.api.util.SystemUtils;
 import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.ui.Center;
+import de.calette.mephisto3.util.NodeDebugger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -86,6 +87,10 @@ public class Mephisto3 extends Application implements EventHandler<KeyEvent> {
     KeyCode code = event.getCode();
     if(code == KeyCode.Q || code == KeyCode.ESCAPE) {
       System.exit(0);
+    }
+
+    if(code == KeyCode.D) {
+      NodeDebugger.dump(rootStack);
     }
   }
 }

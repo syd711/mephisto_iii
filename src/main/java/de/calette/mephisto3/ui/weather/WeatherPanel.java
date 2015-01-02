@@ -9,6 +9,7 @@ import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.ControllablePanel;
 import de.calette.mephisto3.ui.ServiceScroller;
 import de.calette.mephisto3.util.ComponentUtil;
+import de.calette.mephisto3.util.Executor;
 import de.calette.mephisto3.util.SlideshowPanel;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.ParallelTransition;
@@ -18,6 +19,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -47,6 +49,7 @@ public class WeatherPanel extends ControllablePanel {
   private Label cityLabel;
   private Text degreeLabel;
   private Text tempLabel;
+  private HBox busyIndicator;
 
   public WeatherPanel() {
     super(Callete.getWeatherService().getWeather());
@@ -60,11 +63,32 @@ public class WeatherPanel extends ControllablePanel {
 
   @Override
   public void showPanel() {
+    busyIndicator.setOpacity(1);
     super.showPanel();
     scroller.showScroller();
     activeWeather = (Weather) ServiceController.getInstance().getServiceState().getSelection();
-    loadSlideShow(activeWeather.getCity());
+
+    cityLabel.getStyleClass().clear();
+    cityLabel.getStyleClass().addAll("label", "weather-city");
     cityLabel.setText(activeWeather.getCity());
+
+    Executor.run(new Runnable() {
+      @Override
+      public void run() {
+        String city = activeWeather.getCity();
+        SlideShow slideShow = getSlideShow(city);
+        slideshowPanel.setSlideShow(slideShow);
+        Platform.runLater(new Runnable() {
+          @Override
+          public void run() {
+            cityLabel.getStyleClass().clear();
+            cityLabel.getStyleClass().addAll("label", "weather-city-active");
+            slideshowPanel.startSlideShow();
+            busyIndicator.setOpacity(0);
+          }
+        });
+      }
+    });
   }
 
   @Override
@@ -79,7 +103,10 @@ public class WeatherPanel extends ControllablePanel {
     this.activeWeather = (Weather) serviceState.getSelection();
     final Image image = new Image(WeatherConditionMapper.getWeatherForecastIcon(activeWeather), 55, 55, false, true);
 
-    loadSlideShow(activeWeather.getCity());
+    String city = activeWeather.getCity();
+    SlideShow slideShow = getSlideShow(city);
+    slideshowPanel.setSlideShow(slideShow);
+    slideshowPanel.startSlideShow();
 
     ParallelTransition transition = new ParallelTransition(
         TransitionUtil.createOutFader(weatherIconView),
@@ -116,33 +143,22 @@ public class WeatherPanel extends ControllablePanel {
 
   // ------------------- Helper ----------------
 
-  private void loadSlideShow(final String city) {
-    SlideShow slideShow = cachedSlideShows.get(city);
-    Platform.runLater(new Runnable() {
-      @Override
-      public void run() {
-        slideshowPanel.setSlideShow(slideShow);
-        slideshowPanel.startSlideShow();
-      }
-    });
-  }
-
   private void buildUI() {
     Weather weather = Callete.getWeatherService().getWeatherAt(1);
     if (weather == null) {
       return;
     }
 
-    List<Weather> weathers = Callete.getWeatherService().getWeather();
-    for (Weather w : weathers) {
-      String city = w.getCity();
-      LOG.info("Loading slideshow images for " + city);
-      SlideShow slideShow = new SlideShowImpl(new File("slideshows/" + city.toLowerCase() + "/"), true);
-      cachedSlideShows.put(city, slideShow);
-    }
+    busyIndicator = new HBox();
+    ComponentUtil.createLabel("Lade Bildergallerie...", "weather-busy-indicator", busyIndicator);
+    busyIndicator.setPadding(new Insets(90, 30, 0, 30));
 
-    SlideShow slideShow = cachedSlideShows.get(weather.getCity());
-    slideshowPanel.setSlideShow(slideShow);
+    ProgressIndicator pi = new ProgressIndicator();
+    pi.setMaxHeight(25);
+    busyIndicator.getChildren().add(pi);
+
+    getChildren().add(busyIndicator);
+
     getChildren().add(slideshowPanel);
 
     VBox root = new VBox();
@@ -192,5 +208,12 @@ public class WeatherPanel extends ControllablePanel {
 
     root.getChildren().add(status);
     getChildren().add(root);
+  }
+
+  private SlideShow getSlideShow(String city) {
+    if(!cachedSlideShows.containsKey(city)) {
+      cachedSlideShows.put(city, new SlideShowImpl(new File("slideshows/" + city.toLowerCase() + "/"), true));
+    }
+    return cachedSlideShows.get(city);
   }
 }

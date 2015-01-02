@@ -32,7 +32,6 @@ public class AlbumSlider extends ControllableSelectorPanel<Album> {
     this.albumCollection = albumCollection;
     this.collections = collections;
     this.serviceChooser = serviceChooser;
-
     LazyAlbumCoverCache.load(albumCollection.getAlbums());
   }
 
@@ -146,7 +145,7 @@ public class AlbumSlider extends ControllableSelectorPanel<Album> {
    */
   private boolean appendAlbumOnRight() {
     int index = getSelectionIndex();
-    int addIndex = (visibleItemCount-1)+index;
+    int addIndex = index;
 
     if(index <= 1) {
       return false;

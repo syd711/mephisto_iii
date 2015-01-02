@@ -38,6 +38,7 @@ public class LazyAlbumCoverCache {
         e.printStackTrace();
       }
     }
+
     pane.setCenter(cache.get(album));
   }
 
