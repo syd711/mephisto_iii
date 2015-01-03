@@ -6,7 +6,8 @@
 *.ear
 .idea
 *.iml
-image_cache/*
+image_cache/*.png
+image_cache/*.db
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*

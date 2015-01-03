@@ -1,0 +1,1 @@
+Album cover images that are loaded from Google Music are stored here.
