@@ -17,6 +17,8 @@ import de.calette.mephisto3.util.Executor;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.animation.*;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -99,8 +101,6 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     //scale no normal size: remove the selection highlighting
     createScaler(this, 1).play();
 
-    //add control listener to this panel
-    ServiceController.getInstance().addControlListener(this);
     Callete.getMusicPlayer().addPlaybackChangeEventListener(this);
 
     //expand panel to full width
@@ -129,7 +129,15 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
 
       createTracksBox();
       getChildren().add(tracksBox);
-      createInFader(tracksBox).play();
+      FadeTransition inFader = createInFader(tracksBox);
+      inFader.setOnFinished(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          //add control listener to this panel
+          ServiceController.getInstance().addControlListener(AlbumBox.this);
+        }
+      });
+      inFader.play();
     });
 
     ParallelTransition pt = new ParallelTransition(maxWidthTransition, outFader);

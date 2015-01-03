@@ -120,23 +120,24 @@ public class ServiceChooser implements ControlListener {
       if(!searchSelectionBox.isLoaded()) {
         return;
       }
-
-      if(musicSelector != null) {
+      
+      if(musicSelector != null && playbackSelection != null) {
         final FadeTransition blink = TransitionUtil.createBlink(playbackSelection);
         blink.setOnFinished(new EventHandler<ActionEvent>() {
           @Override
           public void handle(ActionEvent actionEvent) {
             overlay.getChildren().remove(scroller);
-            ServiceController.getInstance().removeControlListener(ServiceChooser.this);
-            AlbumLetterSelector selector = new AlbumLetterSelector(ServiceChooser.this, albumSelectorCenterStack, (List<AlbumCollection>) playbackSelection.getUserData());
-            selector.showPanel();
+            if(playbackSelection != null) {
+              ServiceController.getInstance().removeControlListener(ServiceChooser.this);
+              AlbumLetterSelector selector = new AlbumLetterSelector(ServiceChooser.this, albumSelectorCenterStack, (List<AlbumCollection>) playbackSelection.getUserData());
+              selector.showPanel();
 
-            if(googlePlayer == null) {
-              googlePlayer = new GooglePlayerStatusBox();
-              center.stackPane.getChildren().add(googlePlayer);
+              if(googlePlayer == null) {
+                googlePlayer = new GooglePlayerStatusBox();
+                center.stackPane.getChildren().add(googlePlayer);
+              }
+              googlePlayer.showPlayer();
             }
-            googlePlayer.showPlayer();
-
           }
         });
         blink.play();
@@ -269,9 +270,11 @@ public class ServiceChooser implements ControlListener {
       byArtist = ComponentUtil.createText("Albums by Artist", "selector", musicSelector, Callete.getGoogleMusicService().getAlbumsByArtistLetter());
       byName = ComponentUtil.createText("Albums by Name", "selector", musicSelector, Callete.getGoogleMusicService().getAlbumByNameLetter());
     }
-    searchSelectionBox.getChildren().add(musicSelector);
-
-    TransitionUtil.createInFader(musicSelector).play();
+    
+    if(!searchSelectionBox.getChildren().contains(musicSelector)) {
+      searchSelectionBox.getChildren().add(musicSelector);
+      TransitionUtil.createInFader(musicSelector).play();
+    }
   }
 
   private void hideMusicOptions(final Pane searchSelectionBox) {
