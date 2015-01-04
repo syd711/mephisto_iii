@@ -97,7 +97,11 @@ public class SystemPanel extends ControllablePanel {
 
     double cpuPercentage = systemService.getCpuUsage();
     if(!Double.isNaN(cpuPercentage)) {
-      cpuUsage.setProgress(cpuPercentage/100);
+      double v = cpuPercentage / 100;
+      if(v == 1) {
+        v = 9.99;
+      }
+      cpuUsage.setProgress(v);
     }
   }
 
