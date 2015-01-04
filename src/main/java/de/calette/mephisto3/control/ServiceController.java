@@ -11,6 +11,7 @@ import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.ui.ServiceChangeListener;
 import de.calette.mephisto3.util.Executor;
 import de.calette.mephisto3.util.NodeDebugger;
+import javafx.application.Platform;
 import javafx.scene.input.KeyCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,7 +137,7 @@ public class ServiceController {
           LOG.info("Ignoring PUSH event since control is disabled.");
           return;
         }
-        Executor.run(new Runnable() {
+        Platform.runLater(new Runnable() {
           @Override
           public void run() {
             ServiceControlEvent.EVENT_TYPE push = ServiceControlEvent.EVENT_TYPE.PUSH;
@@ -145,8 +146,6 @@ public class ServiceController {
               serviceState.setModels(null);
               push = ServiceControlEvent.EVENT_TYPE.LONG_PUSH;
             }
-
-            //update listeners
             for(ControlListener listener : new ArrayList<>(controlListeners)) {
               listener.controlEvent(new ServiceControlEvent(push, serviceState));
             }
@@ -194,9 +193,14 @@ public class ServiceController {
 
 
         final ServiceControlEvent serviceControlEvent = new ServiceControlEvent(eventType, serviceState);
-        for(ControlListener listener : controlListeners) {
-          listener.controlEvent(serviceControlEvent);
-        }
+        Platform.runLater(new Runnable() {
+          @Override
+          public void run() {
+            for(ControlListener listener : controlListeners) {
+              listener.controlEvent(serviceControlEvent);
+            }
+          }
+        });
       }
     });
   }

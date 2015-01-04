@@ -54,8 +54,10 @@ public class SystemPanel extends ControllablePanel {
 
   @Override
   public void showPanel() {
-    buildUI();
-    
+    if(diskSpace == null) {
+      buildUI();
+    }
+
     super.showPanel();
     this.refreshTimer = new Timer();
     this.refreshTimer.schedule(new TimerTask() {
@@ -76,7 +78,6 @@ public class SystemPanel extends ControllablePanel {
     super.hidePanel();
     this.refreshTimer.cancel();
     this.refreshTimer.purge();
-    this.getChildren().clear();
   }
 
   //--------------- Helper ------------------------------------------------------

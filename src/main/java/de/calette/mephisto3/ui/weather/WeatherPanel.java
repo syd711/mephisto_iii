@@ -58,7 +58,9 @@ public class WeatherPanel extends ControllablePanel {
 
   @Override
   public void showPanel() {
-    buildUI();
+    if(busyIndicator == null) {
+      buildUI();
+    }
     
     busyIndicator.setOpacity(1);
     super.showPanel();
@@ -93,8 +95,6 @@ public class WeatherPanel extends ControllablePanel {
     super.hidePanel();
     scroller.hideScroller();
     slideshowPanel.stopSlideShow();
-    
-    getChildren().clear();
   }
 
   @Override
