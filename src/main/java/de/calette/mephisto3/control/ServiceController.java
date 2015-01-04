@@ -4,13 +4,16 @@ import callete.api.Callete;
 import callete.api.services.Service;
 import callete.api.services.ServiceModel;
 import callete.api.services.gpio.*;
-import callete.api.services.impl.simulator.Simulator;
 import callete.api.services.impl.simulator.SimulatorPushButton;
 import callete.api.services.impl.simulator.SimulatorRotaryEncoder;
 import callete.api.services.music.model.Stream;
+import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.ui.ServiceChangeListener;
 import de.calette.mephisto3.util.Executor;
+import de.calette.mephisto3.util.NodeDebugger;
 import javafx.scene.input.KeyCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,6 +24,8 @@ import java.util.List;
  * Switches the service states.
  */
 public class ServiceController {
+  private final static Logger LOG = LoggerFactory.getLogger(ServiceController.class);
+  
   public final static String SERVICE_NAME_RADIO = "Radio";
   public final static String SERVICE_NAME_WEATHER = "Wetter";
   public final static String SERVICE_NAME_MUSIC = "Musik";
@@ -31,8 +36,8 @@ public class ServiceController {
 
   private static ServiceController instance;
 
-  private List<ServiceChangeListener> serviceChangeListeners = Collections.synchronizedList(new ArrayList<ServiceChangeListener>());
-  private List<ControlListener> controlListeners = Collections.synchronizedList(new ArrayList<ControlListener>());
+  private List<ServiceChangeListener> serviceChangeListeners = Collections.synchronizedList(new ArrayList<>());
+  private List<ControlListener> controlListeners = Collections.synchronizedList(new ArrayList<>());
   private ServiceState serviceState = new ServiceState();
   private boolean controlEnabled = false;
 
@@ -128,6 +133,7 @@ public class ServiceController {
       @Override
       public void pushed(final PushEvent pushEvent) {
         if(!controlEnabled) {
+          LOG.info("Ignoring PUSH event since control is disabled.");
           return;
         }
         Executor.run(new Runnable() {
@@ -196,8 +202,8 @@ public class ServiceController {
   }
 
   public void fireControlEvent(KeyCode code) {
-    SimulatorRotaryEncoder encoder = (SimulatorRotaryEncoder) Simulator.getInstance().getGpioComponent(ROTARY_ENCODER_NAME);
-    SimulatorPushButton pushButton = (SimulatorPushButton) Simulator.getInstance().getGpioComponent(ROTARY_ENCODER_PUSH_BUTTON_NAME);
+    SimulatorRotaryEncoder encoder = (SimulatorRotaryEncoder) Callete.getGPIOService().getSimulatedGPIOComponent(ROTARY_ENCODER_NAME);
+    SimulatorPushButton pushButton = (SimulatorPushButton) Callete.getGPIOService().getSimulatedGPIOComponent(ROTARY_ENCODER_PUSH_BUTTON_NAME);
 
     if(code == KeyCode.RIGHT) {
       encoder.right();
@@ -210,6 +216,13 @@ public class ServiceController {
     }
     else if(code == KeyCode.UP) {
       pushButton.push(true);
+    }
+    else if(code == KeyCode.Q || code == KeyCode.ESCAPE) {
+      System.exit(0);
+    }
+
+    if(code == KeyCode.D) {
+      NodeDebugger.dump(Mephisto3.rootStack);
     }
   }
 }

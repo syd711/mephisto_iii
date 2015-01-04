@@ -14,8 +14,6 @@ public class GoogleMusicPanel extends ControllablePanel {
   private final static Logger LOG = LoggerFactory.getLogger(GoogleMusicPanel.class);
 
   public GoogleMusicPanel() {
-    //empty at this point
-    super(Callete.getGoogleMusicService().getAlbums());
     loadGoogleMusic();
   }
 

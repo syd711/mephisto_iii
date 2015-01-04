@@ -26,8 +26,6 @@ public class StreamsController extends ControllablePanel implements PlaylistMeta
   private StreamsUI streamsUI;
 
   public StreamsController() {
-    super(Callete.getStreamingService().getStreams());
-
     //initial station selection
     activeStream = (Stream) ServiceController.getInstance().getServiceState().getSelection();
     selectedStream = activeStream;

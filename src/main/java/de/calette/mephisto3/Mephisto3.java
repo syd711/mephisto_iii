@@ -5,12 +5,10 @@ import callete.api.services.impl.music.google.AlbumCoverCache;
 import callete.api.util.SystemUtils;
 import de.calette.mephisto3.resources.ResourceLoader;
 import de.calette.mephisto3.ui.Center;
-import de.calette.mephisto3.util.NodeDebugger;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -22,10 +20,10 @@ import java.io.File;
 /**
  * In the beginning, there was main...
  */
-public class Mephisto3 extends Application implements EventHandler<KeyEvent> {
+public class Mephisto3 extends Application {
   public static final int WIDTH = 700;
   public static final int HEIGHT = 395;
-  private StackPane rootStack;
+  public static StackPane rootStack;
 
   public static void main(String[] args) {
     launch(args);
@@ -53,7 +51,6 @@ public class Mephisto3 extends Application implements EventHandler<KeyEvent> {
     primaryStage.getScene().setRoot(rootStack);
 
     primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, new Mephisto3KeyEventFilter());
-    primaryStage.addEventFilter(KeyEvent.KEY_PRESSED, this);
     addDisposeListener(primaryStage);
 
     if(!SystemUtils.isWindows()) {
@@ -75,17 +72,5 @@ public class Mephisto3 extends Application implements EventHandler<KeyEvent> {
         System.exit(0);
       }
     });
-  }
-
-  @Override
-  public void handle(KeyEvent event) {
-    KeyCode code = event.getCode();
-    if(code == KeyCode.Q || code == KeyCode.ESCAPE) {
-      System.exit(0);
-    }
-
-    if(code == KeyCode.D) {
-      NodeDebugger.dump(rootStack);
-    }
   }
 }

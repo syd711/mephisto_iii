@@ -43,18 +43,13 @@ public class WeatherPanel extends ControllablePanel {
   private List<WeatherForecastPanel> forecastPanels = new ArrayList<>();
 
   private Weather activeWeather;
-  private Map<String, SlideShow> cachedSlideShows = new HashMap<>();
+  private static Map<String, SlideShow> cachedSlideShows = new HashMap<>();
 
   private ImageView weatherIconView;
   private Label cityLabel;
   private Text degreeLabel;
   private Text tempLabel;
   private HBox busyIndicator;
-
-  public WeatherPanel() {
-    super(Callete.getWeatherService().getWeather());
-    buildUI();
-  }
 
   @Override
   public void pushed(ServiceState serviceState) {
@@ -63,6 +58,8 @@ public class WeatherPanel extends ControllablePanel {
 
   @Override
   public void showPanel() {
+    buildUI();
+    
     busyIndicator.setOpacity(1);
     super.showPanel();
     scroller.showScroller();
@@ -96,6 +93,8 @@ public class WeatherPanel extends ControllablePanel {
     super.hidePanel();
     scroller.hideScroller();
     slideshowPanel.stopSlideShow();
+    
+    getChildren().clear();
   }
 
   @Override
@@ -148,10 +147,11 @@ public class WeatherPanel extends ControllablePanel {
     if(weather == null) {
       return;
     }
-
-    for(Weather w : Callete.getWeatherService().getWeather()) {
-      getSlideShow(w.getCity());
-    }
+    
+    //TODO this is just too expensive
+//    for(Weather w : Callete.getWeatherService().getWeather()) {
+//      getSlideShow(w.getCity());
+//    }
 
     busyIndicator = new HBox();
     ComponentUtil.createLabel("Lade Bildergallerie...", "weather-busy-indicator", busyIndicator);
@@ -216,6 +216,7 @@ public class WeatherPanel extends ControllablePanel {
 
   private SlideShow getSlideShow(String city) {
     if(!cachedSlideShows.containsKey(city)) {
+      LOG.info("Loading image gallery for " + city + " into cache.");
       cachedSlideShows.put(city, new SlideShowImpl(new File("slideshows/" + city.toLowerCase() + "/"), true));
     }
     return cachedSlideShows.get(city);

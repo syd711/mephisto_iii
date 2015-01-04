@@ -19,6 +19,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -27,85 +29,22 @@ import java.util.TimerTask;
  * Display different system information.
  */
 public class SystemPanel extends ControllablePanel {
+  private final static Logger LOG = LoggerFactory.getLogger(SystemPanel.class);
 
-  ProgressIndicator diskSpace;
+  private ProgressIndicator diskSpace;
   private Text freeMem;
   private Text usedMem;
 
-  ProgressIndicator heapSpace;
+  private ProgressIndicator heapSpace;
   private Text freeDisk;
   private Text usedDisk;
 
   private Timer refreshTimer;
 
+  private ProgressIndicator cpuUsage;
+
   public SystemPanel() {
-    super(Callete.getWeatherService().getWeather());
     setMinWidth(Mephisto3.WIDTH);
-
-
-    final SystemService systemService = Callete.getSystemService();
-
-
-    Label titleLabel = ComponentUtil.createCustomLabel("System Information", "system-tab-title", this);
-    titleLabel.setPadding(new Insets(20, 30, 0, 20));
-
-    BorderPane root = new BorderPane();
-    root.setPadding(new Insets(90, 20, 10, 20));
-
-    HBox center = new HBox(30);
-    center.setAlignment(Pos.TOP_CENTER);
-    root.setCenter(center);
-
-    //disc usage
-    VBox diskSpaceBox = new VBox(20);
-    diskSpaceBox.setAlignment(Pos.TOP_CENTER);
-    center.getChildren().add(diskSpaceBox);
-
-    ComponentUtil.createText("Datenspeicher", "system-title", diskSpaceBox);
-    diskSpace = new ProgressIndicator();
-    diskSpace.getStyleClass().add("progressIndicator");
-    diskSpaceBox.getChildren().add(diskSpace);
-
-    VBox detailsDiskSpace = new VBox(5);
-    detailsDiskSpace.setPadding(new Insets(10, 5, 5, 5));
-    freeDisk = createInfo(detailsDiskSpace, "Frei:", SystemUtils.humanReadableByteCount(systemService.getAvailableDiskSpace()));
-    usedDisk = createInfo(detailsDiskSpace, "Benutzt:", SystemUtils.humanReadableByteCount(systemService.getUsedDiskSpace()));
-    diskSpaceBox.getChildren().add(detailsDiskSpace);
-
-    //memory
-    VBox memoryBox = new VBox(20);
-    memoryBox.setAlignment(Pos.TOP_CENTER);
-    center.getChildren().add(memoryBox);
-
-    ComponentUtil.createText("Heap-Speicher", "system-title", memoryBox);
-    heapSpace = new ProgressIndicator();
-    heapSpace.getStyleClass().add("progressIndicator");
-    memoryBox.getChildren().add(heapSpace);
-    VBox detailsMemory = new VBox(5);
-    detailsMemory.setPadding(new Insets(10, 5, 5, 5));
-    freeMem = createInfo(detailsMemory, "Maximaler Heap:", SystemUtils.humanReadableByteCount(systemService.getFreeMemory()));
-    usedMem = createInfo(detailsMemory, "Aktueller Heap:", SystemUtils.humanReadableByteCount(systemService.getTotalMemory()));
-    memoryBox.getChildren().add(detailsMemory);
-
-
-    //system
-    VBox systemBox = new VBox(20);
-    systemBox.setAlignment(Pos.TOP_CENTER);
-    center.getChildren().add(systemBox);
-
-    ComponentUtil.createText("System", "system-title", systemBox);
-
-    VBox systemDetailsBox = new VBox(5);
-    systemDetailsBox.setPadding(new Insets(10, 5, 5, 5));
-    createInfo(systemDetailsBox, "Rechername:", systemService.getHostname());
-    createInfo(systemDetailsBox, "IP Adresse:", systemService.getHostAddress());
-    createInfo(systemDetailsBox, "User:", System.getProperty("user.name"));
-    createInfo(systemDetailsBox, "OS Name:", System.getProperty("os.name"));
-    createInfo(systemDetailsBox, "Processors:", Runtime.getRuntime().availableProcessors() + "");
-    createInfo(systemDetailsBox, "JDK:", System.getProperty("java.version"));
-    systemBox.getChildren().add(systemDetailsBox);
-
-    getChildren().add(root);
   }
 
   @Override
@@ -115,6 +54,8 @@ public class SystemPanel extends ControllablePanel {
 
   @Override
   public void showPanel() {
+    buildUI();
+    
     super.showPanel();
     this.refreshTimer = new Timer();
     this.refreshTimer.schedule(new TimerTask() {
@@ -135,6 +76,7 @@ public class SystemPanel extends ControllablePanel {
     super.hidePanel();
     this.refreshTimer.cancel();
     this.refreshTimer.purge();
+    this.getChildren().clear();
   }
 
   //--------------- Helper ------------------------------------------------------
@@ -151,6 +93,11 @@ public class SystemPanel extends ControllablePanel {
 
     double memoryUsage = (systemService.getFreeMemory() * 100 / systemService.getTotalMemory()) / new Double(100);
     heapSpace.setProgress(memoryUsage);
+
+    double cpuPercentage = systemService.getCpuUsage();
+    if(!Double.isNaN(cpuPercentage)) {
+      cpuUsage.setProgress(cpuPercentage/100);
+    }
   }
 
   private Text createInfo(Pane parent, String key, String value) {
@@ -159,5 +106,74 @@ public class SystemPanel extends ControllablePanel {
     Text valueText = ComponentUtil.createText(value, "default-16", infoBox);
     parent.getChildren().add(infoBox);
     return valueText;
+  }
+
+  private void buildUI() {
+    LOG.info("Creating System Panel UI");
+    final SystemService systemService = Callete.getSystemService();
+
+
+    Label titleLabel = ComponentUtil.createCustomLabel("System Information", "system-tab-title", this);
+    titleLabel.setPadding(new Insets(20, 30, 0, 20));
+
+    BorderPane root = new BorderPane();
+    root.setPadding(new Insets(90, 20, 10, 20));
+
+    HBox center = new HBox(20);
+    center.setAlignment(Pos.TOP_CENTER);
+    root.setCenter(center);
+
+    //disc usage
+    VBox diskSpaceBox = new VBox(20);
+    diskSpaceBox.setAlignment(Pos.TOP_CENTER);
+    center.getChildren().add(diskSpaceBox);
+
+    ComponentUtil.createText("Datenspeicher", "system-title", diskSpaceBox);
+    diskSpace = new ProgressIndicator();
+    diskSpace.getStyleClass().add("progressIndicator");
+    diskSpaceBox.getChildren().add(diskSpace);
+
+    VBox detailsDiskSpace = new VBox(5);
+    detailsDiskSpace.setAlignment(Pos.TOP_CENTER);
+    detailsDiskSpace.setPadding(new Insets(10, 5, 5, 5));
+    freeDisk = createInfo(detailsDiskSpace, "Frei:", SystemUtils.humanReadableByteCount(systemService.getAvailableDiskSpace()));
+    usedDisk = createInfo(detailsDiskSpace, "Benutzt:", SystemUtils.humanReadableByteCount(systemService.getUsedDiskSpace()));
+    diskSpaceBox.getChildren().add(detailsDiskSpace);
+
+    //memory
+    VBox memoryBox = new VBox(20);
+    memoryBox.setAlignment(Pos.TOP_CENTER);
+    center.getChildren().add(memoryBox);
+
+    ComponentUtil.createText("Heap-Speicher", "system-title", memoryBox);
+    heapSpace = new ProgressIndicator();
+    heapSpace.getStyleClass().add("progressIndicator");
+    memoryBox.getChildren().add(heapSpace);
+    VBox detailsMemory = new VBox(5);
+    detailsMemory.setAlignment(Pos.TOP_CENTER);
+    detailsMemory.setPadding(new Insets(10, 5, 5, 5));
+    freeMem = createInfo(detailsMemory, "Maximaler Heap:", SystemUtils.humanReadableByteCount(systemService.getFreeMemory()));
+    usedMem = createInfo(detailsMemory, "Aktueller Heap:", SystemUtils.humanReadableByteCount(systemService.getTotalMemory()));
+    memoryBox.getChildren().add(detailsMemory);
+
+
+    //CPU
+    VBox cpuBox = new VBox(20);
+    cpuBox.setAlignment(Pos.TOP_CENTER);
+    center.getChildren().add(cpuBox);
+    ComponentUtil.createText("CPU", "system-title", cpuBox);
+
+    cpuUsage = new ProgressIndicator();
+    cpuUsage.getStyleClass().add("progressIndicator");
+    cpuBox.getChildren().add(cpuUsage);
+
+    VBox detailsCPU= new VBox(5);
+    detailsCPU.setAlignment(Pos.TOP_CENTER);
+    createInfo(detailsCPU, "Rechername:", systemService.getHostname());
+    createInfo(detailsCPU, "IP Adresse:", systemService.getHostAddress());
+    createInfo(detailsCPU, "Processors:", Runtime.getRuntime().availableProcessors() + "");
+    cpuBox.getChildren().add(detailsCPU);
+
+    getChildren().add(root);
   }
 }

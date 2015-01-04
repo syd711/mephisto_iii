@@ -17,10 +17,7 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
         </encoder>
     </appender>
-
-    <logger name="org.reflections">
-        <level value="WARN"/>
-    </logger>
+    
     <logger name="org.bff">
         <level value="WARN"/>
     </logger>

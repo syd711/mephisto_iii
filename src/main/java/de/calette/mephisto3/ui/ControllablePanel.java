@@ -1,6 +1,5 @@
 package de.calette.mephisto3.ui;
 
-import callete.api.services.ServiceModel;
 import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
@@ -11,8 +10,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.layout.StackPane;
 
-import java.util.List;
-
 /**
  * Abstract superclass for all center panels
  * that are controlled via the rotary encoder.
@@ -22,7 +19,7 @@ public abstract class ControllablePanel extends StackPane {
   private Transition inFader;
   private Transition outFader;
 
-  public ControllablePanel(List<? extends ServiceModel> models) {
+  public ControllablePanel() {
     setOpacity(0);
     setMinWidth(Mephisto3.WIDTH);
     getStyleClass().add("controllable-panel");
