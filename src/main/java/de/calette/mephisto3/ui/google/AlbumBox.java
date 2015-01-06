@@ -43,12 +43,12 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
   public static final int COVER_WIDTH = 200;
   public static final int BOX_WIDTH = 220;
   public static final int COVER_HEIGHT = 200;
-  public static final int TRACKS_WIDTH = 390;
+  public static final int TRACKS_WIDTH = 380;
   public static final int TRACK_ITEM_HEIGHT = 30;
   public static final int MAX_DISPLAY_TRACKS = 11;
   //index when the tracks should be starting scrolling
   public static final int SCROLL_INDEX = 7;
-  public static final int TRACKS_BOX_WIDTH = Mephisto3.WIDTH-COVER_WIDTH;
+  public static final int TRACKS_BOX_WIDTH = Mephisto3.WIDTH-COVER_WIDTH-10;
   public static final int TOP_PADDING = 15;
   public static final int SHADOW_WIDTH = 3;
 

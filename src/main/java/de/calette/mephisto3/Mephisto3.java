@@ -69,6 +69,8 @@ public class Mephisto3 extends Application {
 
     //finally show the stage
     primaryStage.show();    
+    
+    Center.getInstance().loadServices();
   }
 
   //--------------------------- Helper --------------------------------------------

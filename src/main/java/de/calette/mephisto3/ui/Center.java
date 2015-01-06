@@ -40,6 +40,11 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
   private ServiceChooser serviceChooser;
 
   private Map<Service, ControllablePanel> servicePanels = new HashMap<>();
+  private static Center instance;
+  
+  public static Center getInstance() {
+    return instance;    
+  }
 
   public Center() {
     setMaxWidth(Mephisto3.WIDTH);
@@ -60,7 +65,8 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     ServiceController.getInstance().addControlListener(this);
     ServiceController.getInstance().addServiceChangeListener(this);
     ServiceController.getInstance().serviceChanged();
-    loadServices();
+    
+    instance = this;
   }
 
   @Override
@@ -118,7 +124,7 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     return servicePanels.get(state.getService());
   }
 
-  private void loadServices() {
+  public void loadServices() {
     Executor.run(new Runnable() {
       @Override
       public void run() {
@@ -127,7 +133,7 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
         SystemPanel systemPanel = new SystemPanel();
         servicePanels.put(Callete.getSystemService(), systemPanel);
         serviceChooser.addService(Callete.getSystemService());
-        
+
         LOG.debug("Added service chooser for Google");
         GoogleMusicPanel googleMusicPanel = new GoogleMusicPanel();
         servicePanels.put(Callete.getGoogleMusicService(), googleMusicPanel);

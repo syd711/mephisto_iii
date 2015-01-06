@@ -70,7 +70,7 @@ public class SystemPanel extends ControllablePanel {
           }
         });
       }
-    }, 1000, 1000);
+    }, 1000, 3000);
   }
 
   @Override
@@ -87,7 +87,7 @@ public class SystemPanel extends ControllablePanel {
     usedDisk.setText(SystemUtils.humanReadableByteCount(systemService.getUsedDiskSpace()));
     freeDisk.setText(SystemUtils.humanReadableByteCount(systemService.getAvailableDiskSpace()));
     double usage = (systemService.getAvailableDiskSpace() * 100 / systemService.getUsedDiskSpace()) / new Double(100);
-    diskSpace.setProgress(1 - usage);
+    diskSpace.setProgress((1 - usage));
 
     usedMem.setText(SystemUtils.humanReadableByteCount(systemService.getFreeMemory()));
     freeMem.setText(SystemUtils.humanReadableByteCount(systemService.getTotalMemory()));

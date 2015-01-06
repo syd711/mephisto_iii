@@ -10,10 +10,10 @@ gpu_mem_512=316
 
 # uncomment the following to adjust overscan. Use positive numbers if console
 # goes off screen, and negative if there is too much border
-#overscan_left=16
-#overscan_right=16
+overscan_left=-10
+overscan_right=-45
 #overscan_top=16
-overscan_bottom=-16
+#overscan_bottom=16
 
 # uncomment to force a console size. By default it will be display's size minus
 # overscan.

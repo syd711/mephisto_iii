@@ -14,6 +14,7 @@ import de.calette.mephisto3.util.ComponentUtil;
 import de.calette.mephisto3.util.TransitionUtil;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -70,6 +71,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
 
   private Node createStatusBox() {
     VBox status = new VBox(2);
+    status.setMaxWidth(240);
     status.setMinWidth(240);
     status.setPadding(new Insets(3, 3, 0, 5));
     nameLabel = ComponentUtil.createCustomLabel("", "player-name-label", status);
@@ -86,20 +88,26 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
     progress = new ProgressBar();
     progress.setOpacity(0);
     progress.setProgress(0);
-    progress.setMinWidth(300);
-    progress.setMaxWidth(300);
+    progress.setMinWidth(280);
+    progress.setMaxWidth(280);
 
     HBox durationWrapper = new HBox();
     durationWrapper.setMinWidth(30);
+    durationWrapper.setAlignment(Pos.BASELINE_CENTER);
     currentDurationLabel = ComponentUtil.createText("", "", durationWrapper);
 
     HBox totalDurationWrapper = new HBox();
+    totalDurationWrapper.setAlignment(Pos.BASELINE_CENTER);
     totalDurationWrapper.setMinWidth(30);
     totalDurationLabel = ComponentUtil.createText("", "", totalDurationWrapper);
 
     progressWrapper.getChildren().add(durationWrapper);
     progressWrapper.getChildren().add(progress);
     progressWrapper.getChildren().add(totalDurationWrapper);
+    
+    HBox spacer = new HBox();
+    spacer.setMinWidth(10);
+    progressWrapper.getChildren().add(spacer);
 
     return statusBox;
   }
@@ -157,7 +165,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
       //reset progress to zero
       progress.setProgress(0);
       currentDurationLabel.setText("0:00");
-      totalDurationLabel.setText(song.getDuration());
+      totalDurationLabel.setText(" " + song.getDuration());
 
       //reset timer
       if(timer != null) {
@@ -198,7 +206,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
 
             String time = DateUtil.formatTime(currentDuration);
             if(currentDuration * 1000 <= song.getDurationMillis()) {
-              currentDurationLabel.setText(time);
+              currentDurationLabel.setText(time+" ");
             }
             long duration = song.getDurationMillis() / 1000;
             double progressValue = 1.0 / duration;
@@ -208,7 +216,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
               timer.purge();
               timer.cancel();
               timer = null;
-              progress.setProgress(1.0);
+              progress.setProgress(0);
             }
           }
         });

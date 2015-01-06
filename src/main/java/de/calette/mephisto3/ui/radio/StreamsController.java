@@ -48,6 +48,7 @@ public class StreamsController extends ControllablePanel implements PlaylistMeta
     if(selection.equals(activeStream)) {
       serviceState.incrementIndex();
       activeStream = (Stream) serviceState.getSelection();
+      selectedStream = activeStream;
       serviceState.saveState();
       
       streamsUI.updateSelection();
