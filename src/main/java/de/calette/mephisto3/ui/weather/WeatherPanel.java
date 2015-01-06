@@ -51,6 +51,12 @@ public class WeatherPanel extends ControllablePanel {
   private Text tempLabel;
   private HBox busyIndicator;
 
+  public WeatherPanel() {
+    for(Weather w : Callete.getWeatherService().getWeather()) {
+      getSlideShow(w.getCity());
+    }
+  }
+
   @Override
   public void pushed(ServiceState serviceState) {
     ServiceController.getInstance().fireControlEvent(KeyCode.UP);
@@ -148,11 +154,6 @@ public class WeatherPanel extends ControllablePanel {
       return;
     }
     
-    //TODO this is just too expensive
-//    for(Weather w : Callete.getWeatherService().getWeather()) {
-//      getSlideShow(w.getCity());
-//    }
-
     busyIndicator = new HBox();
     ComponentUtil.createLabel("Lade Bildergallerie...", "weather-busy-indicator", busyIndicator);
     busyIndicator.setPadding(new Insets(90, 30, 0, 30));
@@ -205,7 +206,7 @@ public class WeatherPanel extends ControllablePanel {
     iterator.next();
     while(iterator.hasNext()) {
       WeatherForecastPanel forecastPanel = new WeatherForecastPanel(iterator.next());
-      forecastPanel.setMinWidth(100);
+      forecastPanel.setMinWidth(95);
       weatherStatus.getChildren().add(forecastPanel);
       forecastPanels.add(forecastPanel);
     }

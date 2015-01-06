@@ -6,6 +6,7 @@ import callete.api.services.music.model.PlaylistItem;
 import callete.api.services.music.model.Song;
 import callete.api.services.music.player.PlaybackChangeEvent;
 import callete.api.services.music.player.PlaybackChangeListener;
+import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
@@ -47,7 +48,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
   public static final int MAX_DISPLAY_TRACKS = 11;
   //index when the tracks should be starting scrolling
   public static final int SCROLL_INDEX = 7;
-  public static final int TRACKS_BOX_WIDTH = 500;
+  public static final int TRACKS_BOX_WIDTH = Mephisto3.WIDTH-COVER_WIDTH;
   public static final int TOP_PADDING = 15;
   public static final int SHADOW_WIDTH = 3;
 

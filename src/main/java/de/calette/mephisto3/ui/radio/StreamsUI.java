@@ -91,7 +91,6 @@ public class StreamsUI extends VBox {
    * Called when the playback of a newly selected station should start.
    */
   public void activateStream(Stream stream) {
-    artistResources = null;
     artistBackgroundImage = null;
 
     Platform.runLater(() -> {
@@ -358,5 +357,9 @@ public class StreamsUI extends VBox {
 
   public void showControl() {
     serviceScroller.showScroller();
+  }
+
+  public void updateSelection() {
+    serviceScroller.updateSelection();
   }
 }

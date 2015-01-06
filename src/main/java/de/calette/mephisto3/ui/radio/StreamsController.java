@@ -9,7 +9,6 @@ import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.ControllablePanel;
 import javafx.application.Platform;
-import javafx.scene.input.KeyCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,20 +46,21 @@ public class StreamsController extends ControllablePanel implements PlaylistMeta
 
     //check if the push button was pressed for the current selection, select next station then
     if(selection.equals(activeStream)) {
-      ServiceController.getInstance().fireControlEvent(KeyCode.RIGHT);
-      pushed(serviceState);
+      serviceState.incrementIndex();
+      activeStream = (Stream) serviceState.getSelection();
+      serviceState.saveState();
+      
+      streamsUI.updateSelection();
+
+      //well, play the selected stream
+      playActiveStream();
       return;
     }
     activeStream = selection;
     serviceState.saveState();
+    
+    playActiveStream();
 
-    //well, play the selected stream
-    final MusicPlayerPlaylist playlist = Callete.getMusicPlayer().getPlaylist();
-    playlist.setActiveItem(activeStream);
-    Callete.getMusicPlayer().play();
-
-    //update the UI
-    updateUI(activeStream);
   }
 
   @Override
@@ -101,6 +101,16 @@ public class StreamsController extends ControllablePanel implements PlaylistMeta
   }
 
   // ------------------- Helper --------------------------------------------
+
+  private void playActiveStream() {
+    //well, play the selected stream
+    final MusicPlayerPlaylist playlist = Callete.getMusicPlayer().getPlaylist();
+    playlist.setActiveItem(activeStream);
+    Callete.getMusicPlayer().play();
+
+    //update the UI
+    updateUI(activeStream);
+  }
 
   private void updateUI(final Stream stream) {
     //if a stream is given, it's from a new selection, so activate it.

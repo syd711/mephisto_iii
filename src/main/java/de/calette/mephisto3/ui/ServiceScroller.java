@@ -37,6 +37,11 @@ public class ServiceScroller extends BorderPane implements ControlListener {
     sc.setValue(serviceState.getServiceIndex());
     ServiceController.getInstance().addControlListener(this);
   }
+  
+  public void updateSelection() {
+    ServiceState serviceState = ServiceController.getInstance().getServiceState();
+    sc.setValue(serviceState.getServiceIndex());    
+  }
 
   public void hideScroller() {
     ServiceController.getInstance().removeControlListener(this);

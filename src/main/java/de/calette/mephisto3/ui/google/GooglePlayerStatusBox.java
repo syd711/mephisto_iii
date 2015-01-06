@@ -70,7 +70,6 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
 
   private Node createStatusBox() {
     VBox status = new VBox(2);
-    status.setMaxWidth(240);
     status.setMinWidth(240);
     status.setPadding(new Insets(3, 3, 0, 5));
     nameLabel = ComponentUtil.createCustomLabel("", "player-name-label", status);

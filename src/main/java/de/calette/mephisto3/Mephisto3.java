@@ -21,8 +21,8 @@ import java.io.File;
  * In the beginning, there was main...
  */
 public class Mephisto3 extends Application {
-  public static final int WIDTH = 700;
-  public static final int HEIGHT = 395;
+  public static final int WIDTH = Callete.getConfiguration().getInt("width", 700);
+  public static final int HEIGHT = Callete.getConfiguration().getInt("height", 395);
   public static StackPane rootStack;
 
   public static void main(String[] args) {
@@ -56,9 +56,19 @@ public class Mephisto3 extends Application {
     if(!SystemUtils.isWindows()) {
       primaryStage.initStyle(StageStyle.UNDECORATED);
     }
+    
+    int x = Callete.getConfiguration().getInt("position.x", 0);
+    int y = Callete.getConfiguration().getInt("position.y", 0);
+    if(x == 0 && y == 0) {
+      primaryStage.centerOnScreen();
+    }
+    else {
+      primaryStage.setX(x);
+      primaryStage.setY(y);
+    }
 
     //finally show the stage
-    primaryStage.show();
+    primaryStage.show();    
   }
 
   //--------------------------- Helper --------------------------------------------

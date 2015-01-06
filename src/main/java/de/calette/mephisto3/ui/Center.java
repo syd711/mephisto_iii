@@ -44,17 +44,23 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
   public Center() {
     setMaxWidth(Mephisto3.WIDTH);
     setMaxHeight(Mephisto3.HEIGHT);
-
+    
     stackPane = new StackPane();
+
     serviceChooser = new ServiceChooser(this);
+    StreamsController streamsController = new StreamsController();
+    servicePanels.put(Callete.getStreamingService(), streamsController);
+    serviceChooser.addService(Callete.getStreamingService());
+
     activeControlPanel = getServicePanel(ServiceController.getInstance().getServiceState());
     stackPane.getChildren().add(activeControlPanel);
     setCenter(stackPane);
 
+
     ServiceController.getInstance().addControlListener(this);
     ServiceController.getInstance().addServiceChangeListener(this);
-    loadServices();
     ServiceController.getInstance().serviceChanged();
+    loadServices();
   }
 
   @Override
@@ -109,12 +115,6 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
   //----------------- Helper ------------------------------
 
   private ControllablePanel getServicePanel(ServiceState state) {
-    if(servicePanels.isEmpty()) {
-      StreamsController streamsController = new StreamsController();
-      servicePanels.put(Callete.getStreamingService(), streamsController);
-      serviceChooser.addService(Callete.getStreamingService());
-    }
-
     return servicePanels.get(state.getService());
   }
 
@@ -122,20 +122,21 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
     Executor.run(new Runnable() {
       @Override
       public void run() {
-        LOG.debug("Added service chooser for Weather");
-        WeatherPanel weatherPanel = new WeatherPanel();
-        servicePanels.put(Callete.getWeatherService(), weatherPanel);
-        serviceChooser.addService(Callete.getWeatherService());
-
+        Thread.currentThread().setName("Service Initializer");
         LOG.debug("Added service chooser for System");
         SystemPanel systemPanel = new SystemPanel();
         servicePanels.put(Callete.getSystemService(), systemPanel);
         serviceChooser.addService(Callete.getSystemService());
-
+        
         LOG.debug("Added service chooser for Google");
         GoogleMusicPanel googleMusicPanel = new GoogleMusicPanel();
         servicePanels.put(Callete.getGoogleMusicService(), googleMusicPanel);
         serviceChooser.addService(Callete.getGoogleMusicService());
+
+        LOG.debug("Added service chooser for Weather");
+        WeatherPanel weatherPanel = new WeatherPanel();
+        servicePanels.put(Callete.getWeatherService(), weatherPanel);
+        serviceChooser.addService(Callete.getWeatherService());
       }
     });
   }
