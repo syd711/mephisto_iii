@@ -222,7 +222,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     //box used for details mode
     tracksBox = new VBox(0);
     tracksBox.setPadding(new Insets(TOP_PADDING, 0, 0, 0));
-    tracksBox.setMaxWidth(TRACKS_BOX_WIDTH - 20);
+    tracksBox.setMaxWidth(TRACKS_BOX_WIDTH - 30);
     tracksBox.setOpacity(0);
     final List<Song> songs = getModel().getSongs();
 

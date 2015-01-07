@@ -23,7 +23,18 @@ to start the UI locally using a remote MPD connection from your Raspberry Pi.
 
 # Raspberry Pi Setup
 
-TODO
+* Apply the changes on the alsa-base.conf file to enable USB sound output. According to some documentations the 
+MPD must be configured too, but this was not necessary in my case.
+* Apply the changes on the /boot/config.txt. I've put my settings in the conf folder of the project.
+* Adjust window position: the callete.properties file contains settings to configure the x and y coordinates for the window.
+ If not set, the window will be centered (which may not work properly, at least with the display I am using).
+* Adjust logging: the generated run.sh file will use the logback.xml file from the conf folder. You may want to enable
+the console logging during the development process.
+* callete-deployment.properties: this file is used when the deployable archive is created, so you can use different
+settings for development and the actual deployment.
+* file encoding: the deployment archiver applies utf8 as default encoding for the Java process. If you need another one,
+you have to modify the callete project.
+* following the additional instruction on https://github.com/syd711/callete
 
 # Deployment
 

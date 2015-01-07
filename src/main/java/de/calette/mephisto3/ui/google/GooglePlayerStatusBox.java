@@ -164,7 +164,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
 
       //reset progress to zero
       progress.setProgress(0);
-      currentDurationLabel.setText("0:00");
+      currentDurationLabel.setText("0:00 ");
       totalDurationLabel.setText(" " + song.getDuration());
 
       //reset timer
