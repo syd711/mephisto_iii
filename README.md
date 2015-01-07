@@ -3,6 +3,11 @@
 The project is a re-implementation of the https://github.com/syd711/mephisto_fx 
 radio UI and based on the callete framework: https://github.com/syd711/callete
 
+# Known Issues
+
+* The rotary encoder is not working with 100% precision. Sometimes the wrong direction is detected, also sometimes the events lag.
+* Unfortunately the tracks of the albums are not sorted. I'm using jkiddo's gmusic api which does not provide the necessary information.
+
 # Development Setup
 
 The project was developed with Intellij IDEA, so some of the features described may not 
@@ -15,6 +20,10 @@ Next, have a look on the *conf/callete.properties* file. The file contains all t
 to connect to the Google Music account, EchoNest for artist image retrieval, MPD connection, etc...
 Once you've imported the maven project into IDEA and configured the callete.properties, you should be able
 to start the UI locally using a remote MPD connection from your Raspberry Pi.
+
+# Raspberry Pi Setup
+
+TODO
 
 # Deployment
 
