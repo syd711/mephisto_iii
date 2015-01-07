@@ -33,7 +33,11 @@ public class TrackBox extends HBox {
     posBox.setMinWidth(25);
     getChildren().add(posBox);
     ComponentUtil.createLabel(String.valueOf(song.getTrack()), DEFAULT_16, posBox);
-    final Label title = ComponentUtil.createLabel(song.getName(), DEFAULT_16, this);
+    String name = song.getName();
+    if(name.endsWith(".mp3")) {
+      name = name.substring(0, name.lastIndexOf("."));
+    }
+    final Label title = ComponentUtil.createLabel(name, DEFAULT_16, this);
     title.setPadding(new Insets(0, 0, 0, 10));
     title.setMaxWidth(AlbumBox.TRACKS_WIDTH);
     title.setMinWidth(AlbumBox.TRACKS_WIDTH);

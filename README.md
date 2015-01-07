@@ -34,7 +34,7 @@ the console logging during the development process.
 settings for development and the actual deployment.
 * file encoding: the deployment archiver applies utf8 as default encoding for the Java process. If you need another one,
 you have to modify the callete project.
-* following the additional instruction on https://github.com/syd711/callete
+* following the additional instructions on https://github.com/syd711/callete
 
 # Deployment
 
