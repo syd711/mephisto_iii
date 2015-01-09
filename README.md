@@ -3,6 +3,11 @@
 The project is a re-implementation of the https://github.com/syd711/mephisto_fx 
 radio UI and based on the callete framework: https://github.com/syd711/callete
 
+# Video
+
+https://www.youtube.com/watch?v=vvnBnqdxWmg
+
+
 # Known Issues
 
 * The rotary encoder is not working with 100% precision. Sometimes the wrong direction is detected, also sometimes the events lag.
