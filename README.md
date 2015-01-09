@@ -5,7 +5,7 @@ radio UI and based on the callete framework: https://github.com/syd711/callete
 
 # Video
 
-https://www.youtube.com/watch?v=vvnBnqdxWmg
+[![youtube video](http://www.matthias-faust.de/github/m3-youtube.png)](https://www.youtube.com/watch?v=vvnBnqdxWmg)
 
 
 # Known Issues
