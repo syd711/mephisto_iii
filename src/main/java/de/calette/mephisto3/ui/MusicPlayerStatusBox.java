@@ -1,4 +1,4 @@
-package de.calette.mephisto3.ui.google;
+package de.calette.mephisto3.ui;
 
 import callete.api.Callete;
 import callete.api.services.music.model.Album;
@@ -32,7 +32,7 @@ import java.util.TimerTask;
 /**
  * Displays the current status of the media player.
  */
-public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeListener, PlaybackChangeListener {
+public class MusicPlayerStatusBox extends BorderPane implements PlaylistChangeListener, PlaybackChangeListener {
   public static final int COVER_SIZE = 52;
 
   private Image defaultBackground = new Image(ResourceLoader.getResource("player-background.png"), COVER_SIZE, COVER_SIZE, false, true);
@@ -46,7 +46,7 @@ public class GooglePlayerStatusBox extends BorderPane implements PlaylistChangeL
   private Timer timer;
   private int currentDuration;
 
-  public GooglePlayerStatusBox() {
+  public MusicPlayerStatusBox() {
     VBox spacer = new VBox();
     this.setOpacity(0);
     spacer.setMinHeight(332);

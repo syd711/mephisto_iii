@@ -1,4 +1,4 @@
-package de.calette.mephisto3.ui.google;
+package de.calette.mephisto3.ui;
 
 import callete.api.services.music.model.Song;
 import de.calette.mephisto3.resources.menu.MenuResourceLoader;

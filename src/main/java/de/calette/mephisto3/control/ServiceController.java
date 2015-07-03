@@ -30,6 +30,7 @@ public class ServiceController {
   public final static String SERVICE_NAME_RADIO = "Radio";
   public final static String SERVICE_NAME_WEATHER = "Wetter";
   public final static String SERVICE_NAME_MUSIC = "Musik";
+  public final static String SERVICE_NAME_MP3 = "MP3s";
   public final static String SERVICE_NAME_SETTINGS = "System";
 
   public static final String ROTARY_ENCODER_PUSH_BUTTON_NAME = "Rotary Push";
@@ -87,6 +88,10 @@ public class ServiceController {
         else if(service.equals(Callete.getSystemService())) {
           serviceState.setService(Callete.getSystemService());
           serviceState.setModels(Collections.<ServiceModel>emptyList());
+        }
+        else if(service.equals(Callete.getNetworkMusicService())) {
+          serviceState.setService(Callete.getNetworkMusicService());
+          serviceState.setModels(Callete.getNetworkMusicService().getAlbums());
         }
 
         serviceChanged();

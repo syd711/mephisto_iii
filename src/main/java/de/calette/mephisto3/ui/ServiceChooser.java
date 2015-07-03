@@ -2,14 +2,14 @@ package de.calette.mephisto3.ui;
 
 import callete.api.Callete;
 import callete.api.services.Service;
+import callete.api.services.music.MusicService;
 import callete.api.services.music.model.AlbumCollection;
+import callete.api.util.Config;
 import de.calette.mephisto3.Mephisto3;
 import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
-import de.calette.mephisto3.ui.google.AlbumLetterSelector;
-import de.calette.mephisto3.ui.google.GooglePlayerStatusBox;
 import de.calette.mephisto3.util.ComponentUtil;
 import de.calette.mephisto3.util.TransitionQueue;
 import de.calette.mephisto3.util.TransitionUtil;
@@ -62,7 +62,7 @@ public class ServiceChooser implements ControlListener {
   private Text playbackSelection;
   private StackPane albumSelectorCenterStack;
 
-  private GooglePlayerStatusBox googlePlayer;
+  private MusicPlayerStatusBox playerStatusBox;
 
   public ServiceChooser(final Center center) {
     this.center = center;
@@ -91,7 +91,12 @@ public class ServiceChooser implements ControlListener {
     createServiceNameBox(ServiceController.SERVICE_NAME_RADIO, Callete.getStreamingService());
     createServiceNameBox(ServiceController.SERVICE_NAME_WEATHER, Callete.getWeatherService());
     createServiceNameBox(ServiceController.SERVICE_NAME_SETTINGS, Callete.getSystemService());
-    createServiceNameBox(ServiceController.SERVICE_NAME_MUSIC, Callete.getGoogleMusicService());
+    createServiceNameBox(ServiceController.SERVICE_NAME_MP3, Callete.getNetworkMusicService());
+
+    if(Config.getConfiguration().getBoolean("google.enabled", true)) {
+      createServiceNameBox(ServiceController.SERVICE_NAME_MUSIC, Callete.getGoogleMusicService());
+    }
+
   }
 
   /**
@@ -132,11 +137,11 @@ public class ServiceChooser implements ControlListener {
               AlbumLetterSelector selector = new AlbumLetterSelector(ServiceChooser.this, albumSelectorCenterStack, (List<AlbumCollection>) playbackSelection.getUserData());
               selector.showPanel();
 
-              if(googlePlayer == null) {
-                googlePlayer = new GooglePlayerStatusBox();
-                center.stackPane.getChildren().add(googlePlayer);
+              if(playerStatusBox == null) {
+                playerStatusBox = new MusicPlayerStatusBox();
+                center.stackPane.getChildren().add(playerStatusBox);
               }
-              googlePlayer.showPlayer();
+              playerStatusBox.showPlayer();
             }
           }
         });
@@ -147,11 +152,14 @@ public class ServiceChooser implements ControlListener {
           @Override
           public void run() {
             if(service.equals(Callete.getGoogleMusicService())) {
-              showMusicOptions(searchSelectionBox);
+              showMusicOptions(Callete.getGoogleMusicService(), searchSelectionBox);
+            }
+            else if(service.equals(Callete.getNetworkMusicService())) {
+              showMusicOptions(Callete.getNetworkMusicService(), searchSelectionBox);
             }
             else {
-              if(googlePlayer != null) {
-                googlePlayer.hidePlayer();
+              if(playerStatusBox != null) {
+                playerStatusBox.hidePlayer();
               }
               hideServiceChooser();
             }
@@ -178,7 +186,7 @@ public class ServiceChooser implements ControlListener {
       }
 
       Service selection = (Service) serviceBoxes.get(index).getUserData();
-      if(!selection.equals(Callete.getGoogleMusicService())) {
+      if(!selection.equals(Callete.getGoogleMusicService()) && !selection.equals(Callete.getNetworkMusicService())) {
         hideMusicOptions(searchSelectionBox);
       }
     }
@@ -214,8 +222,8 @@ public class ServiceChooser implements ControlListener {
         showFader.play();
         center.activeControlPanel.hidePanel();
         serviceNameBox.select();
-        if(googlePlayer != null && googlePlayer.isPlaying()) {
-          googlePlayer.showPlayer();
+        if(playerStatusBox != null && playerStatusBox.isPlaying()) {
+          playerStatusBox.showPlayer();
         }
       }
     });
@@ -262,13 +270,13 @@ public class ServiceChooser implements ControlListener {
     });
   }
 
-  private void showMusicOptions(Pane searchSelectionBox) {
+  private void showMusicOptions(MusicService musicService, Pane searchSelectionBox) {
     if(musicSelector == null) {
       musicSelector = new VBox(20);
       musicSelector.setOpacity(0);
 
-      byArtist = ComponentUtil.createText("Albums by Artist", "selector", musicSelector, Callete.getGoogleMusicService().getAlbumsByArtistLetter());
-      byName = ComponentUtil.createText("Albums by Name", "selector", musicSelector, Callete.getGoogleMusicService().getAlbumByNameLetter());
+      byArtist = ComponentUtil.createText("Albums by Artist", "selector", musicSelector, musicService.getAlbumsByArtistLetter());
+      byName = ComponentUtil.createText("Albums by Name", "selector", musicSelector, musicService.getAlbumByNameLetter());
     }
     
     if(!searchSelectionBox.getChildren().contains(musicSelector)) {

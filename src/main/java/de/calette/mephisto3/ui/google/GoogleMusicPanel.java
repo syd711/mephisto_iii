@@ -14,7 +14,6 @@ public class GoogleMusicPanel extends ControllablePanel {
   private final static Logger LOG = LoggerFactory.getLogger(GoogleMusicPanel.class);
 
   public GoogleMusicPanel() {
-    loadGoogleMusic();
   }
 
   //--------------- Helper ------------------------------------------------------
@@ -22,11 +21,12 @@ public class GoogleMusicPanel extends ControllablePanel {
   /**
    * Google Music Login
    */
-  private void loadGoogleMusic() {
+  public boolean loadGoogleMusic() {
     try {
-      Callete.getGoogleMusicService().authenticate();
+      return Callete.getGoogleMusicService().authenticate();
     } catch (Exception e) {
       LOG.error("Error authenticating Google music: " + e.getMessage(), e);
     }
+    return false;
   }
 }

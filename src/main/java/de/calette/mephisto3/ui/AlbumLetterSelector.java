@@ -1,9 +1,7 @@
-package de.calette.mephisto3.ui.google;
+package de.calette.mephisto3.ui;
 
 import callete.api.services.music.model.AlbumCollection;
 import de.calette.mephisto3.resources.menu.MenuResourceLoader;
-import de.calette.mephisto3.ui.ControllableSelectorPanel;
-import de.calette.mephisto3.ui.ServiceChooser;
 import de.calette.mephisto3.util.ComponentUtil;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.Pane;

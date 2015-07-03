@@ -8,6 +8,7 @@ import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.control.ServiceState;
 import de.calette.mephisto3.ui.google.GoogleMusicPanel;
+import de.calette.mephisto3.ui.mp3.NetworkMusicPanel;
 import de.calette.mephisto3.ui.radio.StreamsController;
 import de.calette.mephisto3.ui.system.SystemPanel;
 import de.calette.mephisto3.ui.weather.WeatherPanel;
@@ -136,13 +137,22 @@ public class Center extends BorderPane implements ControlListener, ServiceChange
 
         LOG.debug("Added service chooser for Google");
         GoogleMusicPanel googleMusicPanel = new GoogleMusicPanel();
-        servicePanels.put(Callete.getGoogleMusicService(), googleMusicPanel);
-        serviceChooser.addService(Callete.getGoogleMusicService());
+        if(googleMusicPanel.loadGoogleMusic()) {
+          servicePanels.put(Callete.getGoogleMusicService(), googleMusicPanel);
+          serviceChooser.addService(Callete.getGoogleMusicService());
+        }
 
         LOG.debug("Added service chooser for Weather");
         WeatherPanel weatherPanel = new WeatherPanel();
         servicePanels.put(Callete.getWeatherService(), weatherPanel);
         serviceChooser.addService(Callete.getWeatherService());
+
+        LOG.debug("Added service chooser for Mp3s");
+        NetworkMusicPanel networkMusicPanel = new NetworkMusicPanel();
+        if(networkMusicPanel.loadMusic()) {
+          servicePanels.put(Callete.getNetworkMusicService(), networkMusicPanel);
+          serviceChooser.addService(Callete.getNetworkMusicService());
+        }
       }
     });
   }

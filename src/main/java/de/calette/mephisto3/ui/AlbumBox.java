@@ -1,6 +1,7 @@
-package de.calette.mephisto3.ui.google;
+package de.calette.mephisto3.ui;
 
 import callete.api.Callete;
+import callete.api.services.impl.music.network.Mp3Folder;
 import callete.api.services.music.model.Album;
 import callete.api.services.music.model.PlaylistItem;
 import callete.api.services.music.model.Song;
@@ -11,8 +12,6 @@ import de.calette.mephisto3.control.ControlListener;
 import de.calette.mephisto3.control.ServiceControlEvent;
 import de.calette.mephisto3.control.ServiceController;
 import de.calette.mephisto3.resources.menu.MenuResourceLoader;
-import de.calette.mephisto3.ui.ControllableHBoxItemPanelBase;
-import de.calette.mephisto3.ui.ControllableSelectorPanel;
 import de.calette.mephisto3.util.ComponentUtil;
 import de.calette.mephisto3.util.Executor;
 import de.calette.mephisto3.util.TransitionUtil;
@@ -57,6 +56,9 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
   private VBox tracksBox;
   private int selectionIndex = -1;
 
+  public AlbumBox(ControllableSelectorPanel parentControl, Mp3Folder album) {
+    this(parentControl, album, true);
+  }
   public AlbumBox(ControllableSelectorPanel parentControl, Album album) {
     this(parentControl, album, true);
   }
@@ -289,16 +291,7 @@ public class AlbumBox extends ControllableHBoxItemPanelBase<Album> implements Co
     p.setMaxWidth(COVER_HEIGHT + SHADOW_WIDTH);
     p.getStyleClass().add("cover-box");
 
-    if(!StringUtils.isEmpty(album.getArtUrl())) {
-      LazyAlbumCoverCache.loadImageViewFor(p, album);
-    }
-    else {
-      LOG.warn("No cover found for " + album + ", using spacer instead.");
-      VBox spacer = new VBox();
-      spacer.setMinWidth(COVER_WIDTH);
-      spacer.setMinHeight(COVER_HEIGHT);
-      p.setCenter(spacer);
-    }
+    LazyAlbumCoverCache.loadImageViewFor(p, album);
 
     ComponentUtil.createLabel(getModel().getName(), "default-16", albumInfoBox);
     ComponentUtil.createLabel(getModel().getArtist(), "player-info-label", albumInfoBox);

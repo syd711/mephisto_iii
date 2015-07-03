@@ -1,7 +1,8 @@
-package de.calette.mephisto3.ui.google;
+package de.calette.mephisto3.ui;
 
 import callete.api.services.impl.music.google.AlbumCoverCache;
 import callete.api.services.music.model.Album;
+import de.calette.mephisto3.resources.ResourceLoader;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -69,8 +70,14 @@ public class LazyAlbumCoverCache {
       LOG.info("Starting new album cover loading thread for " + albums.size() + " images");
       for(Album album : albums) {
         String url = AlbumCoverCache.loadCover(album);
-        ImageView cover = new ImageView(new Image(url, width, height, false, true));
-        cache.put(album, cover);
+        if(url != null) {
+          ImageView cover = new ImageView(new Image(url, width, height, false, true));
+          cache.put(album, cover);
+        }
+        else {
+          ImageView cover = new ImageView(new Image(ResourceLoader.getResource("folder.png"), width, height, false, true));
+          cache.put(album, cover);
+        }
         if(!running) {
           break;
         }
