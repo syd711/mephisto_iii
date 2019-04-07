@@ -3,11 +3,6 @@
 The project is a re-implementation of the https://github.com/syd711/mephisto_fx 
 radio UI and based on the callete framework: https://github.com/syd711/callete
 
-# Video
-
-[![youtube video](http://www.matthias-faust.de/github/m3-youtube.png)](https://www.youtube.com/watch?v=vvnBnqdxWmg)
-
-
 # Known Issues
 
 * The rotary encoder is not working with 100% precision. Sometimes the wrong direction is detected, also sometimes the events lag.
@@ -53,30 +48,4 @@ and create a new maven run configuration with target "install" and profile "depl
 the deployment archive that is then copied via HTTP call to the target environment and executed there.
 
 For more details, check out the https://github.com/syd711/callete-template project.
-
-# Screenshots
-
-Here are some screenshots of the UI:
-
-![](http://www.paderpoint.net/radio/iii-new/radio1.png)
-
-![](http://www.paderpoint.net/radio/iii-new/radio2.png)
-
-![](http://www.paderpoint.net/radio/iii-new/radio3.png)
-
-![](http://www.paderpoint.net/radio/iii-new/radio4.png)
-
-![](http://www.paderpoint.net/radio/iii-new/radio5.png)
-
-![](http://www.paderpoint.net/radio/iii-new/radio6.png)
-
-![](http://www.paderpoint.net/radio/iii-new/radio7.png)
-
-![](http://www.paderpoint.net/radio/iii-new/radio8.png)
-
-![](http://www.paderpoint.net/radio/iii-new/radio9.png)
-
-![](http://www.paderpoint.net/radio/iii-new/radio10.png)
-
-![](http://www.paderpoint.net/radio/iii-new/radio11.png)
 
